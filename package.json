@@ -9,7 +9,7 @@
     "sqlite",
     "tree-sitter"
   ],
-  "author": "",
+  "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "nan": "^2.18.0"

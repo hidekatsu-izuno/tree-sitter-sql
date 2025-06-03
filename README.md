@@ -1,5 +1,7 @@
 # Tree-sitter SQLite Parser
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A comprehensive [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) parser for SQLite SQL syntax, providing complete coverage of SQLite's SQL dialect with advanced features and edge case handling.
 
 ## Features
@@ -39,25 +41,42 @@ A comprehensive [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) parser
 
 ## Installation
 
-### Prerequisites
+#### Prerequisites
 - [Node.js](https://nodejs.org/) (v14 or higher)
 - [tree-sitter CLI](https://github.com/tree-sitter/tree-sitter/tree/master/cli)
 
-### Setup
+#### From Source
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/your-username/tree-sitter-sql.git
 cd tree-sitter-sql
 
 # Install dependencies
 npm install
 
 # Generate the parser
-npx tree-sitter generate
+npm run generate
 
 # Run tests
+npm test
+
+# Or use tree-sitter CLI directly
+npx tree-sitter generate
 npx tree-sitter test
+```
+
+## Quick Start
+
+```javascript
+const Parser = require('tree-sitter');
+const SQL = require('tree-sitter-sql');
+
+const parser = new Parser();
+parser.setLanguage(SQL);
+
+const tree = parser.parse('SELECT * FROM users WHERE active = 1;');
+console.log(tree.rootNode.toString());
 ```
 
 ## Usage
@@ -301,41 +320,12 @@ module.exports = grammar({
 - **Benchmarking**: Query complexity metrics
 - **Academic projects**: SQL syntax research
 
-## Contributing
-
-We welcome contributions! Please:
-
-1. **Fork the repository**
-2. **Create a feature branch**
-3. **Add comprehensive tests** for new features
-4. **Update documentation** as needed
-5. **Submit a pull request**
-
-### Contribution Guidelines
-
-- **Test Coverage**: All new features must include tests
-- **Documentation**: Update README and grammar documentation  
-- **Code Quality**: Follow existing code style and patterns
-- **Backward Compatibility**: Maintain compatibility with existing parsers
-
 ## License
 
 [MIT License](LICENSE) - see LICENSE file for details.
-
-## Acknowledgments
-
-- **Tree-sitter**: For the excellent parsing framework
-- **SQLite Project**: For the comprehensive SQL implementation
-- **Community**: Contributors and testers who helped improve this parser
 
 ## Related Projects
 
 - [tree-sitter](https://tree-sitter.github.io/tree-sitter/) - The parsing framework
 - [SQLite](https://sqlite.org/) - The database engine
 - [tree-sitter-sql (generic)](https://github.com/DerekStride/tree-sitter-sql) - Generic SQL parser
-
----
-
-**Built with ❤️ for the SQL and Tree-sitter communities**
-
-For detailed examples, advanced usage patterns, and API documentation, see the [test files](test/corpus/) which serve as comprehensive usage examples.
