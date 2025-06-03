@@ -1,0 +1,625 @@
+================================================================================
+ATTACH DATABASE
+================================================================================
+
+ATTACH DATABASE '/path/to/database.db' AS external_db;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (attach_statement
+    (literal_value
+      (string_literal))
+    (identifier)))
+
+================================================================================
+DETACH DATABASE
+================================================================================
+
+DETACH DATABASE external_db;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (detach_statement
+    (identifier)))
+
+================================================================================
+VACUUM
+================================================================================
+
+VACUUM;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (vacuum_statement))
+
+================================================================================
+VACUUM specific table
+================================================================================
+
+VACUUM main.users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (vacuum_statement
+    (ERROR
+      (identifier))
+    (identifier)))
+
+================================================================================
+VACUUM INTO file
+================================================================================
+
+VACUUM INTO '/backup/database_backup.db';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (vacuum_statement
+    (literal_value
+      (string_literal))))
+
+================================================================================
+ANALYZE
+================================================================================
+
+ANALYZE;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (analyze_statement))
+
+================================================================================
+ANALYZE specific table
+================================================================================
+
+ANALYZE users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (analyze_statement
+    (identifier)))
+
+================================================================================
+REINDEX
+================================================================================
+
+REINDEX;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reindex_statement))
+
+================================================================================
+REINDEX specific index
+================================================================================
+
+REINDEX idx_users_email;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reindex_statement
+    (qualified_identifier
+      (identifier))))
+
+================================================================================
+REINDEX specific table
+================================================================================
+
+REINDEX users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (reindex_statement
+    (qualified_identifier
+      (identifier))))
+
+================================================================================
+Basic PRAGMA
+================================================================================
+
+PRAGMA foreign_keys = ON;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_statement
+    (identifier)
+    (pragma_value)))
+
+================================================================================
+PRAGMA query
+================================================================================
+
+PRAGMA table_info(users);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_statement
+    (identifier)
+    (pragma_value
+      (identifier))))
+
+================================================================================
+PRAGMA with string value
+================================================================================
+
+PRAGMA journal_mode = 'WAL';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_statement
+    (identifier)
+    (pragma_value
+      (string_literal))))
+
+================================================================================
+PRAGMA with integer value
+================================================================================
+
+PRAGMA cache_size = 10000;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_statement
+    (identifier)
+    (pragma_value
+      (signed_number
+        (numeric_literal)))))
+
+================================================================================
+INSERT with RETURNING
+================================================================================
+
+INSERT INTO users (name, email) 
+VALUES ('John Doe', 'john@example.com')
+RETURNING id, name;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (values_clause
+      (literal_value
+        (string_literal))
+      (literal_value
+        (string_literal)))
+    (returning_clause
+      (select_item
+        (qualified_identifier
+          (identifier)))
+      (select_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+UPDATE with RETURNING
+================================================================================
+
+UPDATE users 
+SET last_login = CURRENT_TIMESTAMP 
+WHERE id = 123
+RETURNING id, name, last_login;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (update_statement
+    (qualified_identifier
+      (identifier))
+    (update_set
+      (identifier)
+      (literal_value))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))))
+    (returning_clause
+      (select_item
+        (qualified_identifier
+          (identifier)))
+      (select_item
+        (qualified_identifier
+          (identifier)))
+      (select_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+DELETE with RETURNING
+================================================================================
+
+DELETE FROM sessions 
+WHERE expires_at < CURRENT_TIMESTAMP
+RETURNING session_id, user_id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (delete_statement
+    (qualified_identifier
+      (identifier))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value)))
+    (returning_clause
+      (select_item
+        (qualified_identifier
+          (identifier)))
+      (select_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+Generated columns
+================================================================================
+
+CREATE TABLE rectangles (
+  width REAL NOT NULL,
+  height REAL NOT NULL,
+  area REAL GENERATED ALWAYS AS (width * height) STORED,
+  perimeter REAL GENERATED ALWAYS AS (2 * (width + height)) VIRTUAL
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (literal_value
+            (numeric_literal))
+          (parenthesized_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (qualified_identifier
+                (identifier)))))))))
+
+================================================================================
+Bind parameters
+================================================================================
+
+SELECT * FROM users WHERE id = ? AND status = :status AND region = @region AND type = $type;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (binary_expression
+                  (bind_parameter)
+                  (qualified_identifier
+                    (identifier))))
+              (binary_expression
+                (bind_parameter)
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (bind_parameter)
+              (qualified_identifier
+                (identifier))))
+          (bind_parameter))))))
+
+================================================================================
+Hex and blob literals
+================================================================================
+
+SELECT 
+  0xDEADBEEF AS hex_value,
+  x'48656C6C6F' AS blob_value,
+  X'776F726C64' AS upper_blob;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (literal_value
+            (numeric_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (blob_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (blob_literal))
+          (identifier))))))
+
+================================================================================
+INDEXED BY hint
+================================================================================
+
+SELECT * FROM users INDEXED BY idx_users_email WHERE email = 'test@example.com';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (indexed_by
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+NOT INDEXED hint
+================================================================================
+
+SELECT * FROM users NOT INDEXED WHERE name LIKE 'John%';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (indexed_by)))
+      (where_clause
+        (like_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+COLLATE in expressions
+================================================================================
+
+SELECT * FROM users 
+WHERE name COLLATE NOCASE = 'john'
+ORDER BY email COLLATE BINARY;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (collate_expression
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (literal_value
+            (string_literal)))))
+    (order_by_clause
+      (order_by_item
+        (collate_expression
+          (qualified_identifier
+            (identifier))
+          (identifier))))))
+
+================================================================================
+RAISE function in triggers
+================================================================================
+
+CREATE TRIGGER check_balance
+BEFORE UPDATE ON accounts
+FOR EACH ROW
+WHEN NEW.balance < 0
+BEGIN
+  SELECT RAISE(ABORT, 'Balance cannot be negative');
+END;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_trigger_statement
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))
+    (binary_expression
+      (qualified_identifier
+        (identifier)
+        (identifier))
+      (literal_value
+        (numeric_literal)))
+    (select_statement
+      (select_core
+        (select_list
+          (select_item
+            (raise_function
+              (string_literal))))))))
+
+================================================================================
+Multiple row INSERT
+================================================================================
+
+INSERT INTO products (name, price, category) VALUES 
+  ('Laptop', 999.99, 'Electronics'),
+  ('Mouse', 29.99, 'Electronics'),
+  ('Desk', 199.99, 'Furniture');
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (identifier)
+    (values_clause
+      (literal_value
+        (string_literal))
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (string_literal)))))
+
+================================================================================
+FTS virtual table
+================================================================================
+
+CREATE VIRTUAL TABLE documents_fts USING fts5(title, content, author);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_virtual_table_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))))
+
+================================================================================
+R-Tree virtual table
+================================================================================
+
+CREATE VIRTUAL TABLE rtree_index USING rtree(id, minX, maxX, minY, maxY);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_virtual_table_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))
+    (qualified_identifier
+      (identifier))))
+
+================================================================================
+JSON functions
+================================================================================
+
+SELECT 
+  json_extract(data, '$.name') AS name,
+  json_valid(data) AS is_valid_json,
+  json_type(data) AS data_type
+FROM json_table;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))

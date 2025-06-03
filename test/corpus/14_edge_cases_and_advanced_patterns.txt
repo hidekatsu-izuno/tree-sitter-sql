@@ -1,0 +1,578 @@
+================================================================================
+Row value expressions
+================================================================================
+
+SELECT * FROM table1 
+WHERE (col1, col2) = (SELECT val1, val2 FROM table2 WHERE id = 1)
+  AND (a, b, c) IN (SELECT x, y, z FROM table3);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (in_expression
+          (binary_expression
+            (parenthesized_expression
+              (ERROR
+                (identifier))
+              (identifier))
+            (binary_expression
+              (scalar_subquery
+                (select_statement
+                  (select_core
+                    (select_list
+                      (select_item
+                        (qualified_identifier
+                          (identifier)))
+                      (select_item
+                        (qualified_identifier
+                          (identifier))))
+                    (from_clause
+                      (table_or_subquery
+                        (qualified_identifier
+                          (identifier))))
+                    (where_clause
+                      (binary_expression
+                        (qualified_identifier
+                          (identifier))
+                        (literal_value
+                          (numeric_literal)))))))
+              (parenthesized_expression
+                (ERROR
+                  (identifier)
+                  (identifier))
+                (identifier))))
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (qualified_identifier
+                    (identifier))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier)))))))))))
+
+================================================================================
+EXPLAIN query plans
+================================================================================
+
+EXPLAIN SELECT * FROM users WHERE id = 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (explain_statement
+    (select_statement
+      (select_core
+        (select_list)
+        (from_clause
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))))
+        (where_clause
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal))))))))
+
+================================================================================
+EXPLAIN QUERY PLAN
+================================================================================
+
+EXPLAIN QUERY PLAN 
+SELECT customers.name, orders.total 
+FROM customers 
+JOIN orders ON customers.id = orders.customer_id
+WHERE customers.region = 'US';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (explain_statement
+    (select_statement
+      (select_core
+        (select_list
+          (select_item
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (select_item
+            (qualified_identifier
+              (identifier)
+              (identifier))))
+        (from_clause
+          (table_or_subquery
+            (qualified_identifier
+              (identifier)))
+          (join_clause
+            (join_operator)
+            (table_or_subquery
+              (qualified_identifier
+                (identifier)))
+            (join_constraint
+              (binary_expression
+                (qualified_identifier
+                  (identifier)
+                  (identifier))
+                (qualified_identifier
+                  (identifier)
+                  (identifier))))))
+        (where_clause
+          (binary_expression
+            (qualified_identifier
+              (identifier)
+              (identifier))
+            (literal_value
+              (string_literal))))))))
+
+================================================================================
+Table-valued functions
+================================================================================
+
+SELECT * FROM json_each('{"a":1,"b":2,"c":3}') AS t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal)))
+          (identifier))))))
+
+================================================================================
+Complex table-valued function
+================================================================================
+
+SELECT value, typeof(value) AS type
+FROM json_tree('{"name":"John","scores":[95,87,92]}', '$.scores')
+WHERE type = 'integer';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal))
+            (literal_value
+              (string_literal)))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+VALUES as table constructor
+================================================================================
+
+SELECT * FROM (VALUES (1, 'one'), (2, 'two'), (3, 'three')) AS t(id, name);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (ERROR
+          (table_or_subquery
+            (table_or_subquery
+              (values_clause
+                (literal_value
+                  (numeric_literal))
+                (literal_value
+                  (string_literal))
+                (literal_value
+                  (numeric_literal))
+                (literal_value
+                  (string_literal))
+                (literal_value
+                  (numeric_literal))
+                (literal_value
+                  (string_literal)))))
+          (identifier))
+        (table_or_subquery
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier))))))))
+
+================================================================================
+Complex USING clause in JOIN
+================================================================================
+
+SELECT c.name, o.total, p.name AS product_name
+FROM customers c
+JOIN orders o USING (customer_id)
+JOIN order_items oi USING (order_id)  
+JOIN products p USING (product_id)
+WHERE c.active = 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+Window function with complex frame
+================================================================================
+
+SELECT 
+  name,
+  salary,
+  AVG(salary) OVER (
+    PARTITION BY department 
+    ORDER BY hire_date 
+    ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING
+  ) AS moving_avg,
+  COUNT(*) OVER (
+    PARTITION BY department 
+    ORDER BY salary DESC 
+    RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+  ) AS salary_rank_count
+FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (qualified_identifier
+                (identifier))
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (frame_bound
+                  (literal_value
+                    (numeric_literal)))
+                (frame_bound
+                  (literal_value
+                    (numeric_literal))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (qualified_identifier
+                (identifier))
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (frame_bound)
+                (frame_bound))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Schema-qualified function calls
+================================================================================
+
+SELECT 
+  main.custom_function(value) AS result1,
+  temp.aggregation_func(a, b, c) AS result2,
+  sqlite_version() AS version
+FROM test_table;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (ERROR
+        (qualified_identifier
+          (identifier)
+          (identifier)))
+      (select_list
+        (select_item
+          (parenthesized_expression
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (ERROR)
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (identifier)
+          (ERROR)
+          (identifier))
+        (select_item
+          (function_call
+            (identifier))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Complex constraint expressions
+================================================================================
+
+CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+  price REAL CHECK (price > 0),
+  category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT unique_name_category UNIQUE (name, category_id),
+  CONSTRAINT valid_price CHECK (price BETWEEN 0.01 AND 999999.99)
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint)
+      (column_constraint
+        (identifier)))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (foreign_key_clause
+          (qualified_identifier
+            (identifier))
+          (identifier))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (literal_value)))
+    (table_constraint
+      (identifier)
+      (indexed_column
+        (qualified_identifier
+          (identifier)))
+      (indexed_column
+        (qualified_identifier
+          (identifier))))
+    (table_constraint
+      (identifier)
+      (between_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))
+        (literal_value
+          (numeric_literal))))))
+
+================================================================================
+Generated columns with complex expressions
+================================================================================
+
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY,
+  subtotal REAL NOT NULL,
+  tax_rate REAL NOT NULL DEFAULT 0.08,
+  tax_amount REAL GENERATED ALWAYS AS (subtotal * tax_rate) STORED,
+  total REAL GENERATED ALWAYS AS (subtotal + tax_amount) VIRTUAL,
+  discount_percent INTEGER DEFAULT 0,
+  final_total AS (total * (1 - discount_percent / 100.0)) STORED
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (literal_value
+          (numeric_literal))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (literal_value
+          (numeric_literal))))
+    (column_definition
+      (identifier)
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (parenthesized_expression
+            (binary_expression
+              (binary_expression
+                (literal_value
+                  (numeric_literal))
+                (qualified_identifier
+                  (identifier)))
+              (literal_value
+                (numeric_literal)))))))))

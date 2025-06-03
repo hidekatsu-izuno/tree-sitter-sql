@@ -1,0 +1,33 @@
+{
+  "name": "tree-sitter-sql",
+  "version": "0.1.0",
+  "description": "SQLite SQL grammar for tree-sitter",
+  "main": "bindings/node",
+  "keywords": [
+    "parser",
+    "sql",
+    "sqlite",
+    "tree-sitter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.18.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.20.8"
+  },
+  "scripts": {
+    "generate": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "parse": "tree-sitter parse"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.sql",
+      "file-types": [
+        "sql"
+      ]
+    }
+  ]
+}

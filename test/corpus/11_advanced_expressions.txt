@@ -1,0 +1,785 @@
+================================================================================
+Complex nested expressions
+================================================================================
+
+SELECT 
+  ((price * quantity) + tax) - discount AS final_price,
+  (stock > 0 AND active = 1) OR featured = 1 AS available,
+  CASE 
+    WHEN ((price * quantity) > 1000) THEN 'expensive'
+    WHEN ((price * quantity) > 100) THEN 'moderate' 
+    ELSE 'cheap'
+  END AS price_category
+FROM products;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (parenthesized_expression
+              (binary_expression
+                (parenthesized_expression
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier))
+                    (qualified_identifier
+                      (identifier))))
+                (qualified_identifier
+                  (identifier))))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (binary_expression
+              (parenthesized_expression
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (binary_expression
+                    (binary_expression
+                      (literal_value
+                        (numeric_literal))
+                      (qualified_identifier
+                        (identifier)))
+                    (literal_value
+                      (numeric_literal)))))
+              (qualified_identifier
+                (identifier)))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (case_expression
+            (when_clause
+              (parenthesized_expression
+                (binary_expression
+                  (parenthesized_expression
+                    (binary_expression
+                      (qualified_identifier
+                        (identifier))
+                      (qualified_identifier
+                        (identifier))))
+                  (literal_value
+                    (numeric_literal))))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (parenthesized_expression
+                (binary_expression
+                  (parenthesized_expression
+                    (binary_expression
+                      (qualified_identifier
+                        (identifier))
+                      (qualified_identifier
+                        (identifier))))
+                  (literal_value
+                    (numeric_literal))))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+All literal types
+================================================================================
+
+SELECT 
+  123 AS integer_literal,
+  123.45 AS real_literal,
+  'text string' AS string_literal,
+  "double quoted" AS double_quoted_string,
+  'It''s escaped' AS escaped_string,
+  x'48656C6C6F' AS blob_literal,
+  X'776F726C64' AS upper_blob_literal,
+  0x1234ABCD AS hex_literal,
+  NULL AS null_literal,
+  TRUE AS true_literal,
+  FALSE AS false_literal,
+  CURRENT_TIMESTAMP AS timestamp_literal,
+  CURRENT_DATE AS date_literal,
+  CURRENT_TIME AS time_literal;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (literal_value
+            (numeric_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (numeric_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (string_literal))
+          (identifier))
+        (select_item
+          (quoted_identifier)
+          (identifier))
+        (select_item
+          (literal_value
+            (string_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (blob_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (blob_literal))
+          (identifier))
+        (select_item
+          (literal_value
+            (numeric_literal))
+          (identifier))
+        (select_item
+          (literal_value)
+          (identifier))
+        (select_item
+          (literal_value)
+          (identifier))
+        (select_item
+          (literal_value)
+          (identifier))
+        (select_item
+          (literal_value)
+          (identifier))
+        (select_item
+          (literal_value)
+          (identifier))
+        (select_item
+          (literal_value)
+          (identifier))))))
+
+================================================================================
+All bind parameter types
+================================================================================
+
+SELECT * FROM users 
+WHERE id = ? 
+  AND name = :name
+  AND email = @email 
+  AND status = $status
+  AND age = ?1
+  AND city = :city_name
+  AND country = @user_country
+  AND role = $user_role;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (binary_expression
+                  (binary_expression
+                    (binary_expression
+                      (binary_expression
+                        (qualified_identifier
+                          (identifier))
+                        (binary_expression
+                          (bind_parameter)
+                          (qualified_identifier
+                            (identifier))))
+                      (binary_expression
+                        (bind_parameter)
+                        (qualified_identifier
+                          (identifier))))
+                    (binary_expression
+                      (bind_parameter)
+                      (qualified_identifier
+                        (identifier))))
+                  (binary_expression
+                    (bind_parameter)
+                    (qualified_identifier
+                      (identifier))))
+                (binary_expression
+                  (bind_parameter)
+                  (qualified_identifier
+                    (identifier))))
+              (binary_expression
+                (bind_parameter)
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (bind_parameter)
+              (qualified_identifier
+                (identifier))))
+          (bind_parameter))))))
+
+================================================================================
+Complex CASE expressions
+================================================================================
+
+SELECT 
+  name,
+  CASE status
+    WHEN 'active' THEN 'Active User'
+    WHEN 'pending' THEN 'Pending Approval'
+    WHEN 'suspended' THEN 'Account Suspended'
+    ELSE 'Unknown Status'
+  END AS status_description,
+  CASE 
+    WHEN age < 13 THEN 'child'
+    WHEN age < 20 THEN 'teenager' 
+    WHEN age < 65 THEN 'adult'
+    ELSE 'senior'
+  END AS age_group,
+  CASE
+    WHEN balance > 10000 THEN 'premium'
+    WHEN balance > 1000 THEN 'standard'
+    WHEN balance > 0 THEN 'basic'
+    WHEN balance = 0 THEN 'zero'
+    ELSE 'negative'
+  END AS account_tier
+FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (case_expression
+            (qualified_identifier
+              (identifier))
+            (when_clause
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier))
+        (select_item
+          (case_expression
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier))
+        (select_item
+          (case_expression
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Nested function calls
+================================================================================
+
+SELECT 
+  UPPER(TRIM(LOWER(name))) AS cleaned_name,
+  ROUND(ABS(SIN(RADIANS(latitude))), 6) AS sin_lat,
+  SUBSTR(REPLACE(UPPER(code), ' ', '_'), 1, 10) AS normalized_code,
+  COALESCE(NULLIF(TRIM(description), ''), 'No description') AS safe_description
+FROM locations;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (function_call
+              (identifier)
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier)))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (function_call
+              (identifier)
+              (function_call
+                (identifier)
+                (function_call
+                  (identifier)
+                  (qualified_identifier
+                    (identifier)))))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (function_call
+              (identifier)
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier)))
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal)))
+            (literal_value
+              (numeric_literal))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (function_call
+              (identifier)
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier)))
+              (literal_value
+                (string_literal)))
+            (literal_value
+              (string_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+EXISTS and NOT EXISTS patterns
+================================================================================
+
+SELECT * FROM customers c
+WHERE EXISTS (
+    SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.status = 'completed'
+)
+AND NOT EXISTS (
+    SELECT 1 FROM complaints comp WHERE comp.customer_id = c.id AND comp.resolved = 0
+)
+AND EXISTS (
+    SELECT 1 FROM customer_preferences cp 
+    WHERE cp.customer_id = c.id 
+      AND cp.newsletter = 1
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier)))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (exists_expression
+              (select_statement
+                (select_core
+                  (select_list
+                    (select_item
+                      (literal_value
+                        (numeric_literal))))
+                  (from_clause
+                    (table_or_subquery
+                      (qualified_identifier
+                        (identifier))
+                      (identifier)))
+                  (where_clause
+                    (binary_expression
+                      (binary_expression
+                        (qualified_identifier
+                          (identifier)
+                          (identifier))
+                        (binary_expression
+                          (qualified_identifier
+                            (identifier)
+                            (identifier))
+                          (qualified_identifier
+                            (identifier)
+                            (identifier))))
+                      (literal_value
+                        (string_literal)))))))
+            (exists_expression
+              (select_statement
+                (select_core
+                  (select_list
+                    (select_item
+                      (literal_value
+                        (numeric_literal))))
+                  (from_clause
+                    (table_or_subquery
+                      (qualified_identifier
+                        (identifier))
+                      (identifier)))
+                  (where_clause
+                    (binary_expression
+                      (binary_expression
+                        (qualified_identifier
+                          (identifier)
+                          (identifier))
+                        (binary_expression
+                          (qualified_identifier
+                            (identifier)
+                            (identifier))
+                          (qualified_identifier
+                            (identifier)
+                            (identifier))))
+                      (literal_value
+                        (numeric_literal))))))))
+          (exists_expression
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (literal_value
+                      (numeric_literal))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))
+                    (identifier)))
+                (where_clause
+                  (binary_expression
+                    (binary_expression
+                      (qualified_identifier
+                        (identifier)
+                        (identifier))
+                      (binary_expression
+                        (qualified_identifier
+                          (identifier)
+                          (identifier))
+                        (qualified_identifier
+                          (identifier)
+                          (identifier))))
+                    (literal_value
+                      (numeric_literal))))))))))))
+
+================================================================================
+COLLATE expressions
+================================================================================
+
+SELECT * FROM users 
+WHERE name COLLATE NOCASE = 'john'
+  AND email COLLATE BINARY > 'a@example.com'
+ORDER BY 
+  last_name COLLATE NOCASE ASC,
+  first_name COLLATE BINARY DESC;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (collate_expression
+            (binary_expression
+              (collate_expression
+                (qualified_identifier
+                  (identifier))
+                (identifier))
+              (binary_expression
+                (literal_value
+                  (string_literal))
+                (qualified_identifier
+                  (identifier))))
+            (identifier))
+          (literal_value
+            (string_literal)))))
+    (order_by_clause
+      (order_by_item
+        (collate_expression
+          (qualified_identifier
+            (identifier))
+          (identifier)))
+      (order_by_item
+        (collate_expression
+          (qualified_identifier
+            (identifier))
+          (identifier))))))
+
+================================================================================
+Complex LIKE patterns
+================================================================================
+
+SELECT * FROM products
+WHERE name LIKE 'Apple%'
+  AND description LIKE '%phone%'
+  AND model NOT LIKE '%mini%'
+  AND code LIKE 'A_B_C'
+  AND category LIKE '[A-Z]%'
+  AND sku NOT LIKE '%[0-9][0-9][0-9]%'
+  AND brand LIKE ESCAPE '!' 'prefix!%suffix';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (like_expression
+          (like_expression
+            (like_expression
+              (like_expression
+                (like_expression
+                  (like_expression
+                    (like_expression
+                      (qualified_identifier
+                        (identifier))
+                      (binary_expression
+                        (literal_value
+                          (string_literal))
+                        (qualified_identifier
+                          (identifier))))
+                    (binary_expression
+                      (literal_value
+                        (string_literal))
+                      (qualified_identifier
+                        (identifier))))
+                  (binary_expression
+                    (literal_value
+                      (string_literal))
+                    (qualified_identifier
+                      (identifier))))
+                (binary_expression
+                  (literal_value
+                    (string_literal))
+                  (qualified_identifier
+                    (identifier))))
+              (binary_expression
+                (literal_value
+                  (string_literal))
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (literal_value
+                (string_literal))
+              (qualified_identifier
+                (identifier))))
+          (ERROR
+            (identifier)
+            (literal_value
+              (string_literal)))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+Comprehensive operator precedence
+================================================================================
+
+SELECT 
+  a + b * c AS add_multiply,
+  (a + b) * c AS parentheses_first,
+  a OR b AND c AS logical_precedence,
+  a AND b OR c AND d AS multiple_logical,
+  NOT a AND b AS unary_precedence,
+  a = b AND c > d AS comparison_logical,
+  a << 2 + 3 AS bitwise_arithmetic,
+  a || b + c AS concatenation_arithmetic
+FROM test_table;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (qualified_identifier
+                (identifier)))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (parenthesized_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (qualified_identifier
+                  (identifier))))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (qualified_identifier
+                (identifier)))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (qualified_identifier
+                  (identifier))))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (unary_expression
+              (qualified_identifier
+                (identifier)))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (qualified_identifier
+                  (identifier))))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (numeric_literal)))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (qualified_identifier
+                (identifier))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))

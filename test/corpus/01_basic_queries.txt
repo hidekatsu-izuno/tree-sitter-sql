@@ -1,0 +1,652 @@
+================================================================================
+Basic SELECT
+================================================================================
+
+SELECT * FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+SELECT with DISTINCT
+================================================================================
+
+SELECT DISTINCT name FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+SELECT with multiple columns
+================================================================================
+
+SELECT id, name, email, created_at FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+SELECT with WHERE clause
+================================================================================
+
+SELECT * FROM users WHERE age >= 18 AND status = 'active';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier)))
+            (literal_value
+              (string_literal))))))))
+
+================================================================================
+SELECT with ORDER BY
+================================================================================
+
+SELECT * FROM products ORDER BY price DESC, name ASC;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier)))
+      (order_by_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+SELECT with LIMIT and OFFSET
+================================================================================
+
+SELECT * FROM users LIMIT 10 OFFSET 20;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (limit_clause
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (numeric_literal)))))
+
+================================================================================
+SELECT with LIMIT using comma syntax
+================================================================================
+
+SELECT * FROM users LIMIT 20, 10;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (limit_clause
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (numeric_literal)))))
+
+================================================================================
+Basic INSERT
+================================================================================
+
+INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com');
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (values_clause
+      (literal_value
+        (string_literal))
+      (literal_value
+        (string_literal)))))
+
+================================================================================
+INSERT with multiple rows
+================================================================================
+
+INSERT INTO users (name, age) VALUES 
+  ('Alice', 25),
+  ('Bob', 30),
+  ('Charlie', 35);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (values_clause
+      (literal_value
+        (string_literal))
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (numeric_literal)))))
+
+================================================================================
+Basic UPDATE
+================================================================================
+
+UPDATE users SET status = 'inactive' WHERE last_login < '2023-01-01';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (update_statement
+    (qualified_identifier
+      (identifier))
+    (update_set
+      (identifier)
+      (literal_value
+        (string_literal)))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (string_literal))))))
+
+================================================================================
+UPDATE multiple columns
+================================================================================
+
+UPDATE users 
+SET name = 'John Smith', 
+    email = 'john.smith@example.com',
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = 123;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (update_statement
+    (qualified_identifier
+      (identifier))
+    (update_set
+      (identifier)
+      (literal_value
+        (string_literal)))
+    (update_set
+      (identifier)
+      (literal_value
+        (string_literal)))
+    (update_set
+      (identifier)
+      (literal_value))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))))))
+
+================================================================================
+Basic DELETE
+================================================================================
+
+DELETE FROM users WHERE id = 42;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (delete_statement
+    (qualified_identifier
+      (identifier))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))))))
+
+================================================================================
+DELETE without WHERE
+================================================================================
+
+DELETE FROM temp_data;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (delete_statement
+    (qualified_identifier
+      (identifier))))
+
+================================================================================
+SELECT with column aliases
+================================================================================
+
+SELECT id AS user_id, name AS full_name, email AS contact_email FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+SELECT with table alias
+================================================================================
+
+SELECT u.id, u.name FROM users AS u;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))))))
+
+================================================================================
+SELECT with schema qualified table
+================================================================================
+
+SELECT * FROM main.users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)
+            (identifier)))))))
+
+================================================================================
+SELECT ALL
+================================================================================
+
+SELECT ALL name FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+SELECT with complex WHERE
+================================================================================
+
+SELECT * FROM products 
+WHERE (price BETWEEN 10 AND 100) 
+  AND (category IN ('electronics', 'books')) 
+  AND (description IS NOT NULL)
+  AND (stock > 0);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (parenthesized_expression
+                (between_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (numeric_literal))
+                  (literal_value
+                    (numeric_literal))))
+              (parenthesized_expression
+                (in_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (string_literal))
+                  (literal_value
+                    (string_literal)))))
+            (parenthesized_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value))))
+          (parenthesized_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (numeric_literal)))))))))
+
+================================================================================
+SELECT with ORDER BY multiple columns
+================================================================================
+
+SELECT * FROM users ORDER BY last_name ASC, first_name ASC, created_at DESC;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier)))
+      (order_by_item
+        (qualified_identifier
+          (identifier)))
+      (order_by_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+SELECT with NULLS ordering
+================================================================================
+
+SELECT * FROM users ORDER BY last_login DESC NULLS LAST, name ASC NULLS FIRST;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier)))
+      (order_by_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+INSERT with column list
+================================================================================
+
+INSERT INTO users (id, name, email, status) VALUES (1, 'John', 'john@example.com', 'active');
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (values_clause
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (string_literal))
+      (literal_value
+        (string_literal)))))
+
+================================================================================
+INSERT with SELECT
+================================================================================
+
+INSERT INTO active_users (id, name, email) 
+SELECT id, name, email FROM users WHERE status = 'active';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (identifier)
+    (select_statement
+      (select_core
+        (select_list
+          (select_item
+            (qualified_identifier
+              (identifier)))
+          (select_item
+            (qualified_identifier
+              (identifier)))
+          (select_item
+            (qualified_identifier
+              (identifier))))
+        (from_clause
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))))
+        (where_clause
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal))))))))
+
+================================================================================
+INSERT DEFAULT VALUES
+================================================================================
+
+INSERT INTO audit_log DEFAULT VALUES;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))))
+
+================================================================================
+UPDATE with FROM clause
+================================================================================
+
+UPDATE users 
+SET status = u2.status 
+FROM user_updates u2 
+WHERE users.id = u2.user_id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (update_statement
+    (qualified_identifier
+      (identifier))
+    (update_set
+      (identifier)
+      (qualified_identifier
+        (identifier)
+        (identifier)))
+    (from_clause
+      (table_or_subquery
+        (qualified_identifier
+          (identifier))
+        (identifier)))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier)
+          (identifier))
+        (qualified_identifier
+          (identifier)
+          (identifier))))))
+
+================================================================================
+UPDATE with multiple SET clauses
+================================================================================
+
+UPDATE users 
+SET name = 'Updated Name',
+    email = 'new@example.com',
+    last_modified = CURRENT_TIMESTAMP,
+    version = version + 1
+WHERE id = 123;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (update_statement
+    (qualified_identifier
+      (identifier))
+    (update_set
+      (identifier)
+      (literal_value
+        (string_literal)))
+    (update_set
+      (identifier)
+      (literal_value
+        (string_literal)))
+    (update_set
+      (identifier)
+      (literal_value))
+    (update_set
+      (identifier)
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))))))

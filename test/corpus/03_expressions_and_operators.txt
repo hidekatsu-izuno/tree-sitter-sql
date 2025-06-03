@@ -1,0 +1,699 @@
+================================================================================
+Basic arithmetic
+================================================================================
+
+SELECT price * quantity AS total, 
+       price + tax AS price_with_tax,
+       price - discount AS discounted_price,
+       price / 2 AS half_price,
+       price % 10 AS remainder
+FROM products;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Comparison operators
+================================================================================
+
+SELECT * FROM users 
+WHERE age > 18 
+  AND age < 65
+  AND status != 'inactive'
+  AND level >= 5
+  AND score <= 100
+  AND name = 'John';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (binary_expression
+                  (literal_value
+                    (numeric_literal))
+                  (qualified_identifier
+                    (identifier))))
+              (binary_expression
+                (binary_expression
+                  (literal_value
+                    (numeric_literal))
+                  (qualified_identifier
+                    (identifier)))
+                (binary_expression
+                  (literal_value
+                    (string_literal))
+                  (qualified_identifier
+                    (identifier)))))
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier))))
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier)))
+            (literal_value
+              (string_literal))))))))
+
+================================================================================
+Logical operators
+================================================================================
+
+SELECT * FROM products
+WHERE (category = 'electronics' OR category = 'computers')
+  AND price < 1000
+  AND NOT discontinued;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (parenthesized_expression
+              (binary_expression
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (binary_expression
+                    (literal_value
+                      (string_literal))
+                    (qualified_identifier
+                      (identifier))))
+                (literal_value
+                  (string_literal))))
+            (qualified_identifier
+              (identifier)))
+          (binary_expression
+            (literal_value
+              (numeric_literal))
+            (unary_expression
+              (qualified_identifier
+                (identifier)))))))))
+
+================================================================================
+IN operator
+================================================================================
+
+SELECT * FROM users 
+WHERE status IN ('active', 'pending', 'verified')
+  AND id NOT IN (SELECT blocked_id FROM blocked_users);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (in_expression
+          (binary_expression
+            (in_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal)))
+            (qualified_identifier
+              (identifier)))
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier)))))))))))
+
+================================================================================
+BETWEEN operator
+================================================================================
+
+SELECT * FROM orders
+WHERE order_date BETWEEN '2023-01-01' AND '2023-12-31'
+  AND total NOT BETWEEN 0 AND 10;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (qualified_identifier
+          (identifier)))))
+  (ERROR
+    (between_expression
+      (binary_expression
+        (binary_expression
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal)))
+        (qualified_identifier
+          (identifier)))
+      (literal_value
+        (numeric_literal))
+      (literal_value
+        (numeric_literal)))))
+
+================================================================================
+LIKE patterns
+================================================================================
+
+SELECT * FROM users
+WHERE email LIKE '%@gmail.com'
+  AND name LIKE 'John%'
+  AND code LIKE 'ABC___'
+  AND description NOT LIKE '%spam%';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (like_expression
+          (like_expression
+            (like_expression
+              (like_expression
+                (qualified_identifier
+                  (identifier))
+                (binary_expression
+                  (literal_value
+                    (string_literal))
+                  (qualified_identifier
+                    (identifier))))
+              (binary_expression
+                (literal_value
+                  (string_literal))
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (literal_value
+                (string_literal))
+              (qualified_identifier
+                (identifier))))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+NULL handling
+================================================================================
+
+SELECT * FROM products
+WHERE description IS NULL
+  AND discontinued IS NOT NULL
+  AND COALESCE(price, 0) > 0
+  AND IFNULL(category, 'uncategorized') = 'electronics';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (binary_expression
+                (literal_value)
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (literal_value)
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))))
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (string_literal))))
+            (literal_value
+              (string_literal))))))))
+
+================================================================================
+CASE expressions
+================================================================================
+
+SELECT 
+  name,
+  CASE 
+    WHEN age < 18 THEN 'minor'
+    WHEN age < 65 THEN 'adult'
+    ELSE 'senior'
+  END AS age_group,
+  CASE status
+    WHEN 'active' THEN 1
+    WHEN 'pending' THEN 2
+    ELSE 0
+  END AS status_code
+FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (case_expression
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier))
+        (select_item
+          (case_expression
+            (qualified_identifier
+              (identifier))
+            (when_clause
+              (literal_value
+                (string_literal))
+              (literal_value
+                (numeric_literal)))
+            (when_clause
+              (literal_value
+                (string_literal))
+              (literal_value
+                (numeric_literal)))
+            (else_clause
+              (literal_value
+                (numeric_literal))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+String functions
+================================================================================
+
+SELECT 
+  UPPER(name) AS upper_name,
+  LOWER(email) AS lower_email,
+  LENGTH(description) AS desc_length,
+  SUBSTR(code, 1, 3) AS code_prefix,
+  TRIM(input) AS trimmed,
+  REPLACE(text, 'old', 'new') AS replaced
+FROM data;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal))
+            (literal_value
+              (string_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Date functions
+================================================================================
+
+SELECT 
+  DATE('now') AS today,
+  DATETIME('now', 'localtime') AS local_now,
+  STRFTIME('%Y-%m-%d', created_at) AS formatted_date,
+  JULIANDAY('now') - JULIANDAY(birth_date) AS days_old
+FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal))
+            (literal_value
+              (string_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (function_call
+              (identifier)
+              (literal_value
+                (string_literal)))
+            (function_call
+              (identifier)
+              (qualified_identifier
+                (identifier))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Math functions
+================================================================================
+
+SELECT 
+  ABS(balance) AS abs_balance,
+  ROUND(price, 2) AS rounded_price,
+  CEIL(score) AS ceiling,
+  FLOOR(rating) AS floor_rating,
+  MAX(price, min_price) AS max_price,
+  MIN(stock, 100) AS capped_stock
+FROM products;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Type casting
+================================================================================
+
+SELECT 
+  CAST(price AS INTEGER) AS int_price,
+  CAST(quantity AS TEXT) AS qty_text,
+  CAST('123' AS REAL) AS real_num,
+  TYPEOF(data) AS data_type
+FROM inventory;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (cast_expression
+            (qualified_identifier
+              (identifier))
+            (type_name
+              (identifier)))
+          (identifier))
+        (select_item
+          (cast_expression
+            (qualified_identifier
+              (identifier))
+            (type_name
+              (identifier)))
+          (identifier))
+        (select_item
+          (cast_expression
+            (literal_value
+              (string_literal))
+            (type_name
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Bitwise operators
+================================================================================
+
+SELECT 
+  flags & 0xFF AS low_byte,
+  permissions | 0x04 AS with_read,
+  ~status AS inverted,
+  id << 8 AS shifted_left,
+  value >> 2 AS shifted_right
+FROM settings;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (unary_expression
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))

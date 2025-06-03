@@ -1,0 +1,592 @@
+================================================================================
+Scalar subquery in SELECT
+================================================================================
+
+SELECT 
+  name,
+  salary,
+  (SELECT AVG(salary) FROM employees) AS avg_salary,
+  salary - (SELECT AVG(salary) FROM employees) AS diff_from_avg
+FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (scalar_subquery
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (function_call
+                      (identifier)
+                      (qualified_identifier
+                        (identifier)))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier)))))))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (scalar_subquery
+              (select_statement
+                (select_core
+                  (select_list
+                    (select_item
+                      (function_call
+                        (identifier)
+                        (qualified_identifier
+                          (identifier)))))
+                  (from_clause
+                    (table_or_subquery
+                      (qualified_identifier
+                        (identifier))))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Subquery in WHERE
+================================================================================
+
+SELECT * FROM products
+WHERE price > (SELECT AVG(price) FROM products)
+  AND category_id IN (SELECT id FROM categories WHERE active = 1);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (in_expression
+            (binary_expression
+              (scalar_subquery
+                (select_statement
+                  (select_core
+                    (select_list
+                      (select_item
+                        (function_call
+                          (identifier)
+                          (qualified_identifier
+                            (identifier)))))
+                    (from_clause
+                      (table_or_subquery
+                        (qualified_identifier
+                          (identifier)))))))
+              (qualified_identifier
+                (identifier)))
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (qualified_identifier
+                      (identifier))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))))
+                (where_clause
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier))
+                    (literal_value
+                      (numeric_literal))))))))))))
+
+================================================================================
+Correlated subquery
+================================================================================
+
+SELECT 
+  e1.name,
+  e1.salary,
+  (SELECT COUNT(*) FROM employees e2 WHERE e2.department = e1.department) AS dept_count
+FROM employees e1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (scalar_subquery
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (function_call
+                      (identifier))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))
+                    (identifier)))
+                (where_clause
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))
+                    (qualified_identifier
+                      (identifier)
+                      (identifier)))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))))))
+
+================================================================================
+EXISTS subquery
+================================================================================
+
+SELECT * FROM customers c
+WHERE EXISTS (
+  SELECT 1 FROM orders o WHERE o.customer_id = c.id
+)
+AND NOT EXISTS (
+  SELECT 1 FROM blacklist b WHERE b.customer_id = c.id
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier)))
+      (where_clause
+        (binary_expression
+          (exists_expression
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (literal_value
+                      (numeric_literal))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))
+                    (identifier)))
+                (where_clause
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))
+                    (qualified_identifier
+                      (identifier)
+                      (identifier)))))))
+          (exists_expression
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (literal_value
+                      (numeric_literal))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))
+                    (identifier)))
+                (where_clause
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))))))))))))
+
+================================================================================
+Subquery in FROM
+================================================================================
+
+SELECT 
+  category,
+  avg_price,
+  total_products
+FROM (
+  SELECT 
+    category,
+    AVG(price) AS avg_price,
+    COUNT(*) AS total_products
+  FROM products
+  GROUP BY category
+) AS category_stats
+WHERE avg_price > 100;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (function_call
+                    (identifier)
+                    (qualified_identifier
+                      (identifier)))
+                  (identifier))
+                (select_item
+                  (function_call
+                    (identifier))
+                  (identifier)))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))))
+              (group_by_clause
+                (qualified_identifier
+                  (identifier)))))
+          (identifier)))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+ALL comparison
+================================================================================
+
+SELECT * FROM products
+WHERE price > ALL (
+  SELECT price FROM products WHERE category = 'electronics'
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (identifier)
+          (function_call
+            (identifier)
+            (ERROR
+              (identifier)
+              (identifier)
+              (identifier)
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal)))))))))
+
+================================================================================
+ANY/SOME comparison
+================================================================================
+
+SELECT * FROM employees
+WHERE salary > ANY (
+  SELECT salary FROM employees WHERE department = 'Sales'
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (identifier)
+          (function_call
+            (identifier)
+            (ERROR
+              (identifier)
+              (identifier)
+              (identifier)
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal)))))))))
+
+================================================================================
+Multiple subqueries
+================================================================================
+
+SELECT 
+  name,
+  (SELECT department_name FROM departments d WHERE d.id = e.department_id) AS dept,
+  salary,
+  CASE 
+    WHEN salary > (SELECT AVG(salary) FROM employees) THEN 'Above Average'
+    ELSE 'Below Average'
+  END AS salary_level
+FROM employees e
+WHERE department_id IN (
+  SELECT id FROM departments WHERE location = 'New York'
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (scalar_subquery
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (qualified_identifier
+                      (identifier))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))
+                    (identifier)))
+                (where_clause
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))
+                    (qualified_identifier
+                      (identifier)
+                      (identifier)))))))
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (case_expression
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (scalar_subquery
+                  (select_statement
+                    (select_core
+                      (select_list
+                        (select_item
+                          (function_call
+                            (identifier)
+                            (qualified_identifier
+                              (identifier)))))
+                      (from_clause
+                        (table_or_subquery
+                          (qualified_identifier
+                            (identifier))))))))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier)))
+      (where_clause
+        (in_expression
+          (qualified_identifier
+            (identifier))
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))))
+              (where_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (string_literal)))))))))))
+
+================================================================================
+Subquery with UNION
+================================================================================
+
+SELECT * FROM (
+  SELECT id, name, 'customer' AS type FROM customers
+  UNION ALL
+  SELECT id, company AS name, 'supplier' AS type FROM suppliers
+) AS entities
+WHERE name LIKE 'A%';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (literal_value
+                    (string_literal))
+                  (identifier)))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier)))))
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (qualified_identifier
+                    (identifier))
+                  (identifier))
+                (select_item
+                  (literal_value
+                    (string_literal))
+                  (identifier)))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier)))
+      (where_clause
+        (like_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+Nested subqueries
+================================================================================
+
+SELECT * FROM orders o
+WHERE customer_id IN (
+  SELECT id FROM customers
+  WHERE region_id = (
+    SELECT id FROM regions WHERE name = 'North America'
+  )
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier)))
+      (where_clause
+        (in_expression
+          (qualified_identifier
+            (identifier))
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))))
+              (where_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (scalar_subquery
+                    (select_statement
+                      (select_core
+                        (select_list
+                          (select_item
+                            (qualified_identifier
+                              (identifier))))
+                        (from_clause
+                          (table_or_subquery
+                            (qualified_identifier
+                              (identifier))))
+                        (where_clause
+                          (binary_expression
+                            (qualified_identifier
+                              (identifier))
+                            (literal_value
+                              (string_literal))))))))))))))))

@@ -1,0 +1,569 @@
+================================================================================
+Basic window function
+================================================================================
+
+SELECT 
+  name,
+  department,
+  salary,
+  AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary
+FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (qualified_identifier
+                (identifier))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+ROW_NUMBER window function
+================================================================================
+
+SELECT 
+  name,
+  score,
+  ROW_NUMBER() OVER (ORDER BY score DESC) AS rank
+FROM contestants;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Multiple window functions
+================================================================================
+
+SELECT 
+  date,
+  amount,
+  SUM(amount) OVER (ORDER BY date) AS running_total,
+  AVG(amount) OVER (ORDER BY date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg,
+  FIRST_VALUE(amount) OVER (ORDER BY date) AS first_amount,
+  LAST_VALUE(amount) OVER (ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_amount
+FROM transactions;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (frame_bound
+                  (literal_value
+                    (numeric_literal)))
+                (frame_bound))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (frame_bound)
+                (frame_bound))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+RANK and DENSE_RANK
+================================================================================
+
+SELECT 
+  student_name,
+  subject,
+  score,
+  RANK() OVER (PARTITION BY subject ORDER BY score DESC) AS rank,
+  DENSE_RANK() OVER (PARTITION BY subject ORDER BY score DESC) AS dense_rank,
+  PERCENT_RANK() OVER (PARTITION BY subject ORDER BY score DESC) AS percent_rank
+FROM exam_scores;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (qualified_identifier
+                (identifier))
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (qualified_identifier
+                (identifier))
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (qualified_identifier
+                (identifier))
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+LAG and LEAD functions
+================================================================================
+
+SELECT 
+  date,
+  price,
+  LAG(price, 1, 0) OVER (ORDER BY date) AS prev_price,
+  LEAD(price, 1) OVER (ORDER BY date) AS next_price,
+  price - LAG(price, 1, price) OVER (ORDER BY date) AS price_change
+FROM stock_prices;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal))
+            (literal_value
+              (numeric_literal))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (function_call
+              (identifier)
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier))
+              (window_definition
+                (order_by_clause
+                  (order_by_item
+                    (qualified_identifier
+                      (identifier)))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+NTILE function
+================================================================================
+
+SELECT 
+  name,
+  salary,
+  NTILE(4) OVER (ORDER BY salary DESC) AS salary_quartile,
+  NTILE(10) OVER (ORDER BY performance_score DESC) AS performance_decile
+FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (numeric_literal))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (numeric_literal))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Named window
+================================================================================
+
+SELECT 
+  name,
+  department,
+  salary,
+  ROW_NUMBER() OVER w AS row_num,
+  RANK() OVER w AS rank,
+  DENSE_RANK() OVER w AS dense_rank
+FROM employees
+WINDOW w AS (PARTITION BY department ORDER BY salary DESC);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (identifier))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (window_clause
+        (identifier)
+        (window_definition
+          (qualified_identifier
+            (identifier))
+          (order_by_clause
+            (order_by_item
+              (qualified_identifier
+                (identifier)))))))))
+
+================================================================================
+Complex frame specification
+================================================================================
+
+SELECT 
+  date,
+  value,
+  AVG(value) OVER (
+    ORDER BY date 
+    RANGE BETWEEN INTERVAL '3' DAY PRECEDING AND CURRENT ROW
+  ) AS avg_3_days,
+  SUM(value) OVER (
+    ORDER BY date 
+    ROWS BETWEEN 5 PRECEDING AND 5 FOLLOWING
+  ) AS sum_11_rows,
+  MAX(value) OVER (
+    ORDER BY date 
+    RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW
+  ) AS max_before_current
+FROM daily_metrics;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))))))
+  (ERROR
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier))))
+    (ERROR
+      (identifier))))
+
+================================================================================
+Window function in subquery
+================================================================================
+
+SELECT * FROM (
+  SELECT 
+    customer_id,
+    order_date,
+    total,
+    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn
+  FROM orders
+) AS numbered_orders
+WHERE rn <= 3;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (qualified_identifier
+                    (identifier)))
+                (select_item
+                  (function_call
+                    (identifier)
+                    (window_definition
+                      (qualified_identifier
+                        (identifier))
+                      (order_by_clause
+                        (order_by_item
+                          (qualified_identifier
+                            (identifier))))))
+                  (identifier)))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier)))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+CUME_DIST and percentiles
+================================================================================
+
+SELECT 
+  name,
+  score,
+  CUME_DIST() OVER (ORDER BY score) AS cumulative_distribution,
+  PERCENT_RANK() OVER (ORDER BY score) AS percent_rank,
+  NTH_VALUE(score, 2) OVER (ORDER BY score DESC) AS second_highest_score
+FROM test_results;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal))
+            (window_definition
+              (order_by_clause
+                (order_by_item
+                  (qualified_identifier
+                    (identifier))))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))

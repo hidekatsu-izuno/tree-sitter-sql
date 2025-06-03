@@ -1,0 +1,727 @@
+================================================================================
+Basic CTE
+================================================================================
+
+WITH user_counts AS (
+  SELECT department_id, COUNT(*) AS user_count
+  FROM users
+  GROUP BY department_id
+)
+SELECT * FROM user_counts;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (function_call
+                  (identifier))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (group_by_clause
+              (qualified_identifier
+                (identifier)))))))
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Multiple CTEs
+================================================================================
+
+WITH 
+  active_users AS (
+    SELECT * FROM users WHERE status = 'active'
+  ),
+  recent_orders AS (
+    SELECT * FROM orders WHERE created_at > DATE('now', '-30 days')
+  )
+SELECT u.name, COUNT(o.id) AS order_count
+FROM active_users u
+LEFT JOIN recent_orders o ON u.id = o.user_id
+GROUP BY u.id, u.name;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list)
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (where_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (string_literal)))))))
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list)
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (where_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (function_call
+                  (identifier)
+                  (literal_value
+                    (string_literal))
+                  (literal_value
+                    (string_literal)))))))))
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier))))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier)
+          (identifier))
+        (qualified_identifier
+          (identifier)
+          (identifier))))))
+
+================================================================================
+CTE with column names
+================================================================================
+
+WITH revenue_by_month(month, total_revenue) AS (
+  SELECT 
+    STRFTIME('%Y-%m', date) AS month,
+    SUM(amount) AS total
+  FROM transactions
+  GROUP BY STRFTIME('%Y-%m', date)
+)
+SELECT * FROM revenue_by_month;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (identifier)
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (function_call
+                  (identifier)
+                  (literal_value
+                    (string_literal))
+                  (qualified_identifier
+                    (identifier)))
+                (identifier))
+              (select_item
+                (function_call
+                  (identifier)
+                  (qualified_identifier
+                    (identifier)))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (group_by_clause
+              (function_call
+                (identifier)
+                (literal_value
+                  (string_literal))
+                (qualified_identifier
+                  (identifier))))))))
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Recursive CTE
+================================================================================
+
+WITH RECURSIVE employee_hierarchy AS (
+  SELECT id, name, manager_id, 0 AS level
+  FROM employees
+  WHERE manager_id IS NULL
+  
+  UNION ALL
+  
+  SELECT e.id, e.name, e.manager_id, h.level + 1
+  FROM employees e
+  JOIN employee_hierarchy h ON e.manager_id = h.id
+)
+SELECT * FROM employee_hierarchy;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (literal_value
+                  (numeric_literal))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (where_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value))))
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)
+                  (identifier)))
+              (select_item
+                (binary_expression
+                  (qualified_identifier
+                    (identifier)
+                    (identifier))
+                  (literal_value
+                    (numeric_literal)))))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))
+                (identifier))
+              (join_clause
+                (join_operator)
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))
+                  (identifier))
+                (join_constraint
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))
+                    (qualified_identifier
+                      (identifier)
+                      (identifier))))))))))
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+CTE referencing CTE
+================================================================================
+
+WITH 
+  raw_data AS (
+    SELECT date, product_id, quantity, price
+    FROM sales
+  ),
+  daily_totals AS (
+    SELECT 
+      date, 
+      SUM(quantity * price) AS total
+    FROM raw_data
+    GROUP BY date
+  ),
+  running_total AS (
+    SELECT 
+      date,
+      total,
+      SUM(total) OVER (ORDER BY date) AS cumulative_total
+    FROM daily_totals
+  )
+SELECT * FROM running_total;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier))))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier)))))))
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (function_call
+                  (identifier)
+                  (binary_expression
+                    (qualified_identifier
+                      (identifier))
+                    (qualified_identifier
+                      (identifier))))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (group_by_clause
+              (qualified_identifier
+                (identifier))))))
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (function_call
+                  (identifier)
+                  (qualified_identifier
+                    (identifier))
+                  (window_definition
+                    (order_by_clause
+                      (order_by_item
+                        (qualified_identifier
+                          (identifier))))))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))))))
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+CTE with MATERIALIZED hint
+================================================================================
+
+WITH cte AS MATERIALIZED (
+  SELECT DISTINCT category
+  FROM products
+  WHERE price > 100
+)
+SELECT p.*, c.category
+FROM products p
+JOIN cte c ON p.category = c.category;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier))))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (where_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal))))))))
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (ERROR)
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+CTE with NOT MATERIALIZED hint
+================================================================================
+
+WITH cte AS NOT MATERIALIZED (
+  SELECT user_id, MAX(login_date) AS last_login
+  FROM user_sessions
+  GROUP BY user_id
+)
+SELECT u.*, c.last_login
+FROM users u
+LEFT JOIN cte c ON u.id = c.user_id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (function_call
+                  (identifier)
+                  (qualified_identifier
+                    (identifier)))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (group_by_clause
+              (qualified_identifier
+                (identifier)))))))
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (ERROR)
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+CTE in INSERT
+================================================================================
+
+WITH new_users AS (
+  SELECT 'John' AS name, 'john@example.com' AS email
+  UNION ALL
+  SELECT 'Jane', 'jane@example.com'
+)
+INSERT INTO users (name, email)
+SELECT name, email FROM new_users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (literal_value
+                  (string_literal))
+                (identifier))
+              (select_item
+                (literal_value
+                  (string_literal))
+                (identifier))))
+          (select_core
+            (select_list
+              (select_item
+                (literal_value
+                  (string_literal)))
+              (select_item
+                (literal_value
+                  (string_literal))))))))
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (identifier)
+    (select_statement
+      (select_core
+        (select_list
+          (select_item
+            (qualified_identifier
+              (identifier)))
+          (select_item
+            (qualified_identifier
+              (identifier))))
+        (from_clause
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))))))))
+
+================================================================================
+CTE in UPDATE
+================================================================================
+
+WITH avg_salaries AS (
+  SELECT department_id, AVG(salary) AS avg_salary
+  FROM employees
+  GROUP BY department_id
+)
+UPDATE employees
+SET salary = salary * 1.1
+WHERE salary < (
+  SELECT avg_salary 
+  FROM avg_salaries 
+  WHERE avg_salaries.department_id = employees.department_id
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (update_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier)))
+              (select_item
+                (function_call
+                  (identifier)
+                  (qualified_identifier
+                    (identifier)))
+                (identifier)))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (group_by_clause
+              (qualified_identifier
+                (identifier)))))))
+    (qualified_identifier
+      (identifier))
+    (update_set
+      (identifier)
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (literal_value
+          (numeric_literal))))
+    (where_clause
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (scalar_subquery
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier
+                    (identifier))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))))
+              (where_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier)
+                    (identifier))
+                  (qualified_identifier
+                    (identifier)
+                    (identifier)))))))))))
+
+================================================================================
+CTE in DELETE
+================================================================================
+
+WITH inactive_users AS (
+  SELECT id 
+  FROM users 
+  WHERE last_login < DATE('now', '-1 year')
+    AND status = 'inactive'
+)
+DELETE FROM user_sessions
+WHERE user_id IN (SELECT id FROM inactive_users);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (delete_statement
+    (with_clause
+      (cte
+        (identifier)
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier))))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))
+            (where_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (binary_expression
+                  (binary_expression
+                    (function_call
+                      (identifier)
+                      (literal_value
+                        (string_literal))
+                      (literal_value
+                        (string_literal)))
+                    (qualified_identifier
+                      (identifier)))
+                  (literal_value
+                    (string_literal)))))))))
+    (qualified_identifier
+      (identifier))
+    (where_clause
+      (in_expression
+        (qualified_identifier
+          (identifier))
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (qualified_identifier
+                  (identifier))))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier))))))))))

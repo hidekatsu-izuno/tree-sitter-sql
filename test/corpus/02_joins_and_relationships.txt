@@ -1,0 +1,342 @@
+================================================================================
+INNER JOIN
+================================================================================
+
+SELECT u.name, p.title 
+FROM users u
+INNER JOIN posts p ON u.id = p.user_id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+LEFT JOIN
+================================================================================
+
+SELECT u.*, COUNT(p.id) as post_count
+FROM users u
+LEFT JOIN posts p ON u.id = p.user_id
+GROUP BY u.id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (ERROR)
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (identifier)))
+      (ERROR
+        (identifier))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier))))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier)
+          (identifier))))))
+
+================================================================================
+RIGHT JOIN
+================================================================================
+
+SELECT * FROM posts p RIGHT JOIN users u ON p.user_id = u.id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+FULL OUTER JOIN
+================================================================================
+
+SELECT * FROM orders o FULL OUTER JOIN customers c ON o.customer_id = c.id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+CROSS JOIN
+================================================================================
+
+SELECT * FROM colors CROSS JOIN sizes;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))))))))
+
+================================================================================
+NATURAL JOIN
+================================================================================
+
+SELECT * FROM employees NATURAL JOIN departments;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))))))))
+
+================================================================================
+Multiple JOINs
+================================================================================
+
+SELECT u.name, p.title, c.content
+FROM users u
+JOIN posts p ON u.id = p.user_id
+JOIN comments c ON p.id = c.post_id
+WHERE u.status = 'active';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier))))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+JOIN with USING
+================================================================================
+
+SELECT * FROM orders JOIN customers USING (customer_id);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier)))
+          (join_constraint
+            (identifier)))))))
+
+================================================================================
+Self JOIN
+================================================================================
+
+SELECT e1.name as employee, e2.name as manager
+FROM employees e1
+LEFT JOIN employees e2 ON e1.manager_id = e2.id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (identifier))
+        (ERROR
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (identifier)))
+      (ERROR
+        (identifier))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))

@@ -1,0 +1,745 @@
+================================================================================
+Complex CHECK constraints
+================================================================================
+
+CREATE TABLE employees (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL CHECK (length(name) > 0 AND name NOT LIKE '% %'),
+  age INTEGER CHECK (age BETWEEN 16 AND 120),
+  salary REAL CHECK (salary > 0),
+  department TEXT CHECK (department IN ('HR', 'IT', 'Sales', 'Marketing')),
+  email TEXT UNIQUE CHECK (email LIKE '%@%.%' AND length(email) > 5),
+  hire_date TEXT CHECK (date(hire_date) IS NOT NULL),
+  CONSTRAINT valid_employee CHECK (age >= 18 OR department = 'Intern')
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (binary_expression
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (like_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier)))
+            (literal_value
+              (string_literal))))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (between_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (in_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (binary_expression
+          (like_expression
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (literal_value
+                (string_literal))
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier)))))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (literal_value))))
+    (table_constraint
+      (identifier)
+      (binary_expression
+        (qualified_identifier
+          (identifier))
+        (binary_expression
+          (binary_expression
+            (literal_value
+              (numeric_literal))
+            (qualified_identifier
+              (identifier)))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+Foreign key with complex actions
+================================================================================
+
+CREATE TABLE order_items (
+  id INTEGER PRIMARY KEY,
+  order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE ON UPDATE RESTRICT,
+  product_id INTEGER REFERENCES products(id) ON DELETE SET NULL ON UPDATE SET DEFAULT,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  unit_price REAL NOT NULL,
+  total_price REAL GENERATED ALWAYS AS (quantity * unit_price) STORED,
+  FOREIGN KEY (order_id) REFERENCES orders(id) MATCH FULL ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) DEFERRABLE INITIALLY DEFERRED
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (foreign_key_clause
+          (qualified_identifier
+            (identifier))
+          (identifier))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (foreign_key_clause
+          (qualified_identifier
+            (identifier))
+          (identifier))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (literal_value
+          (numeric_literal))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))
+    (table_constraint
+      (identifier)
+      (foreign_key_clause
+        (qualified_identifier
+          (identifier))
+        (identifier)
+        (identifier)))
+    (table_constraint
+      (identifier)
+      (foreign_key_clause
+        (qualified_identifier
+          (identifier))
+        (identifier)))))
+
+================================================================================
+Complex LIMIT with expressions
+================================================================================
+
+SELECT * FROM large_table 
+ORDER BY score DESC, created_at ASC
+LIMIT (SELECT COUNT(*) / 10 FROM large_table) OFFSET 100;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier)))
+      (order_by_item
+        (qualified_identifier
+          (identifier))))
+    (limit_clause
+      (scalar_subquery
+        (select_statement
+          (select_core
+            (select_list
+              (select_item
+                (binary_expression
+                  (function_call
+                    (identifier))
+                  (literal_value
+                    (numeric_literal)))))
+            (from_clause
+              (table_or_subquery
+                (qualified_identifier
+                  (identifier)))))))
+      (literal_value
+        (numeric_literal)))))
+
+================================================================================
+Dynamic LIMIT with parameter
+================================================================================
+
+SELECT * FROM users 
+WHERE active = 1
+ORDER BY last_login DESC
+LIMIT ? OFFSET ?;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier))))
+    (limit_clause
+      (bind_parameter)
+      (bind_parameter))))
+
+================================================================================
+DISTINCT ON (PostgreSQL-style not in SQLite)
+================================================================================
+
+SELECT DISTINCT name, MAX(score) FROM players GROUP BY name;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+Complex expressions in GROUP BY
+================================================================================
+
+SELECT 
+  CASE WHEN age < 25 THEN 'Young' WHEN age < 50 THEN 'Middle' ELSE 'Senior' END AS age_group,
+  department,
+  COUNT(*) as employee_count,
+  AVG(salary) as avg_salary
+FROM employees 
+GROUP BY 
+  CASE WHEN age < 25 THEN 'Young' WHEN age < 50 THEN 'Middle' ELSE 'Senior' END,
+  department
+HAVING COUNT(*) > 5 AND AVG(salary) > 50000
+ORDER BY age_group, department;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (case_expression
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (when_clause
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (string_literal)))
+            (else_clause
+              (literal_value
+                (string_literal))))
+          (identifier))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (ERROR
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (ERROR
+        (identifier))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (case_expression
+          (when_clause
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (numeric_literal)))
+            (literal_value
+              (string_literal)))
+          (when_clause
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (numeric_literal)))
+            (literal_value
+              (string_literal)))
+          (else_clause
+            (literal_value
+              (string_literal))))
+        (qualified_identifier
+          (identifier)))
+      (having_clause
+        (binary_expression
+          (binary_expression
+            (function_call
+              (identifier))
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier)))))
+          (literal_value
+            (numeric_literal)))))
+    (order_by_clause
+      (order_by_item
+        (qualified_identifier
+          (identifier)))
+      (order_by_item
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+Multiple constraint types in one table
+================================================================================
+
+CREATE TABLE complex_table (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  unique_code TEXT UNIQUE NOT NULL COLLATE BINARY,
+  name TEXT NOT NULL CHECK (length(trim(name)) > 0),
+  category_id INTEGER REFERENCES categories(id),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'inactive')),
+  score REAL CHECK (score BETWEEN 0.0 AND 100.0),
+  metadata TEXT CHECK (json_valid(metadata) OR metadata IS NULL),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now')),
+  
+  UNIQUE (name, category_id),
+  CHECK (score IS NULL OR score >= 0),
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint)
+      (column_constraint
+        (identifier)))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (binary_expression
+          (function_call
+            (identifier)
+            (function_call
+              (identifier)
+              (qualified_identifier
+                (identifier))))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (foreign_key_clause
+          (qualified_identifier
+            (identifier))
+          (identifier))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (literal_value
+          (string_literal)))
+      (column_constraint
+        (in_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (between_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (binary_expression
+          (binary_expression
+            (function_call
+              (identifier)
+              (qualified_identifier
+                (identifier)))
+            (qualified_identifier
+              (identifier)))
+          (literal_value))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint)
+      (column_constraint
+        (parenthesized_expression
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal))))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (parenthesized_expression
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal))))))
+    (table_constraint
+      (indexed_column
+        (qualified_identifier
+          (identifier)))
+      (indexed_column
+        (qualified_identifier
+          (identifier))))
+    (table_constraint
+      (binary_expression
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (binary_expression
+            (literal_value)
+            (qualified_identifier
+              (identifier))))
+        (literal_value
+          (numeric_literal))))
+    (table_constraint
+      (identifier)
+      (foreign_key_clause
+        (qualified_identifier
+          (identifier))
+        (identifier)))))
+
+================================================================================
+Complex column definitions with multiple type parameters
+================================================================================
+
+CREATE TABLE precise_data (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT(65535),
+  price DECIMAL(10,2) CHECK (price >= 0),
+  coordinates POINT,
+  binary_data BLOB(1048576),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  tags JSON DEFAULT '[]',
+  CONSTRAINT positive_price CHECK (price IS NULL OR price > 0)
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    (qualified_identifier
+      (identifier))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier)
+        (signed_number
+          (numeric_literal)))
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier)
+        (signed_number
+          (numeric_literal))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier)
+        (signed_number
+          (numeric_literal))
+        (signed_number
+          (numeric_literal)))
+      (column_constraint
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier)))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier)
+        (signed_number
+          (numeric_literal))))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (literal_value)))
+    (column_definition
+      (identifier)
+      (type_name
+        (identifier))
+      (column_constraint
+        (literal_value
+          (string_literal))))
+    (table_constraint
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (binary_expression
+            (literal_value)
+            (qualified_identifier
+              (identifier))))
+        (literal_value
+          (numeric_literal))))))
+
+================================================================================
+Partial indexes with complex WHERE clauses
+================================================================================
+
+CREATE INDEX active_users_by_score ON users (score DESC, name ASC) 
+WHERE active = 1 AND score > 80 AND last_login > date('now', '-30 days');
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_index_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (indexed_column
+      (qualified_identifier
+        (identifier)))
+    (indexed_column
+      (qualified_identifier
+        (identifier)))
+    (where_clause
+      (binary_expression
+        (binary_expression
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier))))
+          (binary_expression
+            (literal_value
+              (numeric_literal))
+            (qualified_identifier
+              (identifier))))
+        (function_call
+          (identifier)
+          (literal_value
+            (string_literal))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+Expression indexes
+================================================================================
+
+CREATE INDEX lower_name_idx ON users (LOWER(name));
+CREATE UNIQUE INDEX email_domain_idx ON users (SUBSTR(email, INSTR(email, '@') + 1));
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_index_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (indexed_column
+      (function_call
+        (identifier)
+        (qualified_identifier
+          (identifier)))))
+  (create_index_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (indexed_column
+      (function_call
+        (identifier)
+        (qualified_identifier
+          (identifier))
+        (binary_expression
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))
+          (literal_value
+            (numeric_literal)))))))

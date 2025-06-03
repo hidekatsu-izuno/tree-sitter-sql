@@ -1,0 +1,673 @@
+================================================================================
+Basic aggregates
+================================================================================
+
+SELECT 
+  COUNT(*) AS total_rows,
+  COUNT(DISTINCT category) AS unique_categories,
+  SUM(amount) AS total_amount,
+  AVG(price) AS average_price,
+  MIN(created_at) AS first_created,
+  MAX(updated_at) AS last_updated
+FROM orders;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+GROUP BY single column
+================================================================================
+
+SELECT 
+  category,
+  COUNT(*) AS product_count,
+  AVG(price) AS avg_price
+FROM products
+GROUP BY category;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+GROUP BY multiple columns
+================================================================================
+
+SELECT 
+  year,
+  month,
+  category,
+  SUM(sales) AS total_sales
+FROM sales_data
+GROUP BY year, month, category;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))
+        (qualified_identifier
+          (identifier))
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+GROUP BY with HAVING
+================================================================================
+
+SELECT 
+  customer_id,
+  COUNT(*) AS order_count,
+  SUM(total) AS total_spent
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) > 5 AND SUM(total) > 1000;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier)))
+      (having_clause
+        (binary_expression
+          (binary_expression
+            (function_call
+              (identifier))
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (function_call
+                (identifier)
+                (qualified_identifier
+                  (identifier)))))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+Aggregate with FILTER
+================================================================================
+
+SELECT 
+  COUNT(*) AS total_orders,
+  COUNT(*) FILTER (WHERE status = 'completed') AS completed_orders,
+  SUM(amount) FILTER (WHERE payment_method = 'credit_card') AS cc_total
+FROM orders;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+String aggregation
+================================================================================
+
+SELECT 
+  category,
+  GROUP_CONCAT(name) AS all_names,
+  GROUP_CONCAT(DISTINCT tag, ', ') AS unique_tags
+FROM products
+GROUP BY category;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+Nested aggregates in HAVING
+================================================================================
+
+SELECT 
+  department,
+  AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier)))
+      (having_clause
+        (binary_expression
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (scalar_subquery
+            (select_statement
+              (select_core
+                (select_list
+                  (select_item
+                    (function_call
+                      (identifier)
+                      (qualified_identifier
+                        (identifier)))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))))))))))))
+
+================================================================================
+GROUP BY expressions
+================================================================================
+
+SELECT 
+  STRFTIME('%Y-%m', date) AS month,
+  COUNT(*) AS count,
+  SUM(amount) AS total
+FROM transactions
+GROUP BY STRFTIME('%Y-%m', date);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (string_literal))
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (function_call
+          (identifier)
+          (literal_value
+            (string_literal))
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+ROLLUP grouping
+================================================================================
+
+SELECT 
+  region,
+  country,
+  SUM(sales) AS total_sales
+FROM sales
+GROUP BY ROLLUP(region, country);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (function_call
+          (identifier)
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Aggregate with JOIN
+================================================================================
+
+SELECT 
+  c.name AS customer_name,
+  COUNT(o.id) AS order_count,
+  SUM(o.total) AS total_spent,
+  AVG(o.total) AS avg_order
+FROM customers c
+LEFT JOIN orders o ON c.id = o.customer_id
+GROUP BY c.id, c.name
+HAVING COUNT(o.id) > 0;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier))))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier)
+          (identifier))
+        (qualified_identifier
+          (identifier)
+          (identifier)))
+      (having_clause
+        (binary_expression
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)
+              (identifier)))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+Statistical aggregates
+================================================================================
+
+SELECT 
+  category,
+  COUNT(*) AS count,
+  SUM(value) AS sum,
+  AVG(value) AS mean,
+  MIN(value) AS min,
+  MAX(value) AS max,
+  SUM(value * value) / COUNT(*) - AVG(value) * AVG(value) AS variance
+FROM measurements
+GROUP BY category;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier)))
+          (identifier))
+        (select_item
+          (binary_expression
+            (binary_expression
+              (function_call
+                (identifier)
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (qualified_identifier
+                    (identifier))))
+              (binary_expression
+                (function_call
+                  (identifier))
+                (function_call
+                  (identifier)
+                  (qualified_identifier
+                    (identifier)))))
+            (function_call
+              (identifier)
+              (qualified_identifier
+                (identifier))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+Conditional aggregation
+================================================================================
+
+SELECT 
+  date,
+  COUNT(CASE WHEN status = 'success' THEN 1 END) AS success_count,
+  COUNT(CASE WHEN status = 'failure' THEN 1 END) AS failure_count,
+  SUM(CASE WHEN type = 'revenue' THEN amount ELSE 0 END) AS revenue,
+  SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS expense
+FROM transactions
+GROUP BY date;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (case_expression
+              (when_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (string_literal)))
+                (literal_value
+                  (numeric_literal)))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (case_expression
+              (when_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (string_literal)))
+                (literal_value
+                  (numeric_literal)))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (case_expression
+              (when_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (string_literal)))
+                (qualified_identifier
+                  (identifier)))
+              (else_clause
+                (literal_value
+                  (numeric_literal)))))
+          (identifier))
+        (select_item
+          (function_call
+            (identifier)
+            (case_expression
+              (when_clause
+                (binary_expression
+                  (qualified_identifier
+                    (identifier))
+                  (literal_value
+                    (string_literal)))
+                (qualified_identifier
+                  (identifier)))
+              (else_clause
+                (literal_value
+                  (numeric_literal)))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))))))
