@@ -138,3 +138,6 @@ dist
 # rust
 target/
 Cargo.lock
+
+# etc
+build/
