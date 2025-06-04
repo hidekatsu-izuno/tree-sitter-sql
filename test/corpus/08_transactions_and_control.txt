@@ -18,10 +18,8 @@ COMMIT;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))))
+      (string)
+      (integer)))
   (update_statement
     (qualified_identifier
       (identifier))
@@ -30,14 +28,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal)))))
+        (string))))
   (update_statement
     (qualified_identifier
       (identifier))
@@ -46,14 +42,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal)))))
+        (string))))
   (commit_statement))
 
 ================================================================================
@@ -76,12 +70,11 @@ ROLLBACK;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal)))))
+        (string))))
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier))))
       (from_clause
@@ -114,8 +107,7 @@ COMMIT TRANSACTION;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal))))))
+          (integer)))))
   (ERROR
     (identifier))
   (update_statement
@@ -126,14 +118,12 @@ COMMIT TRANSACTION;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal)))))
+        (integer))))
   (commit_statement))
 
 ================================================================================
@@ -157,17 +147,16 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal)))))
+        (real))))
   (insert_statement
     (qualified_identifier
       (identifier))
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value)))
+      (string)
+      (qualified_identifier
+        (identifier))))
   (commit_statement))
 
 ================================================================================
@@ -214,8 +203,7 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal)))))
+        (real))))
   (savepoint_statement
     (identifier))
   (update_statement
@@ -226,14 +214,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (real)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal)))))
+        (string))))
   (rollback_statement
     (identifier))
   (update_statement
@@ -244,14 +230,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (real)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal)))))
+        (string))))
   (release_statement
     (identifier))
   (commit_statement))
@@ -280,10 +264,8 @@ COMMIT;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal))))
+      (integer)
+      (integer)))
   (savepoint_statement
     (identifier))
   (insert_statement
@@ -295,10 +277,8 @@ COMMIT;
     (values_clause
       (function_call
         (identifier))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal))))
+      (integer)
+      (integer)))
   (savepoint_statement
     (identifier))
   (update_statement
@@ -309,14 +289,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal)))))
+        (integer))))
   (rollback_statement
     (identifier))
   (release_statement
@@ -345,14 +323,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal)))))
+        (integer))))
   (update_statement
     (qualified_identifier
       (identifier))
@@ -361,14 +337,12 @@ COMMIT;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal)))))
+        (integer))))
   (insert_statement
     (qualified_identifier
       (identifier))
@@ -376,12 +350,9 @@ COMMIT;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal))))
+      (integer)
+      (integer)
+      (integer)))
   (commit_statement))
 
 ================================================================================
@@ -408,8 +379,7 @@ COMMIT;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal))))))
+          (integer)))))
   (select_statement
     (select_core
       (select_list)
@@ -421,15 +391,13 @@ COMMIT;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))
     (limit_clause
-      (literal_value
-        (numeric_literal))))
+      (integer)))
   (commit_statement))
 
 ================================================================================
@@ -454,15 +422,15 @@ COMMIT;
   (begin_statement)
   (update_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (qualified_identifier
@@ -479,11 +447,11 @@ COMMIT;
       (identifier))
     (update_set
       (identifier)
-      (scalar_subquery
+      (subquery_expression
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier))))
             (from_clause

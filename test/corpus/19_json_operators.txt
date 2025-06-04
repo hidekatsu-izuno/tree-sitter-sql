@@ -10,12 +10,11 @@ SELECT data->'$.name' FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))))
+            (string))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -33,12 +32,11 @@ SELECT data->>'$.age' FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))))
+            (string))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -56,12 +54,11 @@ SELECT json->'$.items[0].price' FROM orders;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))))
+            (string))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -79,15 +76,13 @@ SELECT user_data->'$.profile'->'$.name' FROM accounts;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
-            (json_extract_expression
+        (result_column
+          (binary_expression
+            (binary_expression
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (string_literal)))
-            (literal_value
-              (string_literal)))))
+              (string))
+            (string))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -111,13 +106,11 @@ SELECT * FROM users WHERE data->>'$.status' = 'active';
             (identifier))))
       (where_clause
         (binary_expression
-          (json_extract_expression
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))
-          (literal_value
-            (string_literal)))))))
+            (string))
+          (string))))))
 
 ================================================================================
 JSON with functions
@@ -131,14 +124,13 @@ SELECT json_valid(data->'$.config') FROM settings;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (json_extract_expression
+            (binary_expression
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (string_literal))))))
+              (string)))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -156,12 +148,11 @@ SELECT items->'$[0]' FROM lists;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))))
+            (string))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -182,19 +173,17 @@ FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))
+            (string))
           (identifier))
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))
+            (string))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -218,12 +207,11 @@ SELECT * FROM products ORDER BY data->>'$.price' DESC;
           (qualified_identifier
             (identifier)))))
     (order_by_clause
-      (order_by_item
-        (json_extract_expression
+      (ordering_term
+        (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 JSON with parameters
@@ -237,11 +225,11 @@ SELECT data->? FROM users WHERE id = ?;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (json_extract_expression
+        (result_column
+          (binary_expression
             (qualified_identifier
               (identifier))
-            (bind_parameter))))
+            (parameter))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -250,7 +238,7 @@ SELECT data->? FROM users WHERE id = ?;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (bind_parameter))))))
+          (parameter))))))
 
 ================================================================================
 JSON in INSERT
@@ -268,9 +256,6 @@ INSERT INTO logs (data) VALUES (json_set('{}', '$.event', 'login'));
     (values_clause
       (function_call
         (identifier)
-        (literal_value
-          (string_literal))
-        (literal_value
-          (string_literal))
-        (literal_value
-          (string_literal))))))
+        (string)
+        (string)
+        (string)))))

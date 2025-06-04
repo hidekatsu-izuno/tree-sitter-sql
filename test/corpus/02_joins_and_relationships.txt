@@ -12,11 +12,11 @@ INNER JOIN posts p ON u.id = p.user_id;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))))
@@ -26,7 +26,6 @@ INNER JOIN posts p ON u.id = p.user_id;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -55,11 +54,9 @@ GROUP BY u.id;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (qualified_identifier
-            (identifier)))
-        (ERROR)
-        (select_item
+        (result_column
+          (identifier))
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -74,7 +71,6 @@ GROUP BY u.id;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -110,7 +106,6 @@ SELECT * FROM posts p RIGHT JOIN users u ON p.user_id = u.id;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -142,7 +137,6 @@ SELECT * FROM orders o FULL OUTER JOIN customers c ON o.customer_id = c.id;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -173,7 +167,6 @@ SELECT * FROM colors CROSS JOIN sizes;
           (qualified_identifier
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))))))))
@@ -195,7 +188,6 @@ SELECT * FROM employees NATURAL JOIN departments;
           (qualified_identifier
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))))))))
@@ -216,15 +208,15 @@ WHERE u.status = 'active';
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))))
@@ -234,7 +226,6 @@ WHERE u.status = 'active';
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -248,7 +239,6 @@ WHERE u.status = 'active';
                 (identifier)
                 (identifier)))))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -266,8 +256,7 @@ WHERE u.status = 'active';
           (qualified_identifier
             (identifier)
             (identifier))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 JOIN with USING
@@ -286,7 +275,6 @@ SELECT * FROM orders JOIN customers USING (customer_id);
           (qualified_identifier
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier)))
@@ -307,14 +295,14 @@ LEFT JOIN employees e2 ON e1.manager_id = e2.id;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))
           (identifier))
         (ERROR
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))
@@ -327,7 +315,6 @@ LEFT JOIN employees e2 ON e1.manager_id = e2.id;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))

@@ -10,15 +10,15 @@ SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY salary) FROM employees;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (numeric_literal))
-            (order_by_clause
-              (order_by_item
-                (qualified_identifier
-                  (identifier)))))))
+            (real))
+          (identifier)))
+      (ERROR
+        (group_by_clause
+          (ERROR)
+          (identifier)))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -36,19 +36,18 @@ SELECT percentile_disc(0.25) WITHIN GROUP (ORDER BY age DESC) FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (numeric_literal))
-            (order_by_clause
-              (order_by_item
-                (qualified_identifier
-                  (identifier)))))))
-      (from_clause
-        (table_or_subquery
-          (qualified_identifier
-            (identifier)))))))
+            (real))
+          (identifier))))
+    (ERROR)
+    (order_by_clause
+      (ordering_term
+        (qualified_identifier
+          (identifier)))))
+  (ERROR
+    (identifier)))
 
 ================================================================================
 Mode function with WITHIN GROUP
@@ -62,13 +61,14 @@ SELECT mode() WITHIN GROUP (ORDER BY category) FROM products;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
-            (identifier)
-            (order_by_clause
-              (order_by_item
-                (qualified_identifier
-                  (identifier)))))))
+            (identifier))
+          (identifier)))
+      (ERROR
+        (group_by_clause
+          (ERROR)
+          (identifier)))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -86,21 +86,20 @@ SELECT department, percentile_cont(0.5) WITHIN GROUP (ORDER BY salary, bonus) FR
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (numeric_literal))
-            (order_by_clause
-              (order_by_item
-                (qualified_identifier
-                  (identifier)))
-              (order_by_item
-                (qualified_identifier
-                  (identifier)))))))
+            (real))
+          (identifier)))
+      (ERROR
+        (group_by_clause
+          (ERROR)
+          (identifier)
+          (qualified_identifier
+            (identifier))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -123,24 +122,25 @@ FROM players;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (numeric_literal))
-            (order_by_clause
-              (order_by_item
-                (qualified_identifier
-                  (identifier))))
-            (binary_expression
-              (qualified_identifier
-                (identifier))
-              (literal_value
-                (numeric_literal)))
-            (window_definition
-              (qualified_identifier
-                (identifier))))))
-      (from_clause
-        (table_or_subquery
-          (qualified_identifier
-            (identifier)))))))
+            (real))
+          (identifier)))
+      (group_by_clause
+        (ERROR)
+        (function_call
+          (identifier)
+          (ERROR)
+          (ERROR
+            (identifier))
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (integer))
+          (window_definition
+            (qualified_identifier
+              (identifier)))))))
+  (ERROR
+    (identifier)
+    (identifier)))

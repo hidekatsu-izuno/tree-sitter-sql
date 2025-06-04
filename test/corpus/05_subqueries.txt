@@ -15,18 +15,18 @@ FROM employees;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
-          (scalar_subquery
+        (result_column
+          (subquery_expression
             (select_statement
               (select_core
                 (select_list
-                  (select_item
+                  (result_column
                     (function_call
                       (identifier)
                       (qualified_identifier
@@ -36,15 +36,15 @@ FROM employees;
                     (qualified_identifier
                       (identifier)))))))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (scalar_subquery
+            (subquery_expression
               (select_statement
                 (select_core
                   (select_list
-                    (select_item
+                    (result_column
                       (function_call
                         (identifier)
                         (qualified_identifier
@@ -83,11 +83,11 @@ WHERE price > (SELECT AVG(price) FROM products)
             (identifier))
           (in_expression
             (binary_expression
-              (scalar_subquery
+              (subquery_expression
                 (select_statement
                   (select_core
                     (select_list
-                      (select_item
+                      (result_column
                         (function_call
                           (identifier)
                           (qualified_identifier
@@ -101,7 +101,7 @@ WHERE price > (SELECT AVG(price) FROM products)
             (select_statement
               (select_core
                 (select_list
-                  (select_item
+                  (result_column
                     (qualified_identifier
                       (identifier))))
                 (from_clause
@@ -112,8 +112,7 @@ WHERE price > (SELECT AVG(price) FROM products)
                   (binary_expression
                     (qualified_identifier
                       (identifier))
-                    (literal_value
-                      (numeric_literal))))))))))))
+                    (integer)))))))))))
 
 ================================================================================
 Correlated subquery
@@ -131,20 +130,20 @@ FROM employees e1;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
-          (scalar_subquery
+        (result_column
+          (subquery_expression
             (select_statement
               (select_core
                 (select_list
-                  (select_item
+                  (result_column
                     (function_call
                       (identifier))))
                 (from_clause
@@ -196,9 +195,8 @@ AND NOT EXISTS (
             (select_statement
               (select_core
                 (select_list
-                  (select_item
-                    (literal_value
-                      (numeric_literal))))
+                  (result_column
+                    (integer)))
                 (from_clause
                   (table_or_subquery
                     (qualified_identifier
@@ -216,9 +214,8 @@ AND NOT EXISTS (
             (select_statement
               (select_core
                 (select_list
-                  (select_item
-                    (literal_value
-                      (numeric_literal))))
+                  (result_column
+                    (integer)))
                 (from_clause
                   (table_or_subquery
                     (qualified_identifier
@@ -257,13 +254,13 @@ WHERE avg_price > 100;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))))
       (from_clause
@@ -271,16 +268,16 @@ WHERE avg_price > 100;
           (select_statement
             (select_core
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
+                (result_column
                   (function_call
                     (identifier)
                     (qualified_identifier
                       (identifier)))
                   (identifier))
-                (select_item
+                (result_column
                   (function_call
                     (identifier))
                   (identifier)))
@@ -296,8 +293,7 @@ WHERE avg_price > 100;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))))
+          (integer))))))
 
 ================================================================================
 ALL comparison
@@ -331,8 +327,7 @@ WHERE price > ALL (
             (binary_expression
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (string_literal)))))))))
+              (string))))))))
 
 ================================================================================
 ANY/SOME comparison
@@ -366,8 +361,7 @@ WHERE salary > ANY (
             (binary_expression
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (string_literal)))))))))
+              (string))))))))
 
 ================================================================================
 Multiple subqueries
@@ -392,15 +386,15 @@ WHERE department_id IN (
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
-          (scalar_subquery
+        (result_column
+          (subquery_expression
             (select_statement
               (select_core
                 (select_list
-                  (select_item
+                  (result_column
                     (qualified_identifier
                       (identifier))))
                 (from_clause
@@ -417,33 +411,29 @@ WHERE department_id IN (
                       (identifier)
                       (identifier)))))))
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (case_expression
-            (when_clause
-              (binary_expression
-                (qualified_identifier
-                  (identifier))
-                (scalar_subquery
-                  (select_statement
-                    (select_core
-                      (select_list
-                        (select_item
-                          (function_call
-                            (identifier)
-                            (qualified_identifier
-                              (identifier)))))
-                      (from_clause
-                        (table_or_subquery
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (subquery_expression
+                (select_statement
+                  (select_core
+                    (select_list
+                      (result_column
+                        (function_call
+                          (identifier)
                           (qualified_identifier
-                            (identifier))))))))
-              (literal_value
-                (string_literal)))
-            (else_clause
-              (literal_value
-                (string_literal))))
+                            (identifier)))))
+                    (from_clause
+                      (table_or_subquery
+                        (qualified_identifier
+                          (identifier))))))))
+            (string)
+            (string))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -457,7 +447,7 @@ WHERE department_id IN (
           (select_statement
             (select_core
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier))))
               (from_clause
@@ -468,8 +458,7 @@ WHERE department_id IN (
                 (binary_expression
                   (qualified_identifier
                     (identifier))
-                  (literal_value
-                    (string_literal)))))))))))
+                  (string))))))))))
 
 ================================================================================
 Subquery with UNION
@@ -493,44 +482,42 @@ WHERE name LIKE 'A%';
           (select_statement
             (select_core
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
-                  (literal_value
-                    (string_literal))
+                (result_column
+                  (string)
                   (identifier)))
               (from_clause
                 (table_or_subquery
                   (qualified_identifier
                     (identifier)))))
-            (select_core
-              (select_list
-                (select_item
-                  (qualified_identifier
-                    (identifier)))
-                (select_item
-                  (qualified_identifier
+            (compound_operator
+              (select_core
+                (select_list
+                  (result_column
+                    (qualified_identifier
+                      (identifier)))
+                  (result_column
+                    (qualified_identifier
+                      (identifier))
                     (identifier))
-                  (identifier))
-                (select_item
-                  (literal_value
-                    (string_literal))
-                  (identifier)))
-              (from_clause
-                (table_or_subquery
-                  (qualified_identifier
-                    (identifier))))))
+                  (result_column
+                    (string)
+                    (identifier)))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier)))))))
           (identifier)))
       (where_clause
-        (like_expression
+        (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 Nested subqueries
@@ -562,7 +549,7 @@ WHERE customer_id IN (
           (select_statement
             (select_core
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier))))
               (from_clause
@@ -573,11 +560,11 @@ WHERE customer_id IN (
                 (binary_expression
                   (qualified_identifier
                     (identifier))
-                  (scalar_subquery
+                  (subquery_expression
                     (select_statement
                       (select_core
                         (select_list
-                          (select_item
+                          (result_column
                             (qualified_identifier
                               (identifier))))
                         (from_clause
@@ -588,5 +575,4 @@ WHERE customer_id IN (
                           (binary_expression
                             (qualified_identifier
                               (identifier))
-                            (literal_value
-                              (string_literal))))))))))))))))
+                            (string)))))))))))))))

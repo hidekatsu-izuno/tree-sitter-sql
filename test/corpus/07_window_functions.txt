@@ -15,16 +15,16 @@ FROM employees;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -54,18 +54,18 @@ FROM contestants;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier)))
@@ -93,58 +93,57 @@ FROM transactions;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))
               (frame_spec
                 (frame_bound
-                  (literal_value
-                    (numeric_literal)))
+                  (integer))
                 (frame_bound))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))
               (frame_spec
@@ -175,45 +174,45 @@ FROM exam_scores;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (qualified_identifier
                 (identifier))
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (qualified_identifier
                 (identifier))
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (qualified_identifier
                 (identifier))
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier)))
@@ -240,41 +239,38 @@ FROM stock_prices;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal))
-            (literal_value
-              (numeric_literal))
+            (integer)
+            (integer)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal))
+            (integer)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
@@ -282,13 +278,12 @@ FROM stock_prices;
               (identifier)
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (numeric_literal))
+              (integer)
               (qualified_identifier
                 (identifier))
               (window_definition
                 (order_by_clause
-                  (order_by_item
+                  (ordering_term
                     (qualified_identifier
                       (identifier)))))))
           (identifier)))
@@ -314,31 +309,29 @@ FROM employees;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (numeric_literal))
+            (integer)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (numeric_literal))
+            (integer)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier)))
@@ -367,26 +360,26 @@ WINDOW w AS (PARTITION BY department ORDER BY salary DESC);
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (identifier))
@@ -401,7 +394,7 @@ WINDOW w AS (PARTITION BY department ORDER BY salary DESC);
           (qualified_identifier
             (identifier))
           (order_by_clause
-            (order_by_item
+            (ordering_term
               (qualified_identifier
                 (identifier)))))))))
 
@@ -432,24 +425,64 @@ FROM daily_metrics;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
+          (function_call
+            (identifier)
+            (identifier)
+            (window_definition
+              (order_by_clause
+                (ordering_term
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (ERROR
+                  (identifier)
+                  (string))
+                (frame_bound
+                  (qualified_identifier
+                    (identifier)))
+                (frame_bound))))
+          (identifier))
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
-              (identifier)))))))
-  (ERROR
-    (order_by_clause
-      (order_by_item
-        (qualified_identifier
-          (identifier))))
-    (ERROR
-      (identifier))))
+              (identifier))
+            (window_definition
+              (order_by_clause
+                (ordering_term
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (frame_bound
+                  (integer))
+                (frame_bound
+                  (integer)))))
+          (identifier))
+        (result_column
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (window_definition
+              (order_by_clause
+                (ordering_term
+                  (qualified_identifier
+                    (identifier))))
+              (frame_spec
+                (frame_bound)
+                (frame_bound))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
 
 ================================================================================
 Window function in subquery
@@ -476,23 +509,23 @@ WHERE rn <= 3;
           (select_statement
             (select_core
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
+                (result_column
                   (function_call
                     (identifier)
                     (window_definition
                       (qualified_identifier
                         (identifier))
                       (order_by_clause
-                        (order_by_item
+                        (ordering_term
                           (qualified_identifier
                             (identifier))))))
                   (identifier)))
@@ -505,8 +538,7 @@ WHERE rn <= 3;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))))
+          (integer))))))
 
 ================================================================================
 CUME_DIST and percentiles
@@ -526,40 +558,39 @@ FROM test_results;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal))
+            (integer)
             (window_definition
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))))
           (identifier)))

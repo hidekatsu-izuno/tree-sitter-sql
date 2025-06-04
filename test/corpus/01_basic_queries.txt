@@ -27,7 +27,7 @@ SELECT DISTINCT name FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))))
       (from_clause
@@ -47,16 +47,16 @@ SELECT id, name, email, created_at FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))))
       (from_clause
@@ -86,12 +86,10 @@ SELECT * FROM users WHERE age >= 18 AND status = 'active';
             (identifier))
           (binary_expression
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (qualified_identifier
                 (identifier)))
-            (literal_value
-              (string_literal))))))))
+            (string)))))))
 
 ================================================================================
 SELECT with ORDER BY
@@ -110,10 +108,10 @@ SELECT * FROM products ORDER BY price DESC, name ASC;
           (qualified_identifier
             (identifier)))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier)))
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))))
 
@@ -134,10 +132,8 @@ SELECT * FROM users LIMIT 10 OFFSET 20;
           (qualified_identifier
             (identifier)))))
     (limit_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal)))))
+      (integer)
+      (integer))))
 
 ================================================================================
 SELECT with LIMIT using comma syntax
@@ -156,10 +152,8 @@ SELECT * FROM users LIMIT 20, 10;
           (qualified_identifier
             (identifier)))))
     (limit_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal)))))
+      (integer)
+      (integer))))
 
 ================================================================================
 Basic INSERT
@@ -176,10 +170,8 @@ INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com');
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (string))))
 
 ================================================================================
 INSERT with multiple rows
@@ -199,18 +191,12 @@ INSERT INTO users (name, age) VALUES
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal)))))
+      (string)
+      (integer)
+      (string)
+      (integer)
+      (string)
+      (integer))))
 
 ================================================================================
 Basic UPDATE
@@ -226,14 +212,12 @@ UPDATE users SET status = 'inactive' WHERE last_login < '2023-01-01';
       (identifier))
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal))))))
+        (string)))))
 
 ================================================================================
 UPDATE multiple columns
@@ -253,21 +237,19 @@ WHERE id = 123;
       (identifier))
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (update_set
       (identifier)
-      (literal_value))
+      (qualified_identifier
+        (identifier)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))))
+        (integer)))))
 
 ================================================================================
 Basic DELETE
@@ -285,8 +267,7 @@ DELETE FROM users WHERE id = 42;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))))
+        (integer)))))
 
 ================================================================================
 DELETE without WHERE
@@ -313,15 +294,15 @@ SELECT id AS user_id, name AS full_name, email AS contact_email FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))
           (identifier)))
@@ -342,11 +323,11 @@ SELECT u.id, u.name FROM users AS u;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))))
@@ -386,7 +367,7 @@ SELECT ALL name FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier))))
       (from_clause
@@ -422,29 +403,24 @@ WHERE (price BETWEEN 10 AND 100)
                 (between_expression
                   (qualified_identifier
                     (identifier))
-                  (literal_value
-                    (numeric_literal))
-                  (literal_value
-                    (numeric_literal))))
+                  (integer)
+                  (integer)))
               (parenthesized_expression
                 (in_expression
                   (qualified_identifier
                     (identifier))
-                  (literal_value
-                    (string_literal))
-                  (literal_value
-                    (string_literal)))))
+                  (string)
+                  (string))))
             (parenthesized_expression
               (binary_expression
                 (qualified_identifier
                   (identifier))
-                (literal_value))))
+                (null))))
           (parenthesized_expression
             (binary_expression
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (numeric_literal)))))))))
+              (integer))))))))
 
 ================================================================================
 SELECT with ORDER BY multiple columns
@@ -463,13 +439,13 @@ SELECT * FROM users ORDER BY last_name ASC, first_name ASC, created_at DESC;
           (qualified_identifier
             (identifier)))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier)))
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier)))
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))))
 
@@ -490,10 +466,10 @@ SELECT * FROM users ORDER BY last_login DESC NULLS LAST, name ASC NULLS FIRST;
           (qualified_identifier
             (identifier)))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier)))
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))))
 
@@ -514,14 +490,10 @@ INSERT INTO users (id, name, email, status) VALUES (1, 'John', 'john@example.com
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (integer)
+      (string)
+      (string)
+      (string))))
 
 ================================================================================
 INSERT with SELECT
@@ -542,13 +514,13 @@ SELECT id, name, email FROM users WHERE status = 'active';
     (select_statement
       (select_core
         (select_list
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier))))
         (from_clause
@@ -559,8 +531,7 @@ SELECT id, name, email FROM users WHERE status = 'active';
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal))))))))
+            (string)))))))
 
 ================================================================================
 INSERT DEFAULT VALUES
@@ -595,11 +566,10 @@ WHERE users.id = u2.user_id;
       (qualified_identifier
         (identifier)
         (identifier)))
-    (from_clause
-      (table_or_subquery
-        (qualified_identifier
-          (identifier))
-        (identifier)))
+    (ERROR
+      (identifier)
+      (identifier)
+      (identifier))
     (where_clause
       (binary_expression
         (qualified_identifier
@@ -628,25 +598,22 @@ WHERE id = 123;
       (identifier))
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (update_set
       (identifier)
-      (literal_value))
+      (qualified_identifier
+        (identifier)))
     (update_set
       (identifier)
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))))
+        (integer)))))

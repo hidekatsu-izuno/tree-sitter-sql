@@ -1,12 +1,14 @@
 {
   "name": "tree-sitter-sql",
   "version": "0.1.0",
-  "description": "SQLite SQL grammar for tree-sitter",
+  "description": "SQL grammar for tree-sitter with SQLite and PostgreSQL support",
   "main": "bindings/node",
   "keywords": [
     "parser",
     "sql",
     "sqlite",
+    "postgresql",
+    "postgres",
     "tree-sitter"
   ],
   "author": "Hidekatsu Izuno <hidekatsu.izuno@gmail.com>",

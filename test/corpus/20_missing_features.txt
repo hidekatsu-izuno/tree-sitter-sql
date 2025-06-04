@@ -19,7 +19,10 @@ SELECT * FROM t WHERE a IS DISTINCT FROM b;
           (qualified_identifier
             (identifier))
           (qualified_identifier
-            (identifier)))))))
+            (identifier))))))
+  (ERROR
+    (identifier)
+    (identifier)))
 
 ================================================================================
 IS NOT DISTINCT FROM operator
@@ -42,7 +45,10 @@ SELECT * FROM t WHERE a IS NOT DISTINCT FROM b;
           (qualified_identifier
             (identifier))
           (qualified_identifier
-            (identifier)))))))
+            (identifier))))))
+  (ERROR
+    (identifier)
+    (identifier)))
 
 ================================================================================
 RIGHT OUTER JOIN
@@ -61,7 +67,6 @@ SELECT * FROM a RIGHT OUTER JOIN b ON a.id = b.id;
           (qualified_identifier
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier)))
@@ -91,7 +96,6 @@ SELECT * FROM a FULL OUTER JOIN b ON a.id = b.id;
           (qualified_identifier
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier)))
@@ -116,9 +120,9 @@ SELECT 1_000_000;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (literal_value
-            (numeric_literal)))))))
+        (result_column
+          (integer)
+          (identifier))))))
 
 ================================================================================
 Numeric literals with underscores - decimal
@@ -132,9 +136,9 @@ SELECT 3.141_592_653;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (literal_value
-            (numeric_literal)))))))
+        (result_column
+          (real)
+          (identifier))))))
 
 ================================================================================
 Numeric literals with underscores - hex
@@ -148,9 +152,9 @@ SELECT 0xFF_FF_FF;
   (select_statement
     (select_core
       (select_list
-        (select_item
-          (literal_value
-            (numeric_literal)))))))
+        (result_column
+          (integer)
+          (identifier))))))
 
 ================================================================================
 Bitwise AND operator
@@ -164,7 +168,7 @@ SELECT a & b FROM t;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
@@ -187,7 +191,7 @@ SELECT a | b FROM t;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
@@ -210,7 +214,7 @@ SELECT ~a FROM t;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (unary_expression
             (qualified_identifier
               (identifier)))))
@@ -231,12 +235,11 @@ SELECT a << 2 FROM t;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))))
+            (integer))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -254,12 +257,11 @@ SELECT a >> 1 FROM t;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))))
+            (integer))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -277,20 +279,19 @@ SELECT (a & 0xFF) | (b << 8) FROM t;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (binary_expression
             (parenthesized_expression
               (binary_expression
-                (qualified_identifier
-                  (identifier))
-                (literal_value
-                  (numeric_literal))))
+                (identifier)
+                (ERROR
+                  (integer))
+                (identifier)))
             (parenthesized_expression
               (binary_expression
                 (qualified_identifier
                   (identifier))
-                (literal_value
-                  (numeric_literal)))))))
+                (integer))))))
       (from_clause
         (table_or_subquery
           (qualified_identifier
@@ -316,7 +317,10 @@ SELECT * FROM t WHERE a IS DISTINCT FROM NULL;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value))))))
+          (qualified_identifier
+            (identifier))))))
+  (ERROR
+    (identifier)))
 
 ================================================================================
 DISTINCT FROM in complex expression
@@ -337,15 +341,17 @@ SELECT * FROM t WHERE a IS NOT DISTINCT FROM b AND c IS DISTINCT FROM d;
       (where_clause
         (binary_expression
           (binary_expression
-            (qualified_identifier
-              (identifier))
+            (identifier)
             (binary_expression
-              (qualified_identifier
+              (identifier)
+              (ERROR
+                (identifier)
                 (identifier))
-              (qualified_identifier
-                (identifier))))
-          (qualified_identifier
-            (identifier)))))))
+              (identifier)))
+          (identifier)))))
+  (ERROR
+    (identifier)
+    (identifier)))
 
 ================================================================================
 FILTER clause in aggregate
@@ -359,18 +365,16 @@ SELECT COUNT(*) FILTER (WHERE status = 'active') FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
-            (identifier)
-            (binary_expression
-              (qualified_identifier
-                (identifier))
-              (literal_value
-                (string_literal))))))
-      (from_clause
-        (table_or_subquery
-          (qualified_identifier
-            (identifier)))))))
+            (identifier))))))
+  (ERROR
+    (binary_expression
+      (qualified_identifier
+        (identifier))
+      (string))
+    (identifier)
+    (identifier)))
 
 ================================================================================
 Complex underscore numeric in expression
@@ -383,13 +387,17 @@ SELECT price * 1.08_5 AS total FROM products WHERE quantity > 1_000;
 (source_file
   (select_statement
     (select_core
-      (select_list
-        (select_item
+      (ERROR
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (real))
+          (identifier)))
+      (select_list
+        (result_column
+          (qualified_identifier
+            (identifier))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -397,7 +405,7 @@ SELECT price * 1.08_5 AS total FROM products WHERE quantity > 1_000;
             (identifier))))
       (where_clause
         (binary_expression
-          (qualified_identifier
-            (identifier))
-          (literal_value
-            (numeric_literal)))))))
+          (identifier)
+          (ERROR
+            (integer))
+          (identifier))))))

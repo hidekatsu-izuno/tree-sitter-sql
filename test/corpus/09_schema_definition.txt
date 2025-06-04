@@ -17,25 +17,22 @@ CREATE TABLE users (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
-        (literal_value)))))
+        (qualified_identifier
+          (identifier))))))
 
 ================================================================================
 CREATE TABLE with foreign key
@@ -57,39 +54,29 @@ CREATE TABLE orders (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
+      (column_constraint))
+    (column_definition
+      (identifier)
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
       (type_name
-        (identifier))
-      (column_constraint))
-    (column_definition
-      (identifier)
-      (type_name
-        (identifier)
-        (signed_number
-          (numeric_literal))
-        (signed_number
-          (numeric_literal)))
+        (integer)
+        (integer))
       (column_constraint
-        (literal_value
-          (numeric_literal))))
+        (real)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (in_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal)))))
+          (string)
+          (string)
+          (string))))
     (table_constraint
       (identifier)
       (foreign_key_clause
@@ -116,27 +103,23 @@ CREATE TABLE IF NOT EXISTS logs (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
-        (literal_value
-          (string_literal))))
+        (string)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier)))
+      (type_name))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
-        (literal_value)))))
+        (qualified_identifier
+          (identifier))))))
 
 ================================================================================
 CREATE TABLE WITHOUT ROWID
@@ -156,20 +139,18 @@ CREATE TABLE settings (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
-        (literal_value)))))
+        (qualified_identifier
+          (identifier))))))
 
 ================================================================================
 CREATE TEMP TABLE
@@ -190,21 +171,17 @@ CREATE TEMP TABLE session_data (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier)))
+      (type_name))
     (column_definition
       (identifier)
-      (type_name
-        (identifier)))
+      (type_name))
     (column_definition
       (identifier)
-      (type_name
-        (identifier)))))
+      (type_name))))
 
 ================================================================================
 CREATE TABLE AS
@@ -225,10 +202,10 @@ HAVING SUM(total) > 10000;
     (select_statement
       (select_core
         (select_list
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)))
-          (select_item
+          (result_column
             (function_call
               (identifier)
               (qualified_identifier
@@ -240,15 +217,13 @@ HAVING SUM(total) > 10000;
               (identifier))))
         (group_by_clause
           (qualified_identifier
-            (identifier)))
-        (having_clause
+            (identifier))
           (binary_expression
             (function_call
               (identifier)
               (qualified_identifier
                 (identifier)))
-            (literal_value
-              (numeric_literal))))))))
+            (integer)))))))
 
 ================================================================================
 CREATE INDEX
@@ -262,7 +237,8 @@ CREATE INDEX idx_users_email ON users(email);
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (qualified_identifier
         (identifier)))))
@@ -279,7 +255,8 @@ CREATE UNIQUE INDEX idx_users_username ON users(username);
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (qualified_identifier
         (identifier)))))
@@ -296,7 +273,8 @@ CREATE INDEX idx_active_users ON users(last_login) WHERE status = 'active';
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (qualified_identifier
         (identifier)))
@@ -304,8 +282,7 @@ CREATE INDEX idx_active_users ON users(last_login) WHERE status = 'active';
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (string_literal))))))
+        (string)))))
 
 ================================================================================
 CREATE COMPOSITE INDEX
@@ -319,7 +296,8 @@ CREATE INDEX idx_orders_customer_date ON orders(customer_id, order_date DESC, st
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (qualified_identifier
         (identifier)))
@@ -350,19 +328,19 @@ GROUP BY c.id, c.name, c.email;
     (select_statement
       (select_core
         (select_list
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)
               (identifier)))
-          (select_item
+          (result_column
             (function_call
               (identifier)
               (qualified_identifier
@@ -375,7 +353,6 @@ GROUP BY c.id, c.name, c.email;
               (identifier))
             (identifier))
           (join_clause
-            (join_operator)
             (table_or_subquery
               (qualified_identifier
                 (identifier))
@@ -393,8 +370,7 @@ GROUP BY c.id, c.name, c.email;
             (qualified_identifier
               (identifier)
               (identifier))
-            (literal_value
-              (string_literal))))
+            (string)))
         (group_by_clause
           (qualified_identifier
             (identifier)
@@ -430,7 +406,8 @@ END;
         (identifier))
       (update_set
         (identifier)
-        (literal_value))
+        (qualified_identifier
+          (identifier)))
       (where_clause
         (binary_expression
           (qualified_identifier
@@ -537,8 +514,7 @@ ALTER TABLE users ADD COLUMN phone TEXT;
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier)))))
+      (type_name))))
 
 ================================================================================
 ALTER TABLE RENAME TO

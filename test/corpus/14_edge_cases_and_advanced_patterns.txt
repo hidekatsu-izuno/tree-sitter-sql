@@ -21,17 +21,18 @@ WHERE (col1, col2) = (SELECT val1, val2 FROM table2 WHERE id = 1)
           (binary_expression
             (parenthesized_expression
               (ERROR
-                (identifier))
+                (qualified_identifier
+                  (identifier)))
               (identifier))
             (binary_expression
-              (scalar_subquery
+              (subquery_expression
                 (select_statement
                   (select_core
                     (select_list
-                      (select_item
+                      (result_column
                         (qualified_identifier
                           (identifier)))
-                      (select_item
+                      (result_column
                         (qualified_identifier
                           (identifier))))
                     (from_clause
@@ -42,23 +43,22 @@ WHERE (col1, col2) = (SELECT val1, val2 FROM table2 WHERE id = 1)
                       (binary_expression
                         (qualified_identifier
                           (identifier))
-                        (literal_value
-                          (numeric_literal)))))))
+                        (integer))))))
               (parenthesized_expression
                 (ERROR
-                  (identifier)
-                  (identifier))
+                  (qualified_identifier
+                    (identifier))
+                  (qualified_identifier
+                    (identifier)))
                 (identifier))))
           (select_statement
             (select_core
+              (ERROR)
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier)))
-                (select_item
-                  (qualified_identifier
-                    (identifier)))
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier))))
               (from_clause
@@ -87,8 +87,7 @@ EXPLAIN SELECT * FROM users WHERE id = 1;
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal))))))))
+            (integer)))))))
 
 ================================================================================
 EXPLAIN QUERY PLAN
@@ -107,11 +106,11 @@ WHERE customers.region = 'US';
     (select_statement
       (select_core
         (select_list
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)
               (identifier))))
@@ -120,7 +119,6 @@ WHERE customers.region = 'US';
             (qualified_identifier
               (identifier)))
           (join_clause
-            (join_operator)
             (table_or_subquery
               (qualified_identifier
                 (identifier)))
@@ -137,8 +135,7 @@ WHERE customers.region = 'US';
             (qualified_identifier
               (identifier)
               (identifier))
-            (literal_value
-              (string_literal))))))))
+            (string)))))))
 
 ================================================================================
 Table-valued functions
@@ -151,13 +148,16 @@ SELECT * FROM json_each('{"a":1,"b":2,"c":3}') AS t;
 (source_file
   (select_statement
     (select_core
-      (select_list)
-      (from_clause
-        (table_or_subquery
-          (function_call
-            (identifier)
-            (literal_value
-              (string_literal)))
+      (ERROR
+        (select_list)
+        (from_clause
+          (table_or_subquery
+            (qualified_identifier
+              (identifier)))))
+      (select_list
+        (result_column
+          (string)
+          (ERROR)
           (identifier))))))
 
 ================================================================================
@@ -173,30 +173,32 @@ WHERE type = 'integer';
 (source_file
   (select_statement
     (select_core
-      (select_list
-        (select_item
-          (qualified_identifier
-            (identifier)))
-        (select_item
-          (function_call
-            (identifier)
+      (ERROR
+        (select_list
+          (result_column
             (qualified_identifier
               (identifier)))
-          (identifier)))
-      (from_clause
-        (table_or_subquery
-          (function_call
-            (identifier)
-            (literal_value
-              (string_literal))
-            (literal_value
-              (string_literal)))))
+          (result_column
+            (function_call
+              (identifier)
+              (qualified_identifier
+                (identifier)))
+            (identifier)))
+        (from_clause
+          (table_or_subquery
+            (qualified_identifier
+              (identifier)))))
+      (select_list
+        (result_column
+          (string))
+        (result_column
+          (string)))
+      (ERROR)
       (where_clause
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 VALUES as table constructor
@@ -213,28 +215,23 @@ SELECT * FROM (VALUES (1, 'one'), (2, 'two'), (3, 'three')) AS t(id, name);
       (from_clause
         (ERROR
           (table_or_subquery
-            (table_or_subquery
+            (select_statement
               (values_clause
-                (literal_value
-                  (numeric_literal))
-                (literal_value
-                  (string_literal))
-                (literal_value
-                  (numeric_literal))
-                (literal_value
-                  (string_literal))
-                (literal_value
-                  (numeric_literal))
-                (literal_value
-                  (string_literal)))))
-          (identifier))
+                (integer)
+                (string)
+                (integer)
+                (string)
+                (integer)
+                (string)))
+            (identifier)))
         (table_or_subquery
-          (function_call
-            (identifier)
+          (table_or_subquery
             (qualified_identifier
-              (identifier))
-            (qualified_identifier
-              (identifier))))))))
+              (identifier)))
+          (join_clause
+            (table_or_subquery
+              (qualified_identifier
+                (identifier)))))))))
 
 ================================================================================
 Complex USING clause in JOIN
@@ -253,15 +250,15 @@ WHERE c.active = 1;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))
@@ -272,7 +269,6 @@ WHERE c.active = 1;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -280,7 +276,6 @@ WHERE c.active = 1;
           (join_constraint
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -288,7 +283,6 @@ WHERE c.active = 1;
           (join_constraint
             (identifier)))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -300,8 +294,7 @@ WHERE c.active = 1;
           (qualified_identifier
             (identifier)
             (identifier))
-          (literal_value
-            (numeric_literal)))))))
+          (integer))))))
 
 ================================================================================
 Window function with complex frame
@@ -328,13 +321,13 @@ FROM employees;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -343,25 +336,23 @@ FROM employees;
               (qualified_identifier
                 (identifier))
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))
               (frame_spec
                 (frame_bound
-                  (literal_value
-                    (numeric_literal)))
+                  (integer))
                 (frame_bound
-                  (literal_value
-                    (numeric_literal))))))
+                  (integer)))))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (window_definition
               (qualified_identifier
                 (identifier))
               (order_by_clause
-                (order_by_item
+                (ordering_term
                   (qualified_identifier
                     (identifier))))
               (frame_spec
@@ -393,25 +384,25 @@ FROM test_table;
           (identifier)
           (identifier)))
       (select_list
-        (select_item
+        (result_column
           (parenthesized_expression
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))
           (ERROR)
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (identifier)
           (ERROR)
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier)))
@@ -442,31 +433,26 @@ CREATE TABLE products (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint)
       (column_constraint
         (identifier)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (foreign_key_clause
           (qualified_identifier
@@ -474,27 +460,21 @@ CREATE TABLE products (
           (identifier))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
-        (literal_value)))
-    (table_constraint
-      (identifier)
-      (indexed_column
-        (qualified_identifier
-          (identifier)))
-      (indexed_column
         (qualified_identifier
           (identifier))))
+    (table_constraint
+      (identifier)
+      (identifier)
+      (identifier))
     (table_constraint
       (identifier)
       (between_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))
-        (literal_value
-          (numeric_literal))))))
+        (real)
+        (real)))))
 
 ================================================================================
 Generated columns with complex expressions
@@ -518,26 +498,21 @@ CREATE TABLE orders (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
-        (literal_value
-          (numeric_literal))))
+        (real)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (qualified_identifier
@@ -546,8 +521,7 @@ CREATE TABLE orders (
             (identifier)))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (qualified_identifier
@@ -556,11 +530,9 @@ CREATE TABLE orders (
             (identifier)))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (column_definition
       (identifier)
       (column_constraint
@@ -570,9 +542,7 @@ CREATE TABLE orders (
           (parenthesized_expression
             (binary_expression
               (binary_expression
-                (literal_value
-                  (numeric_literal))
+                (integer)
                 (qualified_identifier
                   (identifier)))
-              (literal_value
-                (numeric_literal)))))))))
+              (real))))))))

@@ -1,0 +1,480 @@
+================================================================================
+PostgreSQL JSON/JSONB operators - contains
+================================================================================
+
+SELECT * FROM users WHERE data @> '{"name": "John"}';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (string))))))
+
+================================================================================
+PostgreSQL JSON/JSONB operators - contained by
+================================================================================
+
+SELECT * FROM users WHERE '{"active": true}' <@ data;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (string)
+          right: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL JSON path operators
+================================================================================
+
+SELECT data #> '{profile,name}', data #>> '{profile,age}' FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (binary_expression
+            left: (qualified_identifier
+              name: (identifier))
+            right: (string)))
+        (result_column
+          expression: (binary_expression
+            left: (qualified_identifier
+              name: (identifier))
+            right: (string))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL JSON existence operators
+================================================================================
+
+SELECT * FROM products WHERE attributes ? 'color' AND attributes ?& ARRAY['size', 'brand'];
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        (ERROR
+          (identifier))
+        condition: (binary_expression
+          left: (binary_expression
+            left: (string)
+            right: (qualified_identifier
+              name: (identifier)))
+          right: (array_constructor
+            element: (string)
+            element: (string)))))))
+
+================================================================================
+PostgreSQL array operators - overlap
+================================================================================
+
+SELECT * FROM posts WHERE tags && ARRAY['tech', 'programming'];
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (array_constructor
+            element: (string)
+            element: (string)))))))
+
+================================================================================
+PostgreSQL array constructors
+================================================================================
+
+SELECT ARRAY[1, 2, 3], ARRAY(SELECT id FROM users);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (array_constructor
+            element: (integer)
+            element: (integer)
+            element: (integer)))
+        (result_column
+          expression: (array_constructor
+            subquery: (select_statement
+              (select_core
+                columns: (select_list
+                  (result_column
+                    expression: (qualified_identifier
+                      name: (identifier))))
+                (from_clause
+                  (table_or_subquery
+                    name: (qualified_identifier
+                      name: (identifier))))))))))))
+
+================================================================================
+PostgreSQL array slicing
+================================================================================
+
+SELECT arr[1], arr[2:4], arr[:3] FROM test_arrays;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier))
+          alias: (quoted_identifier))
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier))
+          alias: (quoted_identifier))
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier))
+          alias: (quoted_identifier)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL ANY/ALL expressions
+================================================================================
+
+SELECT * FROM products WHERE price > ANY(ARRAY[10, 20, 30]) AND quantity = ALL(SELECT min_qty FROM rules);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (identifier)
+          right: (binary_expression
+            left: (binary_expression
+              left: (function_call
+                name: (identifier)
+                argument: (array_constructor
+                  element: (integer)
+                  element: (integer)
+                  element: (integer)))
+              right: (qualified_identifier
+                name: (identifier)))
+            right: (function_call
+              name: (identifier)
+              argument: (identifier)
+              (ERROR
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+PostgreSQL full-text search operators
+================================================================================
+
+SELECT * FROM documents WHERE content @@ to_tsquery('english', 'cat & dog');
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (function_call
+            name: (identifier)
+            argument: (string)
+            argument: (string)))))))
+
+================================================================================
+PostgreSQL EXTRACT function
+================================================================================
+
+SELECT EXTRACT(YEAR FROM created_at), EXTRACT(EPOCH FROM now()) FROM events;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            (ERROR
+              (identifier)
+              (identifier))
+            argument: (identifier)))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            (ERROR
+              (identifier)
+              (identifier))
+            argument: (function_call
+              name: (identifier)))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL SUBSTRING with FROM/FOR
+================================================================================
+
+SELECT SUBSTRING('Hello World' FROM 1 FOR 5), SUBSTRING(name FROM 2) FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (string)
+            (ERROR
+              (identifier)
+              (integer)
+              (integer))))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (identifier)
+            (ERROR
+              (identifier)
+              (integer)))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL POSITION function
+================================================================================
+
+SELECT POSITION('world' IN 'hello world'), POSITION('@' IN email) FROM contacts;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (binary_expression
+              left: (string)
+              right: (string))))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (binary_expression
+              left: (string)
+              right: (identifier)))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL CREATE AGGREGATE
+================================================================================
+
+CREATE AGGREGATE avg_price(numeric) (
+    SFUNC = numeric_avg_accum,
+    STYPE = internal,
+    FINALFUNC = numeric_avg,
+    PARALLEL = SAFE
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL CREATE CAST
+================================================================================
+
+CREATE CAST (text AS mytype) WITH FUNCTION text_to_mytype(text) AS ASSIGNMENT;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (ERROR
+      (identifier))
+    (identifier)
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL CREATE EXTENSION
+================================================================================
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public VERSION '3.1';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (ERROR
+      (identifier)
+      (identifier))
+    (identifier)
+    (real)))
+
+================================================================================
+PostgreSQL CREATE MATERIALIZED VIEW
+================================================================================
+
+CREATE MATERIALIZED VIEW sales_summary AS
+SELECT region, SUM(amount) as total_sales
+FROM sales
+GROUP BY region
+WITH DATA;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_view_statement
+    (ERROR
+      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
+    select: (select_statement
+      (select_core
+        columns: (select_list
+          (result_column
+            expression: (qualified_identifier
+              name: (identifier)))
+          (result_column
+            expression: (function_call
+              name: (identifier)
+              argument: (qualified_identifier
+                name: (identifier)))
+            alias: (identifier)))
+        (ERROR
+          (identifier))
+        (from_clause
+          (table_or_subquery
+            name: (qualified_identifier
+              name: (identifier))))
+        (group_by_clause
+          expression: (qualified_identifier
+            name: (identifier))))))
+  (ERROR
+    (identifier)))
+
+================================================================================
+PostgreSQL REFRESH MATERIALIZED VIEW
+================================================================================
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY sales_summary WITH DATA;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL COMMENT ON
+================================================================================
+
+COMMENT ON TABLE users IS 'User account information';
+COMMENT ON COLUMN users.email IS 'User email address';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))

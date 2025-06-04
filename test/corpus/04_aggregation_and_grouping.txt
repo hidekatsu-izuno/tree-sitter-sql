@@ -17,35 +17,35 @@ FROM orders;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -73,14 +73,14 @@ GROUP BY category;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -112,16 +112,16 @@ GROUP BY year, month, category;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -157,14 +157,14 @@ HAVING COUNT(*) > 5 AND SUM(total) > 1000;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -176,21 +176,18 @@ HAVING COUNT(*) > 5 AND SUM(total) > 1000;
             (identifier))))
       (group_by_clause
         (qualified_identifier
-          (identifier)))
-      (having_clause
+          (identifier))
         (binary_expression
           (binary_expression
             (function_call
               (identifier))
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (function_call
                 (identifier)
                 (qualified_identifier
                   (identifier)))))
-          (literal_value
-            (numeric_literal)))))))
+          (integer))))))
 
 ================================================================================
 Aggregate with FILTER
@@ -208,34 +205,33 @@ FROM orders;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
-            (identifier)
-            (binary_expression
-              (qualified_identifier
-                (identifier))
-              (literal_value
-                (string_literal))))
+            (identifier)))
+        (ERROR
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (string))
+          (identifier)
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
-              (identifier))
-            (binary_expression
-              (qualified_identifier
-                (identifier))
-              (literal_value
-                (string_literal))))
-          (identifier)))
-      (from_clause
-        (table_or_subquery
-          (qualified_identifier
-            (identifier)))))))
+              (identifier)))))))
+  (ERROR
+    (binary_expression
+      (qualified_identifier
+        (identifier))
+      (string))
+    (identifier)
+    (identifier)
+    (identifier)))
 
 ================================================================================
 String aggregation
@@ -254,22 +250,21 @@ GROUP BY category;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))
+            (string))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -296,10 +291,10 @@ HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -311,18 +306,17 @@ HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
             (identifier))))
       (group_by_clause
         (qualified_identifier
-          (identifier)))
-      (having_clause
+          (identifier))
         (binary_expression
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
-          (scalar_subquery
+          (subquery_expression
             (select_statement
               (select_core
                 (select_list
-                  (select_item
+                  (result_column
                     (function_call
                       (identifier)
                       (qualified_identifier
@@ -349,19 +343,18 @@ GROUP BY STRFTIME('%Y-%m', date);
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (string_literal))
+            (string)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -374,8 +367,7 @@ GROUP BY STRFTIME('%Y-%m', date);
       (group_by_clause
         (function_call
           (identifier)
-          (literal_value
-            (string_literal))
+          (string)
           (qualified_identifier
             (identifier)))))))
 
@@ -396,13 +388,13 @@ GROUP BY ROLLUP(region, country);
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -440,26 +432,26 @@ HAVING COUNT(o.id) > 0;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -472,7 +464,6 @@ HAVING COUNT(o.id) > 0;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -491,16 +482,14 @@ HAVING COUNT(o.id) > 0;
           (identifier))
         (qualified_identifier
           (identifier)
-          (identifier)))
-      (having_clause
+          (identifier))
         (binary_expression
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)
               (identifier)))
-          (literal_value
-            (numeric_literal)))))))
+          (integer))))))
 
 ================================================================================
 Statistical aggregates
@@ -523,38 +512,38 @@ GROUP BY category;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (binary_expression
               (function_call
@@ -603,66 +592,52 @@ GROUP BY date;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (case_expression
-              (when_clause
-                (binary_expression
-                  (qualified_identifier
-                    (identifier))
-                  (literal_value
-                    (string_literal)))
-                (literal_value
-                  (numeric_literal)))))
-          (identifier))
-        (select_item
-          (function_call
-            (identifier)
-            (case_expression
-              (when_clause
-                (binary_expression
-                  (qualified_identifier
-                    (identifier))
-                  (literal_value
-                    (string_literal)))
-                (literal_value
-                  (numeric_literal)))))
-          (identifier))
-        (select_item
-          (function_call
-            (identifier)
-            (case_expression
-              (when_clause
-                (binary_expression
-                  (qualified_identifier
-                    (identifier))
-                  (literal_value
-                    (string_literal)))
+              (binary_expression
                 (qualified_identifier
-                  (identifier)))
-              (else_clause
-                (literal_value
-                  (numeric_literal)))))
+                  (identifier))
+                (string))
+              (integer)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (case_expression
-              (when_clause
-                (binary_expression
-                  (qualified_identifier
-                    (identifier))
-                  (literal_value
-                    (string_literal)))
+              (binary_expression
                 (qualified_identifier
-                  (identifier)))
-              (else_clause
-                (literal_value
-                  (numeric_literal)))))
+                  (identifier))
+                (string))
+              (integer)))
+          (identifier))
+        (result_column
+          (function_call
+            (identifier)
+            (case_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (string))
+              (qualified_identifier
+                (identifier))
+              (integer)))
+          (identifier))
+        (result_column
+          (function_call
+            (identifier)
+            (case_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (string))
+              (qualified_identifier
+                (identifier))
+              (integer)))
           (identifier)))
       (from_clause
         (table_or_subquery

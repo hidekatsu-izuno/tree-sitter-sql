@@ -8,8 +8,7 @@ ATTACH DATABASE '/path/to/database.db' AS external_db;
 
 (source_file
   (attach_statement
-    (literal_value
-      (string_literal))
+    (string)
     (identifier)))
 
 ================================================================================
@@ -59,8 +58,7 @@ VACUUM INTO '/backup/database_backup.db';
 
 (source_file
   (vacuum_statement
-    (literal_value
-      (string_literal))))
+    (string)))
 
 ================================================================================
 ANALYZE
@@ -106,8 +104,7 @@ REINDEX idx_users_email;
 
 (source_file
   (reindex_statement
-    (qualified_identifier
-      (identifier))))
+    (identifier)))
 
 ================================================================================
 REINDEX specific table
@@ -119,8 +116,7 @@ REINDEX users;
 
 (source_file
   (reindex_statement
-    (qualified_identifier
-      (identifier))))
+    (identifier)))
 
 ================================================================================
 Basic PRAGMA
@@ -133,7 +129,7 @@ PRAGMA foreign_keys = ON;
 (source_file
   (pragma_statement
     (identifier)
-    (pragma_value)))
+    (identifier)))
 
 ================================================================================
 PRAGMA query
@@ -146,8 +142,7 @@ PRAGMA table_info(users);
 (source_file
   (pragma_statement
     (identifier)
-    (pragma_value
-      (identifier))))
+    (identifier)))
 
 ================================================================================
 PRAGMA with string value
@@ -160,8 +155,7 @@ PRAGMA journal_mode = 'WAL';
 (source_file
   (pragma_statement
     (identifier)
-    (pragma_value
-      (string_literal))))
+    (string)))
 
 ================================================================================
 PRAGMA with integer value
@@ -174,9 +168,7 @@ PRAGMA cache_size = 10000;
 (source_file
   (pragma_statement
     (identifier)
-    (pragma_value
-      (signed_number
-        (numeric_literal)))))
+    (integer)))
 
 ================================================================================
 INSERT with RETURNING
@@ -195,17 +187,13 @@ RETURNING id, name;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))
+      (string)
+      (string))
     (returning_clause
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier))))))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier)))))
 
 ================================================================================
 UPDATE with RETURNING
@@ -224,23 +212,20 @@ RETURNING id, name, last_login;
       (identifier))
     (update_set
       (identifier)
-      (literal_value))
+      (qualified_identifier
+        (identifier)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (returning_clause
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier))))))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier)))))
 
 ================================================================================
 DELETE with RETURNING
@@ -260,14 +245,13 @@ RETURNING session_id, user_id;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value)))
+        (qualified_identifier
+          (identifier))))
     (returning_clause
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier))))))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier)))))
 
 ================================================================================
 Generated columns
@@ -288,18 +272,15 @@ CREATE TABLE rectangles (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (qualified_identifier
@@ -308,12 +289,10 @@ CREATE TABLE rectangles (
             (identifier)))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
-          (literal_value
-            (numeric_literal))
+          (integer)
           (parenthesized_expression
             (binary_expression
               (qualified_identifier
@@ -345,18 +324,21 @@ SELECT * FROM users WHERE id = ? AND status = :status AND region = @region AND t
                 (qualified_identifier
                   (identifier))
                 (binary_expression
-                  (bind_parameter)
+                  (parameter)
                   (qualified_identifier
                     (identifier))))
               (binary_expression
-                (bind_parameter)
+                (parameter
+                  (identifier))
                 (qualified_identifier
                   (identifier))))
             (binary_expression
-              (bind_parameter)
+              (parameter
+                (identifier))
               (qualified_identifier
                 (identifier))))
-          (bind_parameter))))))
+          (parameter
+            (identifier)))))))
 
 ================================================================================
 Hex and blob literals
@@ -372,18 +354,20 @@ SELECT
 (source_file
   (select_statement
     (select_core
+      (ERROR
+        (result_column
+          (integer)
+          (identifier)))
       (select_list
-        (select_item
-          (literal_value
-            (numeric_literal))
+        (result_column
+          (qualified_identifier
+            (identifier))
           (identifier))
-        (select_item
-          (literal_value
-            (blob_literal))
+        (result_column
+          (blob)
           (identifier))
-        (select_item
-          (literal_value
-            (blob_literal))
+        (result_column
+          (blob)
           (identifier))))))
 
 ================================================================================
@@ -402,14 +386,12 @@ SELECT * FROM users INDEXED BY idx_users_email WHERE email = 'test@example.com';
         (table_or_subquery
           (qualified_identifier
             (identifier))
-          (indexed_by
-            (identifier))))
+          (identifier)))
       (where_clause
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 NOT INDEXED hint
@@ -426,14 +408,12 @@ SELECT * FROM users NOT INDEXED WHERE name LIKE 'John%';
       (from_clause
         (table_or_subquery
           (qualified_identifier
-            (identifier))
-          (indexed_by)))
+            (identifier))))
       (where_clause
-        (like_expression
+        (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 COLLATE in expressions
@@ -459,10 +439,9 @@ ORDER BY email COLLATE BINARY;
             (qualified_identifier
               (identifier))
             (identifier))
-          (literal_value
-            (string_literal)))))
+          (string))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (collate_expression
           (qualified_identifier
             (identifier))
@@ -492,14 +471,13 @@ END;
       (qualified_identifier
         (identifier)
         (identifier))
-      (literal_value
-        (numeric_literal)))
+      (integer))
     (select_statement
       (select_core
         (select_list
-          (select_item
-            (raise_function
-              (string_literal))))))))
+          (result_column
+            (raise_expression
+              (string))))))))
 
 ================================================================================
 Multiple row INSERT
@@ -520,24 +498,15 @@ INSERT INTO products (name, price, category) VALUES
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (real)
+      (string)
+      (string)
+      (real)
+      (string)
+      (string)
+      (real)
+      (string))))
 
 ================================================================================
 FTS virtual table
@@ -552,12 +521,9 @@ CREATE VIRTUAL TABLE documents_fts USING fts5(title, content, author);
     (qualified_identifier
       (identifier))
     (identifier)
-    (qualified_identifier
-      (identifier))
-    (qualified_identifier
-      (identifier))
-    (qualified_identifier
-      (identifier))))
+    (identifier)
+    (identifier)
+    (identifier)))
 
 ================================================================================
 R-Tree virtual table
@@ -572,16 +538,11 @@ CREATE VIRTUAL TABLE rtree_index USING rtree(id, minX, maxX, minY, maxY);
     (qualified_identifier
       (identifier))
     (identifier)
-    (qualified_identifier
-      (identifier))
-    (qualified_identifier
-      (identifier))
-    (qualified_identifier
-      (identifier))
-    (qualified_identifier
-      (identifier))
-    (qualified_identifier
-      (identifier))))
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))
 
 ================================================================================
 JSON functions
@@ -599,21 +560,20 @@ FROM json_table;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))
+            (string))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier

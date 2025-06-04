@@ -8,19 +8,17 @@ INSERT OR REPLACE INTO users (id, name, email) VALUES (1, 'John Doe', 'john@exam
 
 (source_file
   (insert_statement
-    (conflict_clause)
+    (ERROR
+      (identifier))
     (qualified_identifier
       (identifier))
     (identifier)
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (integer)
+      (string)
+      (string))))
 
 ================================================================================
 INSERT OR IGNORE
@@ -32,16 +30,15 @@ INSERT OR IGNORE INTO users (name, email) VALUES ('Jane Doe', 'jane@example.com'
 
 (source_file
   (insert_statement
-    (conflict_clause)
+    (ERROR
+      (identifier))
     (qualified_identifier
       (identifier))
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (string))))
 
 ================================================================================
 INSERT OR ABORT
@@ -53,16 +50,15 @@ INSERT OR ABORT INTO users (name, email) VALUES ('Bob Smith', 'bob@example.com')
 
 (source_file
   (insert_statement
-    (conflict_clause)
+    (ERROR
+      (identifier))
     (qualified_identifier
       (identifier))
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (string))))
 
 ================================================================================
 INSERT OR ROLLBACK
@@ -74,16 +70,15 @@ INSERT OR ROLLBACK INTO users (name, email) VALUES ('Alice Johnson', 'alice@exam
 
 (source_file
   (insert_statement
-    (conflict_clause)
+    (ERROR
+      (identifier))
     (qualified_identifier
       (identifier))
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (string))))
 
 ================================================================================
 INSERT OR FAIL
@@ -95,16 +90,15 @@ INSERT OR FAIL INTO users (name, email) VALUES ('Charlie Brown', 'charlie@exampl
 
 (source_file
   (insert_statement
-    (conflict_clause)
+    (ERROR
+      (identifier))
     (qualified_identifier
       (identifier))
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (string))))
 
 ================================================================================
 INSERT with complex UPSERT
@@ -130,14 +124,10 @@ WHERE excluded.price > products.price;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal)))
+      (integer)
+      (string)
+      (real)
+      (string))
     (on_conflict_clause
       (identifier)
       (update_set
@@ -157,7 +147,8 @@ WHERE excluded.price > products.price;
           (identifier)))
       (update_set
         (identifier)
-        (literal_value))
+        (qualified_identifier
+          (identifier)))
       (where_clause
         (binary_expression
           (qualified_identifier
@@ -184,10 +175,8 @@ ON CONFLICT(email) DO NOTHING;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))
+      (string)
+      (string))
     (on_conflict_clause
       (identifier))))
 
@@ -209,22 +198,16 @@ RETURNING id, created_at, total;
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal)))
+      (integer)
+      (real)
+      (string))
     (returning_clause
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier))))))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier)))))
 
 ================================================================================
 INSERT with WITH clause
@@ -241,18 +224,16 @@ SELECT name, email FROM new_customer;
 (source_file
   (insert_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
-                (literal_value
-                  (string_literal))
+              (result_column
+                (string)
                 (identifier))
-              (select_item
-                (literal_value
-                  (string_literal))
+              (result_column
+                (string)
                 (identifier)))))))
     (qualified_identifier
       (identifier))
@@ -261,10 +242,10 @@ SELECT name, email FROM new_customer;
     (select_statement
       (select_core
         (select_list
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier))))
         (from_clause
@@ -284,19 +265,17 @@ WHERE id = 1;
 
 (source_file
   (update_statement
-    (conflict_clause)
     (qualified_identifier
       (identifier))
+    (identifier)
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))))
+        (integer)))))
 
 ================================================================================
 UPDATE with JOIN-like FROM
@@ -317,18 +296,16 @@ WHERE users.tier_id = p.id
       (identifier))
     (update_set
       (identifier)
-      (literal_value
-        (string_literal)))
+      (string))
     (update_set
       (identifier)
       (qualified_identifier
         (identifier)
         (identifier)))
-    (from_clause
-      (table_or_subquery
-        (qualified_identifier
-          (identifier))
-        (identifier)))
+    (ERROR
+      (identifier)
+      (identifier)
+      (identifier))
     (where_clause
       (binary_expression
         (binary_expression
@@ -342,8 +319,7 @@ WHERE users.tier_id = p.id
             (qualified_identifier
               (identifier)
               (identifier))))
-        (literal_value
-          (string_literal))))))
+        (string)))))
 
 ================================================================================
 UPDATE with subquery
@@ -369,11 +345,11 @@ WHERE id IN (
       (identifier))
     (update_set
       (identifier)
-      (scalar_subquery
+      (subquery_expression
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (qualified_identifier
@@ -397,7 +373,7 @@ WHERE id IN (
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier))))
             (from_clause
@@ -410,10 +386,8 @@ WHERE id IN (
                   (identifier))
                 (function_call
                   (identifier)
-                  (literal_value
-                    (string_literal))
-                  (literal_value
-                    (string_literal)))))))))))
+                  (string)
+                  (string))))))))))
 
 ================================================================================
 UPDATE with tuple assignment
@@ -433,18 +407,16 @@ WHERE point_id = 1;
       (identifier)
       (identifier)
       (identifier)
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal)))
+      (parenthesized_expression
+        (ERROR
+          (real)
+          (real))
+        (real)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))))
+        (integer)))))
 
 ================================================================================
 UPDATE with RETURNING
@@ -467,27 +439,23 @@ RETURNING product_id, quantity, last_updated;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (update_set
       (identifier)
-      (literal_value))
+      (qualified_identifier
+        (identifier)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (returning_clause
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier))))))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier)))))
 
 ================================================================================
 DELETE with complex WHERE
@@ -513,48 +481,39 @@ WHERE (status = 'inactive' AND last_login < DATE('now', '-1 year'))
                 (qualified_identifier
                   (identifier))
                 (binary_expression
-                  (literal_value
-                    (string_literal))
+                  (string)
                   (qualified_identifier
                     (identifier))))
               (function_call
                 (identifier)
-                (literal_value
-                  (string_literal))
-                (literal_value
-                  (string_literal)))))
+                (string)
+                (string))))
           (parenthesized_expression
             (binary_expression
               (binary_expression
                 (qualified_identifier
                   (identifier))
                 (binary_expression
-                  (literal_value
-                    (string_literal))
+                  (string)
                   (qualified_identifier
                     (identifier))))
               (function_call
                 (identifier)
-                (literal_value
-                  (string_literal))
-                (literal_value
-                  (string_literal))))))
+                (string)
+                (string)))))
         (parenthesized_expression
           (binary_expression
             (binary_expression
               (qualified_identifier
                 (identifier))
               (binary_expression
-                (literal_value
-                  (numeric_literal))
+                (integer)
                 (qualified_identifier
                   (identifier))))
             (function_call
               (identifier)
-              (literal_value
-                (string_literal))
-              (literal_value
-                (string_literal)))))))))
+              (string)
+              (string))))))))
 
 ================================================================================
 DELETE with EXISTS subquery
@@ -578,9 +537,8 @@ WHERE NOT EXISTS (
         (select_statement
           (select_core
             (select_list
-              (select_item
-                (literal_value
-                  (numeric_literal))))
+              (result_column
+                (integer)))
             (from_clause
               (table_or_subquery
                 (qualified_identifier
@@ -600,10 +558,8 @@ WHERE NOT EXISTS (
                       (identifier))))
                 (function_call
                   (identifier)
-                  (literal_value
-                    (string_literal))
-                  (literal_value
-                    (string_literal)))))))))))
+                  (string)
+                  (string))))))))))
 
 ================================================================================
 DELETE with RETURNING
@@ -623,17 +579,15 @@ RETURNING session_id, user_id, expires_at;
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value)))
+        (qualified_identifier
+          (identifier))))
     (returning_clause
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier)))
-      (select_item
-        (qualified_identifier
-          (identifier))))))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier))
+      (qualified_identifier
+        (identifier)))))
 
 ================================================================================
 REPLACE statement
@@ -651,12 +605,9 @@ REPLACE INTO users (id, name, email) VALUES (1, 'John Updated', 'john.updated@ex
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal)))))
+      (integer)
+      (string)
+      (string))))
 
 ================================================================================
 INSERT with multiple VALUES sets
@@ -679,36 +630,21 @@ INSERT INTO products (name, price, category) VALUES
     (identifier)
     (identifier)
     (values_clause
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (string_literal))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (string_literal)))))
+      (string)
+      (real)
+      (string)
+      (string)
+      (real)
+      (string)
+      (string)
+      (real)
+      (string)
+      (string)
+      (real)
+      (string)
+      (string)
+      (real)
+      (string))))
 
 ================================================================================
 DELETE with LIMIT
@@ -728,8 +664,7 @@ DELETE FROM logs WHERE created_at < DATE('now', '-30 days') LIMIT 1000;
           (identifier))
         (function_call
           (identifier)
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal))))))
-  (ERROR))
+          (string)
+          (string)))))
+  (ERROR
+    (integer)))

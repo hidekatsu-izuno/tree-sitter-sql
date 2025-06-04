@@ -82,7 +82,7 @@ const MISC_KEYWORDS = [
   'DESC', 'FULL', 'GLOB', 'EACH', 'FOR', 'OF', 'INSTEAD',
   'BEFORE', 'AFTER', 'NEW', 'OLD', 'UNION', 'INTERSECT', 'EXCEPT',
   'TRUE', 'FALSE', 'DEFERRABLE', 'INITIALLY', 'MATCH', 'ON',
-  'USING', 'TO', 'INDEXED', 'ACTION', 'RESTRICT'
+  'USING', 'TO', 'INDEXED', 'ACTION', 'RESTRICT', 'ARRAY'
 ];
 
 // Grouped binary operators by precedence
@@ -92,7 +92,7 @@ const OPERATORS_BY_PRECEDENCE = {
   3: ['+', '-'],  // Addition, subtraction
   4: ['<<', '>>', '&', '|'],  // Bitwise operators
   5: ['<', '<=', '>', '>='],  // Comparison
-  6: ['=', '==', '!=', '<>', 'IS', 'IS NOT', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'GLOB', 'NOT GLOB', 'MATCH', 'NOT MATCH', 'REGEXP', 'NOT REGEXP'],  // Equality and pattern matching
+  6: ['=', '==', '!=', '<>', 'IS', 'IS NOT', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'GLOB', 'NOT GLOB', 'MATCH', 'NOT MATCH', 'REGEXP', 'NOT REGEXP', '->', '->>', '@>', '<@', token('#>'), token('#>>'), token('?&'), token('?|'), token('&&'), token('@@')],  // Equality, pattern matching, and PostgreSQL operators
   7: ['AND'],  // Logical AND
   8: ['OR'],  // Logical OR
 };
@@ -140,6 +140,16 @@ module.exports = grammar({
     [$.unary_expression, $.is_expression],
     [$.binary_expression, $.in_expression, $.between_expression, $.like_expression],
     [$.binary_expression, $.between_expression, $.like_expression],
+    [$.unary_expression, $.in_expression, $.between_expression, $.like_expression, $.is_expression],
+    [$.unary_expression, $.is_expression, $.collate_expression],
+    [$.unary_expression, $.between_expression, $.is_expression],
+    [$.unary_expression, $.is_expression, $.null_expression],
+    [$.in_expression, $.subquery_expression],
+    [$.parenthesized_expression, $.in_expression],
+    [$.column_constraint, $.in_expression, $.between_expression, $.like_expression],
+    [$.column_constraint, $.collate_expression],
+    [$.column_constraint, $._expression],
+    [$.like_expression],
   ],
 
   precedences: $ => [
@@ -779,6 +789,7 @@ module.exports = grammar({
       $._literal_value,
       $.identifier,
       $.qualified_identifier,
+      $.parameter,
       $.unary_expression,
       $.binary_expression,
       $.parenthesized_expression,
@@ -793,7 +804,8 @@ module.exports = grammar({
       $.collate_expression,
       $.function_call,
       $.subquery_expression,
-      $.raise_expression
+      $.raise_expression,
+      $.array_constructor
     ),
 
     _literal_value: $ => choice(
@@ -977,5 +989,30 @@ module.exports = grammar({
       optional(seq(',', field('message', $.string))),
       ')'
     ),
+
+    parameter: $ => choice(
+      token('?'),  // Anonymous parameter
+      seq(token('?'), $.integer),  // Numbered parameter (?1, ?2, etc.)
+      seq(':', $.identifier),  // Named parameter (:name)
+      seq('@', $.identifier),  // Named parameter (@name)
+      seq('$', $.identifier),  // Named parameter ($name)
+      seq('$', $.integer)  // Numbered parameter ($1, $2, etc.)
+    ),
+
+    array_constructor: $ => choice(
+      seq(
+        'ARRAY',
+        '[',
+        commaSep1(field('element', $._expression)),
+        ']'
+      ),
+      seq(
+        'ARRAY',
+        '(',
+        field('subquery', $.select_statement),
+        ')'
+      )
+    ),
+
   }
 });

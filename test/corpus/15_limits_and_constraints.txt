@@ -21,13 +21,11 @@ CREATE TABLE employees (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
         (binary_expression
@@ -35,82 +33,66 @@ CREATE TABLE employees (
             (identifier)
             (qualified_identifier
               (identifier)))
-          (like_expression
+          (binary_expression
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (qualified_identifier
                 (identifier)))
-            (literal_value
-              (string_literal))))))
+            (string)))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (between_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal))
-          (literal_value
-            (numeric_literal)))))
+          (integer)
+          (integer))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (in_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal)))))
+          (string)
+          (string)
+          (string)
+          (string))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
         (binary_expression
-          (like_expression
+          (binary_expression
             (qualified_identifier
               (identifier))
             (binary_expression
-              (literal_value
-                (string_literal))
+              (string)
               (function_call
                 (identifier)
                 (qualified_identifier
                   (identifier)))))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
-          (literal_value))))
+          (null))))
     (table_constraint
       (identifier)
       (binary_expression
@@ -118,12 +100,10 @@ CREATE TABLE employees (
           (identifier))
         (binary_expression
           (binary_expression
-            (literal_value
-              (numeric_literal))
+            (integer)
             (qualified_identifier
               (identifier)))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 Foreign key with complex actions
@@ -148,13 +128,11 @@ CREATE TABLE order_items (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
         (foreign_key_clause
@@ -163,8 +141,7 @@ CREATE TABLE order_items (
           (identifier))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (foreign_key_clause
           (qualified_identifier
@@ -172,21 +149,17 @@ CREATE TABLE order_items (
           (identifier))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
-        (literal_value
-          (numeric_literal))))
+        (integer)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (qualified_identifier
@@ -226,29 +199,27 @@ LIMIT (SELECT COUNT(*) / 10 FROM large_table) OFFSET 100;
           (qualified_identifier
             (identifier)))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier)))
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))
     (limit_clause
-      (scalar_subquery
+      (subquery_expression
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (binary_expression
                   (function_call
                     (identifier))
-                  (literal_value
-                    (numeric_literal)))))
+                  (integer))))
             (from_clause
               (table_or_subquery
                 (qualified_identifier
                   (identifier)))))))
-      (literal_value
-        (numeric_literal)))))
+      (integer))))
 
 ================================================================================
 Dynamic LIMIT with parameter
@@ -273,15 +244,14 @@ LIMIT ? OFFSET ?;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))
     (limit_clause
-      (bind_parameter)
-      (bind_parameter))))
+      (parameter)
+      (parameter))))
 
 ================================================================================
 DISTINCT ON (PostgreSQL-style not in SQLite)
@@ -295,10 +265,10 @@ SELECT DISTINCT name, MAX(score) FROM players GROUP BY name;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -333,38 +303,30 @@ ORDER BY age_group, department;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (case_expression
-            (when_clause
-              (binary_expression
-                (qualified_identifier
-                  (identifier))
-                (literal_value
-                  (numeric_literal)))
-              (literal_value
-                (string_literal)))
-            (when_clause
-              (binary_expression
-                (qualified_identifier
-                  (identifier))
-                (literal_value
-                  (numeric_literal)))
-              (literal_value
-                (string_literal)))
-            (else_clause
-              (literal_value
-                (string_literal))))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (integer))
+            (string)
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (integer))
+            (string)
+            (string))
           (identifier))
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier))
           (identifier))
         (ERROR
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -378,46 +340,35 @@ ORDER BY age_group, department;
             (identifier))))
       (group_by_clause
         (case_expression
-          (when_clause
-            (binary_expression
-              (qualified_identifier
-                (identifier))
-              (literal_value
-                (numeric_literal)))
-            (literal_value
-              (string_literal)))
-          (when_clause
-            (binary_expression
-              (qualified_identifier
-                (identifier))
-              (literal_value
-                (numeric_literal)))
-            (literal_value
-              (string_literal)))
-          (else_clause
-            (literal_value
-              (string_literal))))
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (integer))
+          (string)
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (integer))
+          (string)
+          (string))
         (qualified_identifier
-          (identifier)))
-      (having_clause
+          (identifier))
         (binary_expression
           (binary_expression
             (function_call
               (identifier))
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (function_call
                 (identifier)
                 (qualified_identifier
                   (identifier)))))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (order_by_clause
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier)))
-      (order_by_item
+      (ordering_term
         (qualified_identifier
           (identifier))))))
 
@@ -449,21 +400,18 @@ CREATE TABLE complex_table (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint)
       (column_constraint
         (identifier)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
         (binary_expression
@@ -473,12 +421,10 @@ CREATE TABLE complex_table (
               (identifier)
               (qualified_identifier
                 (identifier))))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (foreign_key_clause
           (qualified_identifier
@@ -486,37 +432,28 @@ CREATE TABLE complex_table (
           (identifier))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
-        (literal_value
-          (string_literal)))
+        (string))
       (column_constraint
         (in_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal)))))
+          (string)
+          (string)
+          (string))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (between_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal))
-          (literal_value
-            (numeric_literal)))))
+          (real)
+          (real))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (binary_expression
           (binary_expression
@@ -526,46 +463,36 @@ CREATE TABLE complex_table (
                 (identifier)))
             (qualified_identifier
               (identifier)))
-          (literal_value))))
+          (null))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint)
       (column_constraint
         (parenthesized_expression
           (function_call
             (identifier)
-            (literal_value
-              (string_literal))))))
+            (string)))))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint
         (parenthesized_expression
           (function_call
             (identifier)
-            (literal_value
-              (string_literal))))))
+            (string)))))
     (table_constraint
-      (indexed_column
-        (qualified_identifier
-          (identifier)))
-      (indexed_column
-        (qualified_identifier
-          (identifier))))
+      (identifier)
+      (identifier))
     (table_constraint
       (binary_expression
         (binary_expression
-          (qualified_identifier
-            (identifier))
-          (binary_expression
-            (literal_value)
+          (is_expression
             (qualified_identifier
-              (identifier))))
-        (literal_value
-          (numeric_literal))))
+              (identifier)))
+          (qualified_identifier
+            (identifier)))
+        (integer)))
     (table_constraint
       (identifier)
       (foreign_key_clause
@@ -597,71 +524,58 @@ CREATE TABLE precise_data (
       (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
+      (type_name)
       (column_constraint))
     (column_definition
       (identifier)
       (type_name
-        (identifier)
-        (signed_number
-          (numeric_literal)))
+        (integer))
       (column_constraint))
     (column_definition
       (identifier)
       (type_name
-        (identifier)
-        (signed_number
-          (numeric_literal))))
+        (integer)))
     (column_definition
       (identifier)
       (type_name
-        (identifier)
-        (signed_number
-          (numeric_literal))
-        (signed_number
-          (numeric_literal)))
+        (integer)
+        (integer))
       (column_constraint
         (binary_expression
           (qualified_identifier
             (identifier))
-          (literal_value
-            (numeric_literal)))))
+          (integer))))
+    (column_definition
+      (identifier))
+    (ERROR
+      (identifier))
     (column_definition
       (identifier)
       (type_name
-        (identifier)))
+        (integer)))
     (column_definition
       (identifier)
-      (type_name
-        (identifier)
-        (signed_number
-          (numeric_literal))))
-    (column_definition
-      (identifier)
-      (type_name
+      (ERROR
         (identifier))
       (column_constraint
-        (literal_value)))
+        (qualified_identifier
+          (identifier))))
+    (ERROR
+      (identifier))
     (column_definition
       (identifier)
-      (type_name
-        (identifier))
       (column_constraint
-        (literal_value
-          (string_literal))))
+        (string)))
     (table_constraint
       (identifier)
       (binary_expression
         (binary_expression
-          (qualified_identifier
-            (identifier))
-          (binary_expression
-            (literal_value)
+          (is_expression
             (qualified_identifier
-              (identifier))))
-        (literal_value
-          (numeric_literal))))))
+              (identifier)))
+          (qualified_identifier
+            (identifier)))
+        (integer)))))
 
 ================================================================================
 Partial indexes with complex WHERE clauses
@@ -676,7 +590,8 @@ WHERE active = 1 AND score > 80 AND last_login > date('now', '-30 days');
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (qualified_identifier
         (identifier)))
@@ -690,21 +605,17 @@ WHERE active = 1 AND score > 80 AND last_login > date('now', '-30 days');
             (qualified_identifier
               (identifier))
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (qualified_identifier
                 (identifier))))
           (binary_expression
-            (literal_value
-              (numeric_literal))
+            (integer)
             (qualified_identifier
               (identifier))))
         (function_call
           (identifier)
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal)))))))
+          (string)
+          (string))))))
 
 ================================================================================
 Expression indexes
@@ -719,7 +630,8 @@ CREATE UNIQUE INDEX email_domain_idx ON users (SUBSTR(email, INSTR(email, '@') +
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (function_call
         (identifier)
@@ -728,7 +640,8 @@ CREATE UNIQUE INDEX email_domain_idx ON users (SUBSTR(email, INSTR(email, '@') +
   (create_index_statement
     (qualified_identifier
       (identifier))
-    (identifier)
+    (qualified_identifier
+      (identifier))
     (indexed_column
       (function_call
         (identifier)
@@ -739,7 +652,5 @@ CREATE UNIQUE INDEX email_domain_idx ON users (SUBSTR(email, INSTR(email, '@') +
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal)))
-          (literal_value
-            (numeric_literal)))))))
+            (string))
+          (integer))))))

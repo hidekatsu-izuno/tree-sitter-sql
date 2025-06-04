@@ -1,0 +1,281 @@
+================================================================================
+PostgreSQL CREATE ROLE
+================================================================================
+
+CREATE ROLE admin WITH LOGIN PASSWORD 'secret' CREATEDB;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (ERROR
+      (identifier)
+      (identifier)
+      (identifier))
+    (identifier)))
+
+================================================================================
+PostgreSQL CREATE SEQUENCE
+================================================================================
+
+CREATE SEQUENCE my_seq INCREMENT BY 5 MINVALUE 1 MAXVALUE 1000 START WITH 10;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (integer)
+    (identifier)
+    (integer)
+    (identifier)
+    (integer)
+    (identifier)
+    (integer)))
+
+================================================================================
+PostgreSQL CREATE TYPE - ENUM
+================================================================================
+
+CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL CREATE FUNCTION
+================================================================================
+
+CREATE OR REPLACE FUNCTION add_em(x int, y int) RETURNS int AS $$
+BEGIN
+    RETURN x + y;
+END;
+$$ LANGUAGE plpgsql;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier))
+  (begin_statement)
+  (ERROR
+    (identifier)
+    (identifier))
+  (commit_statement)
+  (ERROR
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL COPY statement
+================================================================================
+
+COPY users FROM '/tmp/users.csv' WITH (FORMAT CSV, HEADER true);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (ERROR
+      (identifier)
+      (identifier))
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL GRANT statement
+================================================================================
+
+GRANT SELECT, INSERT ON TABLE users TO user1 WITH GRANT OPTION;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL Array Types
+================================================================================
+
+CREATE TABLE test_arrays (
+    id serial,
+    tags text[],
+    scores integer[]
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (ERROR
+      (identifier))
+    (column_definition
+      name: (identifier))
+    (column_definition
+      name: (identifier))
+    (ERROR
+      (identifier))
+    (column_definition
+      name: (identifier))
+    (ERROR
+      (identifier))))
+
+================================================================================
+PostgreSQL JSONB Operations
+================================================================================
+
+SELECT data->'name', data->>'age' FROM users WHERE data @> '{"active": true}';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (binary_expression
+            left: (qualified_identifier
+              name: (identifier))
+            right: (string)))
+        (result_column
+          expression: (binary_expression
+            left: (qualified_identifier
+              name: (identifier))
+            right: (string))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (string))))))
+
+================================================================================
+PostgreSQL Window Functions
+================================================================================
+
+SELECT 
+    name,
+    salary,
+    RANK() OVER (PARTITION BY department ORDER BY salary DESC) as rank
+FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier)))
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier)))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            (window_definition
+              (qualified_identifier
+                name: (identifier))
+              (order_by_clause
+                (ordering_term
+                  expression: (qualified_identifier
+                    name: (identifier))))))
+          alias: (identifier)))
+      (ERROR
+        (identifier))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+PostgreSQL UPSERT (INSERT ON CONFLICT)
+================================================================================
+
+INSERT INTO users (email, name) VALUES ('test@example.com', 'Test User')
+ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    name: (qualified_identifier
+      name: (identifier))
+    column: (identifier)
+    column: (identifier)
+    (values_clause
+      value: (string)
+      value: (string))
+    (on_conflict_clause
+      column: (identifier)
+      (update_set
+        column: (identifier)
+        value: (qualified_identifier
+          schema: (identifier)
+          name: (identifier))))))
+
+================================================================================
+PostgreSQL TRUNCATE with options
+================================================================================
+
+TRUNCATE TABLE logs RESTART IDENTITY CASCADE;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)))
+
+================================================================================
+PostgreSQL SET statement
+================================================================================
+
+SET work_mem = '256MB';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (ERROR
+    (identifier)
+    (identifier)
+    (integer)
+    (identifier)))

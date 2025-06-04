@@ -14,15 +14,15 @@ SELECT * FROM user_counts;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (function_call
                   (identifier))
                 (identifier)))
@@ -61,7 +61,7 @@ GROUP BY u.id, u.name;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
@@ -74,9 +74,8 @@ GROUP BY u.id, u.name;
               (binary_expression
                 (qualified_identifier
                   (identifier))
-                (literal_value
-                  (string_literal)))))))
-      (cte
+                (string))))))
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
@@ -91,17 +90,15 @@ GROUP BY u.id, u.name;
                   (identifier))
                 (function_call
                   (identifier)
-                  (literal_value
-                    (string_literal))
-                  (literal_value
-                    (string_literal)))))))))
+                  (string)
+                  (string))))))))
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier)))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -114,7 +111,6 @@ GROUP BY u.id, u.name;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -153,22 +149,21 @@ SELECT * FROM revenue_by_month;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (identifier)
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
-                  (literal_value
-                    (string_literal))
+                  (string)
                   (qualified_identifier
                     (identifier)))
                 (identifier))
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (qualified_identifier
@@ -181,8 +176,7 @@ SELECT * FROM revenue_by_month;
             (group_by_clause
               (function_call
                 (identifier)
-                (literal_value
-                  (string_literal))
+                (string)
                 (qualified_identifier
                   (identifier))))))))
     (select_core
@@ -214,73 +208,70 @@ SELECT * FROM employee_hierarchy;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
-                (literal_value
-                  (numeric_literal))
+              (result_column
+                (integer)
                 (identifier)))
             (from_clause
               (table_or_subquery
                 (qualified_identifier
                   (identifier))))
             (where_clause
-              (binary_expression
+              (is_expression
                 (qualified_identifier
-                  (identifier))
-                (literal_value))))
-          (select_core
-            (select_list
-              (select_item
-                (qualified_identifier
-                  (identifier)
-                  (identifier)))
-              (select_item
-                (qualified_identifier
-                  (identifier)
-                  (identifier)))
-              (select_item
-                (qualified_identifier
-                  (identifier)
-                  (identifier)))
-              (select_item
-                (binary_expression
+                  (identifier)))))
+          (compound_operator
+            (select_core
+              (select_list
+                (result_column
                   (qualified_identifier
                     (identifier)
-                    (identifier))
-                  (literal_value
-                    (numeric_literal)))))
-            (from_clause
-              (table_or_subquery
-                (qualified_identifier
-                  (identifier))
-                (identifier))
-              (join_clause
-                (join_operator)
-                (table_or_subquery
+                    (identifier)))
+                (result_column
                   (qualified_identifier
-                    (identifier))
-                  (identifier))
-                (join_constraint
+                    (identifier)
+                    (identifier)))
+                (result_column
+                  (qualified_identifier
+                    (identifier)
+                    (identifier)))
+                (result_column
                   (binary_expression
                     (qualified_identifier
                       (identifier)
                       (identifier))
+                    (integer))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier
+                    (identifier))
+                  (identifier))
+                (join_clause
+                  (table_or_subquery
                     (qualified_identifier
-                      (identifier)
-                      (identifier))))))))))
+                      (identifier))
+                    (identifier))
+                  (join_constraint
+                    (binary_expression
+                      (qualified_identifier
+                        (identifier)
+                        (identifier))
+                      (qualified_identifier
+                        (identifier)
+                        (identifier)))))))))))
     (select_core
       (select_list)
       (from_clause
@@ -318,36 +309,36 @@ SELECT * FROM running_total;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier))))
             (from_clause
               (table_or_subquery
                 (qualified_identifier
                   (identifier)))))))
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (binary_expression
@@ -363,25 +354,25 @@ SELECT * FROM running_total;
             (group_by_clause
               (qualified_identifier
                 (identifier))))))
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (qualified_identifier
                     (identifier))
                   (window_definition
                     (order_by_clause
-                      (order_by_item
+                      (ordering_term
                         (qualified_identifier
                           (identifier))))))
                 (identifier)))
@@ -414,12 +405,14 @@ JOIN cte c ON p.category = c.category;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
+        (ERROR
+          (identifier))
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier))))
             (from_clause
@@ -430,15 +423,12 @@ JOIN cte c ON p.category = c.category;
               (binary_expression
                 (qualified_identifier
                   (identifier))
-                (literal_value
-                  (numeric_literal))))))))
+                (integer)))))))
     (select_core
       (select_list
-        (select_item
-          (qualified_identifier
-            (identifier)))
-        (ERROR)
-        (select_item
+        (result_column
+          (identifier))
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))))
@@ -448,7 +438,6 @@ JOIN cte c ON p.category = c.category;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -480,15 +469,17 @@ LEFT JOIN cte c ON u.id = c.user_id;
 (source_file
   (select_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
+        (ERROR
+          (identifier))
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (qualified_identifier
@@ -503,11 +494,9 @@ LEFT JOIN cte c ON u.id = c.user_id;
                 (identifier)))))))
     (select_core
       (select_list
-        (select_item
-          (qualified_identifier
-            (identifier)))
-        (ERROR)
-        (select_item
+        (result_column
+          (identifier))
+        (result_column
           (qualified_identifier
             (identifier)
             (identifier))))
@@ -517,7 +506,6 @@ LEFT JOIN cte c ON u.id = c.user_id;
             (identifier))
           (identifier))
         (join_clause
-          (join_operator)
           (table_or_subquery
             (qualified_identifier
               (identifier))
@@ -548,27 +536,24 @@ SELECT name, email FROM new_users;
 (source_file
   (insert_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
-                (literal_value
-                  (string_literal))
+              (result_column
+                (string)
                 (identifier))
-              (select_item
-                (literal_value
-                  (string_literal))
+              (result_column
+                (string)
                 (identifier))))
-          (select_core
-            (select_list
-              (select_item
-                (literal_value
-                  (string_literal)))
-              (select_item
-                (literal_value
-                  (string_literal))))))))
+          (compound_operator
+            (select_core
+              (select_list
+                (result_column
+                  (string))
+                (result_column
+                  (string))))))))
     (qualified_identifier
       (identifier))
     (identifier)
@@ -576,10 +561,10 @@ SELECT name, email FROM new_users;
     (select_statement
       (select_core
         (select_list
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier)))
-          (select_item
+          (result_column
             (qualified_identifier
               (identifier))))
         (from_clause
@@ -609,15 +594,15 @@ WHERE salary < (
 (source_file
   (update_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier)))
-              (select_item
+              (result_column
                 (function_call
                   (identifier)
                   (qualified_identifier
@@ -637,17 +622,16 @@ WHERE salary < (
       (binary_expression
         (qualified_identifier
           (identifier))
-        (literal_value
-          (numeric_literal))))
+        (real)))
     (where_clause
       (binary_expression
         (qualified_identifier
           (identifier))
-        (scalar_subquery
+        (subquery_expression
           (select_statement
             (select_core
               (select_list
-                (select_item
+                (result_column
                   (qualified_identifier
                     (identifier))))
               (from_clause
@@ -681,12 +665,12 @@ WHERE user_id IN (SELECT id FROM inactive_users);
 (source_file
   (delete_statement
     (with_clause
-      (cte
+      (common_table_expression
         (identifier)
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier))))
             (from_clause
@@ -701,14 +685,11 @@ WHERE user_id IN (SELECT id FROM inactive_users);
                   (binary_expression
                     (function_call
                       (identifier)
-                      (literal_value
-                        (string_literal))
-                      (literal_value
-                        (string_literal)))
+                      (string)
+                      (string))
                     (qualified_identifier
                       (identifier)))
-                  (literal_value
-                    (string_literal)))))))))
+                  (string))))))))
     (qualified_identifier
       (identifier))
     (where_clause
@@ -718,7 +699,7 @@ WHERE user_id IN (SELECT id FROM inactive_users);
         (select_statement
           (select_core
             (select_list
-              (select_item
+              (result_column
                 (qualified_identifier
                   (identifier))))
             (from_clause

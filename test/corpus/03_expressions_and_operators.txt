@@ -15,40 +15,38 @@ FROM products;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (integer))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (integer))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -85,34 +83,28 @@ WHERE age > 18
                 (qualified_identifier
                   (identifier))
                 (binary_expression
-                  (literal_value
-                    (numeric_literal))
+                  (integer)
                   (qualified_identifier
                     (identifier))))
               (binary_expression
                 (binary_expression
-                  (literal_value
-                    (numeric_literal))
+                  (integer)
                   (qualified_identifier
                     (identifier)))
                 (binary_expression
-                  (literal_value
-                    (string_literal))
+                  (string)
                   (qualified_identifier
                     (identifier)))))
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (qualified_identifier
                 (identifier))))
           (binary_expression
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (qualified_identifier
                 (identifier)))
-            (literal_value
-              (string_literal))))))))
+            (string)))))))
 
 ================================================================================
 Logical operators
@@ -142,17 +134,14 @@ WHERE (category = 'electronics' OR category = 'computers')
                   (qualified_identifier
                     (identifier))
                   (binary_expression
-                    (literal_value
-                      (string_literal))
+                    (string)
                     (qualified_identifier
                       (identifier))))
-                (literal_value
-                  (string_literal))))
+                (string)))
             (qualified_identifier
               (identifier)))
           (binary_expression
-            (literal_value
-              (numeric_literal))
+            (integer)
             (unary_expression
               (qualified_identifier
                 (identifier)))))))))
@@ -176,29 +165,27 @@ WHERE status IN ('active', 'pending', 'verified')
           (qualified_identifier
             (identifier))))
       (where_clause
-        (in_expression
+        (binary_expression
           (binary_expression
             (in_expression
               (qualified_identifier
                 (identifier))
-              (literal_value
-                (string_literal))
-              (literal_value
-                (string_literal))
-              (literal_value
-                (string_literal)))
+              (string)
+              (string)
+              (string))
             (qualified_identifier
               (identifier)))
-          (select_statement
-            (select_core
-              (select_list
-                (select_item
-                  (qualified_identifier
-                    (identifier))))
-              (from_clause
-                (table_or_subquery
-                  (qualified_identifier
-                    (identifier)))))))))))
+          (subquery_expression
+            (select_statement
+              (select_core
+                (select_list
+                  (result_column
+                    (qualified_identifier
+                      (identifier))))
+                (from_clause
+                  (table_or_subquery
+                    (qualified_identifier
+                      (identifier))))))))))))
 
 ================================================================================
 BETWEEN operator
@@ -225,16 +212,12 @@ WHERE order_date BETWEEN '2023-01-01' AND '2023-12-31'
     (between_expression
       (binary_expression
         (binary_expression
-          (literal_value
-            (string_literal))
-          (literal_value
-            (string_literal)))
+          (string)
+          (string))
         (qualified_identifier
           (identifier)))
-      (literal_value
-        (numeric_literal))
-      (literal_value
-        (numeric_literal)))))
+      (integer)
+      (integer))))
 
 ================================================================================
 LIKE patterns
@@ -257,29 +240,25 @@ WHERE email LIKE '%@gmail.com'
           (qualified_identifier
             (identifier))))
       (where_clause
-        (like_expression
-          (like_expression
-            (like_expression
-              (like_expression
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
                 (qualified_identifier
                   (identifier))
                 (binary_expression
-                  (literal_value
-                    (string_literal))
+                  (string)
                   (qualified_identifier
                     (identifier))))
               (binary_expression
-                (literal_value
-                  (string_literal))
+                (string)
                 (qualified_identifier
                   (identifier))))
             (binary_expression
-              (literal_value
-                (string_literal))
+              (string)
               (qualified_identifier
                 (identifier))))
-          (literal_value
-            (string_literal)))))))
+          (string))))))
 
 ================================================================================
 NULL handling
@@ -305,32 +284,27 @@ WHERE description IS NULL
         (binary_expression
           (binary_expression
             (binary_expression
-              (qualified_identifier
-                (identifier))
-              (binary_expression
-                (literal_value)
+              (is_expression
                 (qualified_identifier
-                  (identifier))))
+                  (identifier)))
+              (qualified_identifier
+                (identifier)))
             (binary_expression
-              (literal_value)
+              (null)
               (function_call
                 (identifier)
                 (qualified_identifier
                   (identifier))
-                (literal_value
-                  (numeric_literal)))))
+                (integer))))
           (binary_expression
             (binary_expression
-              (literal_value
-                (numeric_literal))
+              (integer)
               (function_call
                 (identifier)
                 (qualified_identifier
                   (identifier))
-                (literal_value
-                  (string_literal))))
-            (literal_value
-              (string_literal))))))))
+                (string)))
+            (string)))))))
 
 ================================================================================
 CASE expressions
@@ -356,48 +330,32 @@ FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (qualified_identifier
             (identifier)))
-        (select_item
+        (result_column
           (case_expression
-            (when_clause
-              (binary_expression
-                (qualified_identifier
-                  (identifier))
-                (literal_value
-                  (numeric_literal)))
-              (literal_value
-                (string_literal)))
-            (when_clause
-              (binary_expression
-                (qualified_identifier
-                  (identifier))
-                (literal_value
-                  (numeric_literal)))
-              (literal_value
-                (string_literal)))
-            (else_clause
-              (literal_value
-                (string_literal))))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (integer))
+            (string)
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (integer))
+            (string)
+            (string))
           (identifier))
-        (select_item
+        (result_column
           (case_expression
             (qualified_identifier
               (identifier))
-            (when_clause
-              (literal_value
-                (string_literal))
-              (literal_value
-                (numeric_literal)))
-            (when_clause
-              (literal_value
-                (string_literal))
-              (literal_value
-                (numeric_literal)))
-            (else_clause
-              (literal_value
-                (numeric_literal))))
+            (string)
+            (integer)
+            (string)
+            (integer)
+            (integer))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -423,49 +381,45 @@ FROM data;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal))
-            (literal_value
-              (numeric_literal)))
+            (integer)
+            (integer))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (string_literal))
-            (literal_value
-              (string_literal)))
+            (string)
+            (string))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -489,34 +443,29 @@ FROM users;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (string_literal)))
+            (string))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (string_literal))
-            (literal_value
-              (string_literal)))
+            (string)
+            (string))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
-            (literal_value
-              (string_literal))
+            (string)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (function_call
               (identifier)
-              (literal_value
-                (string_literal)))
+              (string))
             (function_call
               (identifier)
               (qualified_identifier
@@ -546,33 +495,32 @@ FROM products;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (integer))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -580,13 +528,12 @@ FROM products;
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (integer))
           (identifier)))
       (from_clause
         (table_or_subquery
@@ -610,28 +557,24 @@ FROM inventory;
   (select_statement
     (select_core
       (select_list
-        (select_item
+        (result_column
           (cast_expression
             (qualified_identifier
               (identifier))
-            (type_name
-              (identifier)))
+            (type_name))
           (identifier))
-        (select_item
+        (result_column
           (cast_expression
             (qualified_identifier
               (identifier))
-            (type_name
-              (identifier)))
+            (type_name))
           (identifier))
-        (select_item
+        (result_column
           (cast_expression
-            (literal_value
-              (string_literal))
-            (type_name
-              (identifier)))
+            (string)
+            (type_name))
           (identifier))
-        (select_item
+        (result_column
           (function_call
             (identifier)
             (qualified_identifier
@@ -659,39 +602,45 @@ FROM settings;
 (source_file
   (select_statement
     (select_core
+      (ERROR
+        (result_column
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (integer))
+          (identifier))
+        (select_list
+          (result_column
+            (qualified_identifier
+              (identifier))
+            (identifier))
+          (result_column
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (integer))
+            (identifier))))
       (select_list
-        (select_item
-          (binary_expression
-            (qualified_identifier
-              (identifier))
-            (literal_value
-              (numeric_literal)))
+        (result_column
+          (qualified_identifier
+            (identifier))
           (identifier))
-        (select_item
-          (binary_expression
-            (qualified_identifier
-              (identifier))
-            (literal_value
-              (numeric_literal)))
-          (identifier))
-        (select_item
+        (result_column
           (unary_expression
             (qualified_identifier
               (identifier)))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (integer))
           (identifier))
-        (select_item
+        (result_column
           (binary_expression
             (qualified_identifier
               (identifier))
-            (literal_value
-              (numeric_literal)))
+            (integer))
           (identifier)))
       (from_clause
         (table_or_subquery
