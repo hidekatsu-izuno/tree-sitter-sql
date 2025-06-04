@@ -1,0 +1,333 @@
+================================================================================
+Complex arithmetic precedence
+================================================================================
+
+SELECT 2 + 3 * 4;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (literal_value
+                (numeric_literal)))
+            (literal_value
+              (numeric_literal))))))))
+
+================================================================================
+String concatenation vs arithmetic
+================================================================================
+
+SELECT 'a' || 'b' + 'c';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (literal_value
+              (string_literal))
+            (binary_expression
+              (literal_value
+                (string_literal))
+              (literal_value
+                (string_literal)))))))))
+
+================================================================================
+Comparison vs logical operators
+================================================================================
+
+SELECT 1 = 1 AND 2 > 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (binary_expression
+                (literal_value
+                  (numeric_literal))
+                (literal_value
+                  (numeric_literal))))
+            (literal_value
+              (numeric_literal))))))))
+
+================================================================================
+Bitwise operations precedence
+================================================================================
+
+SELECT 8 >> 1 & 3;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (literal_value
+                (numeric_literal)))
+            (literal_value
+              (numeric_literal))))))))
+
+================================================================================
+Complex mixed precedence
+================================================================================
+
+SELECT 1 + 2 * 3 = 7 AND 4 | 2 & 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (literal_value
+                (numeric_literal)))
+            (binary_expression
+              (binary_expression
+                (binary_expression
+                  (literal_value
+                    (numeric_literal))
+                  (binary_expression
+                    (literal_value
+                      (numeric_literal))
+                    (literal_value
+                      (numeric_literal))))
+                (literal_value
+                  (numeric_literal)))
+              (literal_value
+                (numeric_literal)))))))))
+
+================================================================================
+LIKE vs AND precedence
+================================================================================
+
+SELECT * FROM t WHERE a LIKE 'x%' AND b = 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (like_expression
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (literal_value
+                (string_literal))
+              (qualified_identifier
+                (identifier))))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+IS vs AND precedence
+================================================================================
+
+SELECT * FROM t WHERE a IS NULL AND b = 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (literal_value)
+              (qualified_identifier
+                (identifier))))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+BETWEEN vs AND precedence
+================================================================================
+
+SELECT * FROM t WHERE a BETWEEN 1 AND 10 AND b = 2;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (qualified_identifier
+          (identifier)))))
+  (ERROR
+    (binary_expression
+      (binary_expression
+        (binary_expression
+          (literal_value
+            (numeric_literal))
+          (literal_value
+            (numeric_literal)))
+        (qualified_identifier
+          (identifier)))
+      (literal_value
+        (numeric_literal)))))
+
+================================================================================
+NOT precedence with LIKE
+================================================================================
+
+SELECT * FROM t WHERE NOT a LIKE 'x%' AND b = 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (like_expression
+            (unary_expression
+              (qualified_identifier
+                (identifier)))
+            (binary_expression
+              (literal_value
+                (string_literal))
+              (qualified_identifier
+                (identifier))))
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+COLLATE in expression precedence
+================================================================================
+
+SELECT a COLLATE NOCASE = b FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (collate_expression
+              (qualified_identifier
+                (identifier))
+              (identifier))
+            (qualified_identifier
+              (identifier)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Complex parenthesized precedence
+================================================================================
+
+SELECT (1 + 2) * (3 + 4) = 21;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (parenthesized_expression
+              (binary_expression
+                (literal_value
+                  (numeric_literal))
+                (literal_value
+                  (numeric_literal))))
+            (binary_expression
+              (parenthesized_expression
+                (binary_expression
+                  (literal_value
+                    (numeric_literal))
+                  (literal_value
+                    (numeric_literal))))
+              (literal_value
+                (numeric_literal)))))))))
+
+================================================================================
+OR vs AND precedence
+================================================================================
+
+SELECT * FROM t WHERE a = 1 AND b = 2 OR c = 3;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (binary_expression
+                (literal_value
+                  (numeric_literal))
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (literal_value
+                (numeric_literal))
+              (qualified_identifier
+                (identifier))))
+          (literal_value
+            (numeric_literal)))))))

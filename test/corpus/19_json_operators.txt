@@ -1,0 +1,276 @@
+================================================================================
+JSON extract operator - single arrow
+================================================================================
+
+SELECT data->'$.name' FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON extract operator - double arrow
+================================================================================
+
+SELECT data->>'$.age' FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON complex path extraction
+================================================================================
+
+SELECT json->'$.items[0].price' FROM orders;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON nested extraction
+================================================================================
+
+SELECT user_data->'$.profile'->'$.name' FROM accounts;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (json_extract_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal)))
+            (literal_value
+              (string_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON in WHERE clause
+================================================================================
+
+SELECT * FROM users WHERE data->>'$.status' = 'active';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+JSON with functions
+================================================================================
+
+SELECT json_valid(data->'$.config') FROM settings;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (json_extract_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON array access
+================================================================================
+
+SELECT items->'$[0]' FROM lists;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON with aliases
+================================================================================
+
+SELECT 
+  data->'$.name' AS name,
+  data->>'$.age' AS age
+FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))
+          (identifier))
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (string_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+JSON in ORDER BY
+================================================================================
+
+SELECT * FROM products ORDER BY data->>'$.price' DESC;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))
+    (order_by_clause
+      (order_by_item
+        (json_extract_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (string_literal)))))))
+
+================================================================================
+JSON with parameters
+================================================================================
+
+SELECT data->? FROM users WHERE id = ?;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (json_extract_expression
+            (qualified_identifier
+              (identifier))
+            (bind_parameter))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (bind_parameter))))))
+
+================================================================================
+JSON in INSERT
+================================================================================
+
+INSERT INTO logs (data) VALUES (json_set('{}', '$.event', 'login'));
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (insert_statement
+    (qualified_identifier
+      (identifier))
+    (identifier)
+    (values_clause
+      (function_call
+        (identifier)
+        (literal_value
+          (string_literal))
+        (literal_value
+          (string_literal))
+        (literal_value
+          (string_literal))))))

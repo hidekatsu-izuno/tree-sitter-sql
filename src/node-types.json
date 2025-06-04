@@ -159,6 +159,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -255,6 +259,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -343,6 +351,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -446,6 +458,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -538,6 +554,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -648,6 +668,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -776,6 +800,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -1103,6 +1131,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -1296,6 +1328,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -1520,6 +1556,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -1717,6 +1757,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -1871,6 +1915,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -1970,6 +2018,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -2061,6 +2113,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -2149,6 +2205,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -2264,6 +2324,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -2436,6 +2500,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -2550,6 +2618,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -2592,6 +2664,101 @@
     "type": "join_operator",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "json_extract_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "between_expression",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "bind_parameter",
+          "named": true
+        },
+        {
+          "type": "case_expression",
+          "named": true
+        },
+        {
+          "type": "cast_expression",
+          "named": true
+        },
+        {
+          "type": "collate_expression",
+          "named": true
+        },
+        {
+          "type": "exists_expression",
+          "named": true
+        },
+        {
+          "type": "function_call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "in_expression",
+          "named": true
+        },
+        {
+          "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
+          "type": "like_expression",
+          "named": true
+        },
+        {
+          "type": "literal_value",
+          "named": true
+        },
+        {
+          "type": "notnull_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "qualified_identifier",
+          "named": true
+        },
+        {
+          "type": "quoted_identifier",
+          "named": true
+        },
+        {
+          "type": "raise_function",
+          "named": true
+        },
+        {
+          "type": "scalar_subquery",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "like_expression",
@@ -2643,6 +2810,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -2734,6 +2905,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -2848,6 +3023,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -2993,6 +3172,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -3081,6 +3264,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -3451,6 +3638,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -3748,6 +3939,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -3940,6 +4135,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -4043,6 +4242,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -4216,6 +4419,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -4304,6 +4511,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -4398,6 +4609,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -4486,6 +4701,10 @@
         },
         {
           "type": "isnull_expression",
+          "named": true
+        },
+        {
+          "type": "json_extract_expression",
           "named": true
         },
         {
@@ -4629,6 +4848,10 @@
           "named": true
         },
         {
+          "type": "json_extract_expression",
+          "named": true
+        },
+        {
           "type": "like_expression",
           "named": true
         },
@@ -4732,6 +4955,14 @@
   },
   {
     "type": "-",
+    "named": false
+  },
+  {
+    "type": "->",
+    "named": false
+  },
+  {
+    "type": "->>",
     "named": false
   },
   {
@@ -5107,7 +5338,15 @@
     "named": false
   },
   {
+    "type": "IS DISTINCT FROM",
+    "named": false
+  },
+  {
     "type": "IS NOT",
+    "named": false
+  },
+  {
+    "type": "IS NOT DISTINCT FROM",
     "named": false
   },
   {
@@ -5331,6 +5570,10 @@
     "named": false
   },
   {
+    "type": "STRICT",
+    "named": false
+  },
+  {
     "type": "TABLE",
     "named": false
   },
@@ -5428,6 +5671,10 @@
   },
   {
     "type": "WITH",
+    "named": false
+  },
+  {
+    "type": "WITHIN",
     "named": false
   },
   {

@@ -774,6 +774,10 @@
         },
         {
           "type": "STRING",
+          "value": "STRICT"
+        },
+        {
+          "type": "STRING",
           "value": "SAVEPOINT"
         },
         {
@@ -3119,6 +3123,18 @@
                           "value": "ROWID"
                         }
                       ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "STRICT"
                     },
                     {
                       "type": "BLANK"
@@ -5602,6 +5618,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "json_extract_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "raise_function"
         }
       ]
@@ -5669,31 +5689,31 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "\\d+"
+          "value": "\\d+(_\\d+)*"
         },
         {
           "type": "PATTERN",
-          "value": "\\d+\\.\\d*"
+          "value": "\\d+(_\\d+)*\\.\\d*(_\\d+)*"
         },
         {
           "type": "PATTERN",
-          "value": "\\.\\d+"
+          "value": "\\.\\d+(_\\d+)*"
         },
         {
           "type": "PATTERN",
-          "value": "\\d+[eE][+-]?\\d+"
+          "value": "\\d+(_\\d+)*[eE][+-]?\\d+(_\\d+)*"
         },
         {
           "type": "PATTERN",
-          "value": "\\d+\\.\\d*[eE][+-]?\\d+"
+          "value": "\\d+(_\\d+)*\\.\\d*(_\\d+)*[eE][+-]?\\d+(_\\d+)*"
         },
         {
           "type": "PATTERN",
-          "value": "\\.\\d+[eE][+-]?\\d+"
+          "value": "\\.\\d+(_\\d+)*[eE][+-]?\\d+(_\\d+)*"
         },
         {
           "type": "PATTERN",
-          "value": "0x[0-9a-fA-F]+"
+          "value": "0x[0-9a-fA-F]+(_[0-9a-fA-F]+)*"
         }
       ]
     },
@@ -6210,6 +6230,48 @@
         },
         {
           "type": "PREC_LEFT",
+          "value": 6,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              {
+                "type": "STRING",
+                "value": "IS DISTINCT FROM"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 6,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              {
+                "type": "STRING",
+                "value": "IS NOT DISTINCT FROM"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
           "value": 7,
           "content": {
             "type": "SEQ",
@@ -6651,6 +6713,39 @@
                 "members": [
                   {
                     "type": "STRING",
+                    "value": "WITHIN"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "GROUP"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "("
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "order_by_clause"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ")"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
                     "value": "FILTER"
                   },
                   {
@@ -6861,6 +6956,36 @@
           "name": "_expression"
         }
       ]
+    },
+    "json_extract_expression": {
+      "type": "PREC_LEFT",
+      "value": 6,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_expression"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "->"
+              },
+              {
+                "type": "STRING",
+                "value": "->>"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        ]
+      }
     },
     "raise_function": {
       "type": "SEQ",

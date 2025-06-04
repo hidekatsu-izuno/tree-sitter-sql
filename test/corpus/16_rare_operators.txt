@@ -1,0 +1,739 @@
+================================================================================
+GLOB operator - basic pattern matching
+================================================================================
+
+SELECT * FROM users WHERE name GLOB 'J*';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+GLOB operator - case sensitivity test
+================================================================================
+
+SELECT * FROM files WHERE path GLOB '*.TXT';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+GLOB operator - character ranges
+================================================================================
+
+SELECT * FROM products WHERE code GLOB '[A-Z][0-9][0-9][0-9]';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+GLOB operator - with NOT
+================================================================================
+
+SELECT * FROM files WHERE filename NOT GLOB '*.tmp';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+REGEXP operator - basic regex matching
+================================================================================
+
+SELECT * FROM emails WHERE address REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+REGEXP operator - digit matching
+================================================================================
+
+SELECT * FROM logs WHERE message REGEXP '[0-9]{3}-[0-9]{4}';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+REGEXP operator - with NOT
+================================================================================
+
+SELECT * FROM users WHERE username NOT REGEXP '^admin';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+REGEXP operator - word boundaries
+================================================================================
+
+SELECT * FROM documents WHERE content REGEXP '\bSQLite\b';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+REGEXP operator - alternation
+================================================================================
+
+SELECT * FROM products WHERE category REGEXP 'electronics|computers|phones';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+MATCH operator - basic usage
+================================================================================
+
+SELECT * FROM articles WHERE title MATCH 'database';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+MATCH operator - with FTS table
+================================================================================
+
+SELECT * FROM fts_documents WHERE content MATCH 'sqlite OR database';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+MATCH operator - phrase search
+================================================================================
+
+SELECT * FROM documents WHERE text MATCH '"full text search"';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+MATCH operator - with NOT
+================================================================================
+
+SELECT * FROM articles WHERE content NOT MATCH 'deprecated';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+MATCH operator - complex FTS query
+================================================================================
+
+SELECT docid, snippet(docs) FROM docs WHERE docs MATCH 'sqlite NEAR database';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (qualified_identifier (identifier)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+GLOB operator - in CASE expression
+================================================================================
+
+SELECT 
+  filename,
+  CASE 
+    WHEN filename GLOB '*.jpg' THEN 'image'
+    WHEN filename GLOB '*.txt' THEN 'text'
+    ELSE 'other'
+  END file_type
+FROM files;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier (identifier)))
+        (select_item
+          (case_expression
+            (when_clause
+              (like_expression
+                (qualified_identifier (identifier))
+                (literal_value (string_literal)))
+              (literal_value (string_literal)))
+            (when_clause
+              (like_expression
+                (qualified_identifier (identifier))
+                (literal_value (string_literal)))
+              (literal_value (string_literal)))
+            (else_clause (literal_value (string_literal))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier)))))))
+
+================================================================================
+Combined operators - GLOB and REGEXP
+================================================================================
+
+SELECT * FROM files 
+WHERE filename GLOB '*.log' 
+   OR filename REGEXP '^error_[0-9]{8}\.txt$';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (like_expression
+            (qualified_identifier (identifier))
+            (binary_expression
+              (literal_value (string_literal))
+              (qualified_identifier (identifier))))
+          (literal_value (string_literal)))))))
+
+================================================================================
+Combined operators - LIKE, GLOB, and MATCH
+================================================================================
+
+SELECT * FROM products 
+WHERE name LIKE '%phone%' 
+  AND category GLOB 'Electronics*'
+  AND description MATCH 'smartphone';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (like_expression
+            (like_expression
+              (qualified_identifier (identifier))
+              (binary_expression
+                (literal_value (string_literal))
+                (qualified_identifier (identifier))))
+            (binary_expression
+              (literal_value (string_literal))
+              (qualified_identifier (identifier))))
+          (literal_value (string_literal)))))))
+
+================================================================================
+Operators in subqueries
+================================================================================
+
+SELECT * FROM users 
+WHERE id IN (
+  SELECT user_id FROM activities 
+  WHERE action REGEXP '^(login|logout)$'
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (in_expression
+          (qualified_identifier (identifier))
+          (select_statement
+            (select_core
+              (select_list
+                (select_item
+                  (qualified_identifier (identifier))))
+              (from_clause
+                (table_or_subquery
+                  (qualified_identifier (identifier))))
+              (where_clause
+                (like_expression
+                  (qualified_identifier (identifier))
+                  (literal_value (string_literal)))))))))))
+
+================================================================================
+Operators with parameters
+================================================================================
+
+SELECT * FROM logs 
+WHERE 
+  timestamp GLOB ?1
+  AND level REGEXP ?2
+  AND message MATCH ?3;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (like_expression
+            (like_expression
+              (qualified_identifier (identifier))
+              (binary_expression
+                (bind_parameter)
+                (qualified_identifier (identifier))))
+            (binary_expression
+              (bind_parameter)
+              (qualified_identifier (identifier))))
+          (bind_parameter))))))
+
+================================================================================
+Operators in JOIN conditions
+================================================================================
+
+SELECT * FROM products p
+JOIN categories c ON p.category_code GLOB c.code_pattern;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))
+          (identifier))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier (identifier))
+            (identifier))
+          (join_constraint
+            (like_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+Simple GLOB test
+================================================================================
+
+SELECT * FROM t WHERE c GLOB 'a*';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+Simple REGEXP test
+================================================================================
+
+SELECT * FROM t WHERE c REGEXP '[0-9]+';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+Simple MATCH test
+================================================================================
+
+SELECT * FROM t WHERE c MATCH 'search';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal)))))))
+
+================================================================================
+LIKE with ESCAPE clause - basic
+================================================================================
+
+SELECT * FROM products WHERE name LIKE '%\_%' ESCAPE '\';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+LIKE with ESCAPE clause - percent sign
+================================================================================
+
+SELECT * FROM discounts WHERE rate LIKE '10!%' ESCAPE '!';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+LIKE with ESCAPE clause - custom escape character
+================================================================================
+
+SELECT * FROM files WHERE path LIKE '%@_backup' ESCAPE '@';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+GLOB with ESCAPE clause
+================================================================================
+
+SELECT * FROM files WHERE name GLOB '*\[*' ESCAPE '\';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+REGEXP with ESCAPE clause
+================================================================================
+
+SELECT * FROM logs WHERE message REGEXP 'error\.' ESCAPE '\';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+Complex pattern with multiple escaped characters
+================================================================================
+
+SELECT * FROM data 
+WHERE code LIKE '\_\%\_\%' ESCAPE '\'
+   OR code LIKE '#_#%#_' ESCAPE '#';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (like_expression
+            (qualified_identifier (identifier))
+            (literal_value (string_literal))
+            (binary_expression
+              (literal_value (string_literal))
+              (qualified_identifier (identifier))))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+ESCAPE with parameter
+================================================================================
+
+SELECT * FROM items WHERE name LIKE ? ESCAPE ?;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (bind_parameter)
+          (bind_parameter))))))
+
+================================================================================
+NOT LIKE with ESCAPE
+================================================================================
+
+SELECT * FROM users WHERE username NOT LIKE 'admin@_%' ESCAPE '@';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (literal_value (string_literal)))))))
+
+================================================================================
+ESCAPE with expression
+================================================================================
+
+SELECT * FROM data WHERE value LIKE '%x%' ESCAPE SUBSTR('xyz', 1, 1);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier (identifier))))
+      (where_clause
+        (like_expression
+          (qualified_identifier (identifier))
+          (literal_value (string_literal))
+          (function_call
+            (identifier)
+            (literal_value (string_literal))
+            (literal_value (numeric_literal))
+            (literal_value (numeric_literal))))))))

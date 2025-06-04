@@ -1,0 +1,146 @@
+================================================================================
+Percentile continuous function with WITHIN GROUP
+================================================================================
+
+SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY salary) FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (numeric_literal))
+            (order_by_clause
+              (order_by_item
+                (qualified_identifier
+                  (identifier)))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Percentile discrete function with WITHIN GROUP
+================================================================================
+
+SELECT percentile_disc(0.25) WITHIN GROUP (ORDER BY age DESC) FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (numeric_literal))
+            (order_by_clause
+              (order_by_item
+                (qualified_identifier
+                  (identifier)))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Mode function with WITHIN GROUP
+================================================================================
+
+SELECT mode() WITHIN GROUP (ORDER BY category) FROM products;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (order_by_clause
+              (order_by_item
+                (qualified_identifier
+                  (identifier)))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Complex ordered-set aggregate with multiple expressions
+================================================================================
+
+SELECT department, percentile_cont(0.5) WITHIN GROUP (ORDER BY salary, bonus) FROM employees GROUP BY department;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (qualified_identifier
+            (identifier)))
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (numeric_literal))
+            (order_by_clause
+              (order_by_item
+                (qualified_identifier
+                  (identifier)))
+              (order_by_item
+                (qualified_identifier
+                  (identifier)))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (group_by_clause
+        (qualified_identifier
+          (identifier))))))
+
+================================================================================
+Ordered-set aggregate with FILTER and window function
+================================================================================
+
+SELECT 
+  percentile_cont(0.9) WITHIN GROUP (ORDER BY score) FILTER (WHERE active = 1) OVER (PARTITION BY team)
+FROM players;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (literal_value
+              (numeric_literal))
+            (order_by_clause
+              (order_by_item
+                (qualified_identifier
+                  (identifier))))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (numeric_literal)))
+            (window_definition
+              (qualified_identifier
+                (identifier))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))

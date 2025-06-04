@@ -111,7 +111,7 @@ module.exports = grammar({
       'NOT', 'NOTHING', 'NOTNULL', 'NULL', 'NULLS', 'OF', 'OFFSET', 'ON', 'OR', 'ORDER',
       'OTHERS', 'OUTER', 'OVER', 'PARTITION', 'PLAN', 'PRAGMA', 'PRECEDING', 'PRIMARY',
       'QUERY', 'RAISE', 'RANGE', 'RECURSIVE', 'REFERENCES', 'REGEXP', 'REINDEX', 'RELEASE',
-      'RENAME', 'REPLACE', 'RESTRICT', 'RETURNING', 'RIGHT', 'ROLLBACK', 'ROW', 'ROWS',
+      'RENAME', 'REPLACE', 'RESTRICT', 'RETURNING', 'RIGHT', 'ROLLBACK', 'ROW', 'ROWS', 'STRICT',
       'SAVEPOINT', 'SELECT', 'SET', 'TABLE', 'TEMP', 'TEMPORARY', 'THEN', 'TIES', 'TO',
       'TRANSACTION', 'TRIGGER', 'UNBOUNDED', 'UNION', 'UNIQUE', 'UPDATE', 'USING', 'VACUUM',
       'VALUES', 'VIEW', 'VIRTUAL', 'WHEN', 'WHERE', 'WINDOW', 'WITH', 'WITHOUT'
@@ -366,7 +366,8 @@ module.exports = grammar({
           '(',
           commaSep1(choice($.column_definition, $.table_constraint)),
           ')',
-          optional(seq('WITHOUT', 'ROWID'))
+          optional(seq('WITHOUT', 'ROWID')),
+          optional('STRICT')
         ),
         seq('AS', $.select_statement)
       )
@@ -660,6 +661,7 @@ module.exports = grammar({
       $.in_expression,
       $.exists_expression,
       $.case_expression,
+      $.json_extract_expression,
       $.raise_function
     ),
 
@@ -678,13 +680,13 @@ module.exports = grammar({
     ),
 
     numeric_literal: $ => choice(
-      /\d+/,
-      /\d+\.\d*/,
-      /\.\d+/,
-      /\d+[eE][+-]?\d+/,
-      /\d+\.\d*[eE][+-]?\d+/,
-      /\.\d+[eE][+-]?\d+/,
-      /0x[0-9a-fA-F]+/
+      /\d+(_\d+)*/,
+      /\d+(_\d+)*\.\d*(_\d+)*/,
+      /\.\d+(_\d+)*/,
+      /\d+(_\d+)*[eE][+-]?\d+(_\d+)*/,
+      /\d+(_\d+)*\.\d*(_\d+)*[eE][+-]?\d+(_\d+)*/,
+      /\.\d+(_\d+)*[eE][+-]?\d+(_\d+)*/,
+      /0x[0-9a-fA-F]+(_[0-9a-fA-F]+)*/
     ),
 
     string_literal: $ => seq(
@@ -732,6 +734,8 @@ module.exports = grammar({
         ['<>', 6],
         ['IS', 6],
         ['IS NOT', 6],
+        ['IS DISTINCT FROM', 6],
+        ['IS NOT DISTINCT FROM', 6],
         ['AND', 7],
         ['OR', 8],
       ];
@@ -803,6 +807,7 @@ module.exports = grammar({
         )
       )),
       ')',
+      optional(seq('WITHIN', 'GROUP', '(', $.order_by_clause, ')')),
       optional(seq('FILTER', '(', 'WHERE', $._expression, ')')),
       optional(seq('OVER', choice(field('window', $._identifier), $.window_definition)))
     )),
@@ -840,6 +845,12 @@ module.exports = grammar({
     ),
 
     else_clause: $ => seq('ELSE', $._expression),
+
+    json_extract_expression: $ => prec.left(6, seq(
+      $._expression,
+      choice('->', '->>'),
+      $._expression
+    )),
 
     raise_function: $ => seq(
       'RAISE',

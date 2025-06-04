@@ -1,0 +1,403 @@
+================================================================================
+IS DISTINCT FROM operator
+================================================================================
+
+SELECT * FROM t WHERE a IS DISTINCT FROM b;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+IS NOT DISTINCT FROM operator
+================================================================================
+
+SELECT * FROM t WHERE a IS NOT DISTINCT FROM b;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+RIGHT OUTER JOIN
+================================================================================
+
+SELECT * FROM a RIGHT OUTER JOIN b ON a.id = b.id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier)))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+FULL OUTER JOIN
+================================================================================
+
+SELECT * FROM a FULL OUTER JOIN b ON a.id = b.id;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))
+        (join_clause
+          (join_operator)
+          (table_or_subquery
+            (qualified_identifier
+              (identifier)))
+          (join_constraint
+            (binary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier))
+              (qualified_identifier
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+Numeric literals with underscores - integer
+================================================================================
+
+SELECT 1_000_000;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+Numeric literals with underscores - decimal
+================================================================================
+
+SELECT 3.141_592_653;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+Numeric literals with underscores - hex
+================================================================================
+
+SELECT 0xFF_FF_FF;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (literal_value
+            (numeric_literal)))))))
+
+================================================================================
+Bitwise AND operator
+================================================================================
+
+SELECT a & b FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Bitwise OR operator
+================================================================================
+
+SELECT a | b FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (qualified_identifier
+              (identifier)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Bitwise NOT operator
+================================================================================
+
+SELECT ~a FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (unary_expression
+            (qualified_identifier
+              (identifier)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Left shift operator
+================================================================================
+
+SELECT a << 2 FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Right shift operator
+================================================================================
+
+SELECT a >> 1 FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Complex bitwise expression
+================================================================================
+
+SELECT (a & 0xFF) | (b << 8) FROM t;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (parenthesized_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal))))
+            (parenthesized_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (literal_value
+                  (numeric_literal)))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Complex DISTINCT FROM with NULL
+================================================================================
+
+SELECT * FROM t WHERE a IS DISTINCT FROM NULL;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value))))))
+
+================================================================================
+DISTINCT FROM in complex expression
+================================================================================
+
+SELECT * FROM t WHERE a IS NOT DISTINCT FROM b AND c IS DISTINCT FROM d;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list)
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (qualified_identifier
+                (identifier))))
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+FILTER clause in aggregate
+================================================================================
+
+SELECT COUNT(*) FILTER (WHERE status = 'active') FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (function_call
+            (identifier)
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (literal_value
+                (string_literal))))))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+================================================================================
+Complex underscore numeric in expression
+================================================================================
+
+SELECT price * 1.08_5 AS total FROM products WHERE quantity > 1_000;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (select_item
+          (binary_expression
+            (qualified_identifier
+              (identifier))
+            (literal_value
+              (numeric_literal)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier))))
+      (where_clause
+        (binary_expression
+          (qualified_identifier
+            (identifier))
+          (literal_value
+            (numeric_literal)))))))

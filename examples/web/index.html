@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLite Parser Demo</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #005a9f;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .output {
+            background: #f8f8f8;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .error {
+            color: #d73a49;
+            background: #ffeef0;
+            border-color: #fdaeb7;
+        }
+        
+        .success {
+            color: #28a745;
+            background: #f0fff4;
+            border-color: #a3d977;
+        }
+        
+        .info {
+            background: #e7f3ff;
+            border: 1px solid #bee5eb;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .example-buttons {
+            margin: 10px 0;
+        }
+        
+        .example-buttons button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+            background: #28a745;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        
+        .example-buttons button:hover {
+            background: #218838;
+        }
+        
+        .analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .analysis-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        
+        .analysis-item h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        
+        .analysis-item ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ SQLite Tree-sitter Parser Demo</h1>
+        
+        <div class="info">
+            <strong>Note:</strong> This demo requires the WASM file to be built first. 
+            Run <code>npm run build-wasm</code> to generate <code>tree-sitter-sql.wasm</code> 
+            and place it in the same directory as this HTML file.
+        </div>
+        
+        <div class="section">
+            <label for="sql-input">SQL Query:</label>
+            <textarea id="sql-input" placeholder="Enter your SQL query here...">SELECT u.name, u.email, COUNT(o.id) as order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE u.active = 1 AND u.created_at > '2023-01-01'
+GROUP BY u.id, u.name, u.email
+HAVING COUNT(o.id) > 5
+ORDER BY order_count DESC
+LIMIT 10;</textarea>
+            
+            <div class="example-buttons">
+                <button onclick="loadExample('basic')">Basic SELECT</button>
+                <button onclick="loadExample('join')">Complex JOIN</button>
+                <button onclick="loadExample('cte')">CTE Query</button>
+                <button onclick="loadExample('window')">Window Functions</button>
+                <button onclick="loadExample('upsert')">UPSERT</button>
+                <button onclick="loadExample('virtual')">Virtual Table</button>
+            </div>
+            
+            <button id="parse-btn" onclick="parseSQL()">Parse SQL</button>
+            <button onclick="clearOutput()">Clear</button>
+        </div>
+        
+        <div class="section">
+            <label>Parse Results:</label>
+            <div id="output" class="output">Click "Parse SQL" to see the Abstract Syntax Tree...</div>
+        </div>
+        
+        <div class="section">
+            <label>Query Analysis:</label>
+            <div id="analysis" class="analysis"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/web-tree-sitter@^0.20.8/tree-sitter.js"></script>
+    <script>
+        let parser = null;
+        let isInitialized = false;
+        
+        const examples = {
+            basic: `SELECT * FROM users WHERE active = 1;`,
+            
+            join: `SELECT u.name, p.title, c.name as category
+FROM users u
+INNER JOIN posts p ON u.id = p.author_id
+LEFT JOIN categories c ON p.category_id = c.id
+WHERE u.status = 'active'
+ORDER BY p.created_at DESC;`,
+            
+            cte: `WITH RECURSIVE category_tree AS (
+  SELECT id, name, parent_id, 0 as level
+  FROM categories
+  WHERE parent_id IS NULL
+  
+  UNION ALL
+  
+  SELECT c.id, c.name, c.parent_id, ct.level + 1
+  FROM categories c
+  INNER JOIN category_tree ct ON c.parent_id = ct.id
+)
+SELECT * FROM category_tree ORDER BY level, name;`,
+            
+            window: `SELECT 
+  employee_id,
+  department,
+  salary,
+  AVG(salary) OVER (PARTITION BY department) as dept_avg,
+  ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as rank,
+  LAG(salary, 1) OVER (ORDER BY salary) as prev_salary
+FROM employees;`,
+            
+            upsert: `INSERT INTO user_stats (user_id, login_count, last_login)
+VALUES (?, 1, CURRENT_TIMESTAMP)
+ON CONFLICT (user_id) DO UPDATE SET
+  login_count = login_count + 1,
+  last_login = CURRENT_TIMESTAMP
+WHERE user_stats.last_login < date('now', '-1 day');`,
+            
+            virtual: `CREATE VIRTUAL TABLE docs_fts USING fts5(
+  title, content, tags,
+  content='documents',
+  content_rowid='id'
+);
+
+INSERT INTO docs_fts(title, content, tags)
+SELECT title, content, tags FROM documents;`
+        };
+        
+        async function initializeParser() {
+            if (isInitialized) return true;
+            
+            try {
+                document.getElementById('parse-btn').disabled = true;
+                document.getElementById('output').textContent = 'Initializing parser...';
+                
+                await TreeSitter.init();
+                parser = new TreeSitter();
+                
+                // Try to load the WASM file
+                const SQLite = await TreeSitter.Language.load('./tree-sitter-sql.wasm');
+                parser.setLanguage(SQLite);
+                
+                isInitialized = true;
+                document.getElementById('parse-btn').disabled = false;
+                document.getElementById('output').textContent = 'Parser initialized successfully! Click "Parse SQL" to parse your query.';
+                document.getElementById('output').className = 'output success';
+                
+                return true;
+            } catch (error) {
+                document.getElementById('output').textContent = `Failed to initialize parser: ${error.message}\n\nMake sure tree-sitter-sql.wasm is in the same directory as this HTML file.\nRun 'npm run build-wasm' to generate the WASM file.`;
+                document.getElementById('output').className = 'output error';
+                document.getElementById('parse-btn').disabled = false;
+                return false;
+            }
+        }
+        
+        async function parseSQL() {
+            const sqlInput = document.getElementById('sql-input').value.trim();
+            const output = document.getElementById('output');
+            const analysisDiv = document.getElementById('analysis');
+            
+            if (!sqlInput) {
+                output.textContent = 'Please enter a SQL query to parse.';
+                output.className = 'output error';
+                return;
+            }
+            
+            if (!await initializeParser()) {
+                return;
+            }
+            
+            try {
+                const tree = parser.parse(sqlInput);
+                
+                // Display the AST
+                output.textContent = tree.rootNode.toString();
+                output.className = 'output success';
+                
+                // Perform analysis
+                analyzeQuery(tree, sqlInput, analysisDiv);
+                
+                // Clean up
+                tree.delete();
+                
+            } catch (error) {
+                output.textContent = `Parse error: ${error.message}`;
+                output.className = 'output error';
+                analysisDiv.innerHTML = '';
+            }
+        }
+        
+        function analyzeQuery(tree, sql, container) {
+            const analysis = {
+                type: getQueryType(tree),
+                tables: getTables(tree),
+                joins: getJoins(tree),
+                functions: getFunctions(tree),
+                subqueries: getSubqueries(tree),
+                complexity: calculateComplexity(tree)
+            };
+            
+            container.innerHTML = `
+                <div class="analysis-item">
+                    <h4>Query Type</h4>
+                    <p>${analysis.type}</p>
+                </div>
+                <div class="analysis-item">
+                    <h4>Tables (${analysis.tables.length})</h4>
+                    <ul>${analysis.tables.map(t => `<li>${t}</li>`).join('')}</ul>
+                </div>
+                <div class="analysis-item">
+                    <h4>Joins (${analysis.joins.length})</h4>
+                    <ul>${analysis.joins.map(j => `<li>${j}</li>`).join('')}</ul>
+                </div>
+                <div class="analysis-item">
+                    <h4>Functions (${analysis.functions.length})</h4>
+                    <ul>${analysis.functions.map(f => `<li>${f}</li>`).join('')}</ul>
+                </div>
+                <div class="analysis-item">
+                    <h4>Subqueries</h4>
+                    <p>${analysis.subqueries} found</p>
+                </div>
+                <div class="analysis-item">
+                    <h4>Complexity Score</h4>
+                    <p>${analysis.complexity}</p>
+                </div>
+            `;
+        }
+        
+        function getQueryType(tree) {
+            const rootChild = tree.rootNode.firstChild;
+            if (rootChild) {
+                return rootChild.type.replace('_statement', '').toUpperCase();
+            }
+            return 'UNKNOWN';
+        }
+        
+        function getTables(tree) {
+            const tables = new Set();
+            const tableNodes = tree.rootNode.descendantsOfType('table_or_subquery');
+            
+            tableNodes.forEach(node => {
+                const identifier = node.firstChild;
+                if (identifier && identifier.type === 'qualified_identifier') {
+                    tables.add(identifier.text);
+                }
+            });
+            
+            return Array.from(tables);
+        }
+        
+        function getJoins(tree) {
+            const joins = [];
+            const joinNodes = tree.rootNode.descendantsOfType('join_clause');
+            
+            joinNodes.forEach(node => {
+                const joinOp = node.childForFieldName('operator');
+                if (joinOp) {
+                    joins.push(joinOp.text);
+                } else {
+                    joins.push('JOIN');
+                }
+            });
+            
+            return joins;
+        }
+        
+        function getFunctions(tree) {
+            const functions = new Set();
+            const funcNodes = tree.rootNode.descendantsOfType('function_call');
+            
+            funcNodes.forEach(node => {
+                const name = node.firstChild;
+                if (name) {
+                    functions.add(name.text);
+                }
+            });
+            
+            return Array.from(functions);
+        }
+        
+        function getSubqueries(tree) {
+            return tree.rootNode.descendantsOfType('scalar_subquery').length +
+                   tree.rootNode.descendantsOfType('exists_expression').length;
+        }
+        
+        function calculateComplexity(tree) {
+            let complexity = 1;
+            
+            // Add complexity for various constructs
+            complexity += tree.rootNode.descendantsOfType('join_clause').length * 2;
+            complexity += tree.rootNode.descendantsOfType('scalar_subquery').length * 3;
+            complexity += tree.rootNode.descendantsOfType('exists_expression').length * 3;
+            complexity += tree.rootNode.descendantsOfType('case_expression').length * 2;
+            complexity += tree.rootNode.descendantsOfType('window_function').length * 2;
+            complexity += tree.rootNode.descendantsOfType('cte').length * 2;
+            
+            return complexity;
+        }
+        
+        function loadExample(type) {
+            if (examples[type]) {
+                document.getElementById('sql-input').value = examples[type];
+            }
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').textContent = 'Output cleared. Click "Parse SQL" to parse your query.';
+            document.getElementById('output').className = 'output';
+            document.getElementById('analysis').innerHTML = '';
+        }
+        
+        // Initialize parser when page loads
+        window.addEventListener('load', () => {
+            // Auto-initialize in the background
+            setTimeout(initializeParser, 100);
+        });
+    </script>
+</body>
+</html>
