@@ -348,18 +348,21 @@ CREATE AGGREGATE avg_price(numeric) (
 --------------------------------------------------------------------------------
 
 (source_file
-  (ERROR
+  (create_aggregate_statement
     (identifier)
     (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)))
+    (aggregate_option
+      (identifier)
+      (identifier))
+    (aggregate_option
+      (identifier)
+      (identifier))
+    (aggregate_option
+      (identifier)
+      (identifier))
+    (aggregate_option
+      (identifier)
+      (identifier))))
 
 ================================================================================
 PostgreSQL CREATE CAST

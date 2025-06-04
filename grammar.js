@@ -39,7 +39,8 @@ function qualified_table_name($, with_alias = true) {
 const DDL_KEYWORDS = [
   'CREATE', 'DROP', 'ALTER', 'TABLE', 'INDEX', 'VIEW', 'TRIGGER',
   'DATABASE', 'SCHEMA', 'VIRTUAL', 'TEMPORARY', 'TEMP', 'IF',
-  'EXISTS', 'CASCADE', 'RESTRICT', 'RENAME', 'ADD', 'COLUMN'
+  'EXISTS', 'CASCADE', 'RESTRICT', 'RENAME', 'ADD', 'COLUMN',
+  'FUNCTION', 'RETURNS', 'LANGUAGE'
 ];
 
 const DML_KEYWORDS = [
@@ -82,7 +83,15 @@ const MISC_KEYWORDS = [
   'DESC', 'FULL', 'GLOB', 'EACH', 'FOR', 'OF', 'INSTEAD',
   'BEFORE', 'AFTER', 'NEW', 'OLD', 'UNION', 'INTERSECT', 'EXCEPT',
   'TRUE', 'FALSE', 'DEFERRABLE', 'INITIALLY', 'MATCH', 'ON',
-  'USING', 'TO', 'INDEXED', 'ACTION', 'RESTRICT', 'ARRAY'
+  'USING', 'TO', 'INDEXED', 'ACTION', 'RESTRICT'
+];
+
+// ZetaSQL-specific keywords (excluding data types which are handled in type_name)
+const ZETASQL_KEYWORDS = [
+  'EXTEND', 'RENAME', 'AGGREGATE', 'TABLESAMPLE', 'PIVOT', 'UNPIVOT',
+  'ASSERT', 'SAFE_CAST', 'NULLIFZERO', 'ZEROIFNULL',
+  'PROTO', 'CALL', 'DESTINATION', 'SOURCE', 'GRAPH',
+  'NODES', 'EDGES', 'PROPERTY_EXISTS', 'ELEMENT_ID', 'SAFE'
 ];
 
 // Grouped binary operators by precedence
@@ -150,6 +159,7 @@ module.exports = grammar({
     [$.column_constraint, $.collate_expression],
     [$.column_constraint, $._expression],
     [$.like_expression],
+    [$.select_core, $.pipe_query],
   ],
 
   precedences: $ => [
@@ -173,6 +183,8 @@ module.exports = grammar({
         $.create_view_statement,
         $.create_trigger_statement,
         $.create_virtual_table_statement,
+        $.create_aggregate_statement,
+        $.create_function_statement,
         $.drop_statement,
         $.alter_table_statement,
         $.pragma_statement,
@@ -232,7 +244,8 @@ module.exports = grammar({
       ...CONSTRAINT_KEYWORDS,
       ...FUNCTION_KEYWORDS,
       ...OPERATOR_KEYWORDS,
-      ...MISC_KEYWORDS
+      ...MISC_KEYWORDS,
+      ...ZETASQL_KEYWORDS
     ),
 
     // SELECT statement
@@ -509,22 +522,18 @@ module.exports = grammar({
       repeat($.column_constraint)
     ),
 
-    type_name: $ => seq(
-      field('name', choice(
-        'INTEGER', 'REAL', 'TEXT', 'BLOB', 'NUMERIC',
-        'INT', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT',
-        'UNSIGNED BIG INT', 'INT2', 'INT8',
-        'CHARACTER', 'VARCHAR', 'VARYING CHARACTER', 'NCHAR',
-        'NATIVE CHARACTER', 'NVARCHAR', 'CLOB',
-        'DOUBLE', 'DOUBLE PRECISION', 'FLOAT',
-        'BOOLEAN', 'DATE', 'DATETIME', 'DECIMAL'
-      )),
-      optional(seq(
-        '(',
-        field('size', $.integer),
-        optional(seq(',', field('scale', $.integer))),
-        ')'
-      ))
+    type_name: $ => choice(
+      seq(
+        field('name', $.identifier),
+        optional(seq(
+          '(',
+          field('size', $.integer),
+          optional(seq(',', field('scale', $.integer))),
+          ')'
+        ))
+      ),
+      field('name', $.array_type),
+      field('name', $.struct_type)
     ),
 
     column_constraint: $ => seq(
@@ -667,6 +676,55 @@ module.exports = grammar({
       ))
     ),
 
+    // CREATE AGGREGATE statement (PostgreSQL)
+    create_aggregate_statement: $ => seq(
+      'CREATE',
+      optional(seq('OR', 'REPLACE')),
+      'AGGREGATE',
+      field('name', $.identifier),
+      '(',
+      field('parameter_type', $.identifier),
+      ')',
+      '(',
+      commaSep1($.aggregate_option),
+      ')'
+    ),
+
+    aggregate_option: $ => seq(
+      field('option_name', $.identifier),
+      '=',
+      field('option_value', $.identifier)
+    ),
+
+    // CREATE FUNCTION statement (PostgreSQL)
+    create_function_statement: $ => seq(
+      'CREATE',
+      optional(seq('OR', 'REPLACE')),
+      'FUNCTION',
+      field('name', $.identifier),
+      '(',
+      optional(commaSep1($.function_parameter)),
+      ')',
+      'RETURNS',
+      field('return_type', $.identifier),
+      'AS',
+      $.dollar_quoted_string,
+      'LANGUAGE',
+      field('language', $.identifier)
+    ),
+
+    function_parameter: $ => seq(
+      field('name', $.identifier),
+      field('type', $.identifier)
+    ),
+
+    // Dollar-quoted strings for PostgreSQL ($$...$$)
+    dollar_quoted_string: $ => seq(
+      '$$',
+      /[^$]*(\$[^$]+)*[^$]*/,
+      '$$'
+    ),
+
     // DROP statement
     drop_statement: $ => seq(
       'DROP',
@@ -805,7 +863,10 @@ module.exports = grammar({
       $.function_call,
       $.subquery_expression,
       $.raise_expression,
-      $.array_constructor
+      $.array_constructor,
+      $.safe_cast_expression,
+      $.nullifzero_expression,
+      $.zeroifnull_expression
     ),
 
     _literal_value: $ => choice(
@@ -933,7 +994,7 @@ module.exports = grammar({
     ),
 
     is_expression: $ => seq(
-      field('expression', $._expression),
+      field('left', $._expression),
       'IS',
       optional('NOT'),
       choice(
@@ -1012,6 +1073,95 @@ module.exports = grammar({
         field('subquery', $.select_statement),
         ')'
       )
+    ),
+
+    // ZetaSQL data types
+    array_type: $ => seq(
+      'ARRAY',
+      '<',
+      field('element_type', $.type_name),
+      '>'
+    ),
+
+    struct_type: $ => seq(
+      'STRUCT',
+      '<',
+      commaSep1(seq(
+        field('field_name', $.identifier),
+        field('field_type', $.type_name)
+      )),
+      '>'
+    ),
+
+    // ZetaSQL pipe syntax
+    pipe_query: $ => prec(1, seq(
+      'FROM',
+      field('source', $.table_or_subquery),
+      repeat1($.pipe_operator)
+    )),
+
+    pipe_operator: $ => seq(
+      token('|>'),
+      field('operator', choice(
+        $.pipe_select,
+        $.pipe_extend,
+        $.pipe_set,
+        $.pipe_drop,
+        $.pipe_rename,
+        $.pipe_where,
+        $.pipe_limit,
+        $.pipe_aggregate,
+        $.pipe_distinct,
+        $.pipe_order_by,
+        $.pipe_join,
+        $.pipe_assert
+      ))
+    ),
+
+    pipe_select: $ => seq('SELECT', commaSep1($._expression)),
+    pipe_extend: $ => seq('EXTEND', commaSep1(seq($._expression, optional(alias($))))),
+    pipe_set: $ => seq('SET', commaSep1(seq($.identifier, '=', $._expression))),
+    pipe_drop: $ => seq('DROP', commaSep1($.identifier)),
+    pipe_rename: $ => seq('RENAME', commaSep1(seq($.identifier, 'AS', $.identifier))),
+    pipe_where: $ => seq('WHERE', $._expression),
+    pipe_limit: $ => seq('LIMIT', $._expression),
+    pipe_aggregate: $ => seq(
+      'AGGREGATE',
+      commaSep1(seq($._expression, optional(alias($)))),
+      optional(seq('GROUP', 'BY', commaSep1($._expression)))
+    ),
+    pipe_distinct: $ => 'DISTINCT',
+    pipe_order_by: $ => seq('ORDER', 'BY', commaSep1($.ordering_term)),
+    pipe_join: $ => seq(
+      optional(choice('LEFT', 'RIGHT', 'FULL', 'INNER')),
+      'JOIN',
+      $.table_or_subquery,
+      optional($.join_constraint)
+    ),
+    pipe_assert: $ => seq('ASSERT', $._expression),
+
+    // ZetaSQL-specific functions
+    safe_cast_expression: $ => seq(
+      'SAFE_CAST',
+      '(',
+      field('expression', $._expression),
+      'AS',
+      field('type', $.type_name),
+      ')'
+    ),
+
+    nullifzero_expression: $ => seq(
+      'NULLIFZERO',
+      '(',
+      field('expression', $._expression),
+      ')'
+    ),
+
+    zeroifnull_expression: $ => seq(
+      'ZEROIFNULL',
+      '(',
+      field('expression', $._expression),
+      ')'
     ),
 
   }

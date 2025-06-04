@@ -556,34 +556,37 @@ FROM inventory;
 (source_file
   (select_statement
     (select_core
-      (select_list
+      columns: (select_list
         (result_column
-          (cast_expression
-            (qualified_identifier
-              (identifier))
-            (type_name))
-          (identifier))
+          expression: (cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier))
         (result_column
-          (cast_expression
-            (qualified_identifier
-              (identifier))
-            (type_name))
-          (identifier))
+          expression: (cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier))
         (result_column
-          (cast_expression
-            (string)
-            (type_name))
-          (identifier))
+          expression: (cast_expression
+            expression: (string)
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier))
         (result_column
-          (function_call
-            (identifier)
-            (qualified_identifier
-              (identifier)))
-          (identifier)))
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier)))
+          alias: (identifier)))
       (from_clause
         (table_or_subquery
-          (qualified_identifier
-            (identifier)))))))
+          name: (qualified_identifier
+            name: (identifier)))))))
 
 ================================================================================
 Bitwise operators

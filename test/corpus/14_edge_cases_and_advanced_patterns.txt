@@ -429,52 +429,57 @@ CREATE TABLE products (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint)
       (column_constraint
-        (identifier)))
+        collation: (identifier)))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (integer))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (integer))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
         (foreign_key_clause
-          (qualified_identifier
-            (identifier))
-          (identifier))))
+          table: (qualified_identifier
+            name: (identifier))
+          column: (identifier))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (qualified_identifier
-          (identifier))))
+        value: (qualified_identifier
+          name: (identifier))))
     (table_constraint
-      (identifier)
-      (identifier)
-      (identifier))
+      name: (identifier)
+      column: (identifier)
+      column: (identifier))
     (table_constraint
-      (identifier)
-      (between_expression
-        (qualified_identifier
-          (identifier))
-        (real)
-        (real)))))
+      name: (identifier)
+      expression: (between_expression
+        expression: (qualified_identifier
+          name: (identifier))
+        low: (real)
+        high: (real)))))
 
 ================================================================================
 Generated columns with complex expressions
@@ -494,55 +499,61 @@ CREATE TABLE orders (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
-        (real)))
+        value: (real)))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (qualified_identifier
-            (identifier)))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (qualified_identifier
+            name: (identifier)))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (qualified_identifier
-            (identifier)))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (qualified_identifier
+            name: (identifier)))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (integer)))
+        value: (integer)))
     (column_definition
-      (identifier)
+      name: (identifier)
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (parenthesized_expression
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (parenthesized_expression
             (binary_expression
-              (binary_expression
-                (integer)
-                (qualified_identifier
-                  (identifier)))
-              (real))))))))
+              left: (binary_expression
+                left: (integer)
+                right: (qualified_identifier
+                  name: (identifier)))
+              right: (real))))))))

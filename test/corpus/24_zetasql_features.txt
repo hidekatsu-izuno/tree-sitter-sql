@@ -1,0 +1,280 @@
+================================================================================
+ZetaSQL ARRAY type declaration
+================================================================================
+
+CREATE TABLE test_table (
+    id INT64,
+    tags ARRAY<STRING>,
+    scores ARRAY<FLOAT64>
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (array_type
+          element_type: (type_name
+            name: (identifier)))))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (array_type
+          element_type: (type_name
+            name: (identifier)))))))
+
+================================================================================
+ZetaSQL STRUCT type declaration
+================================================================================
+
+CREATE TABLE test_struct (
+    id INT64,
+    person STRUCT<name STRING, age INT64>,
+    location STRUCT<lat FLOAT64, lng FLOAT64>
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (struct_type
+          field_name: (identifier)
+          field_type: (type_name
+            name: (identifier))
+          field_name: (identifier)
+          field_type: (type_name
+            name: (identifier)))))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (struct_type
+          field_name: (identifier)
+          field_type: (type_name
+            name: (identifier))
+          field_name: (identifier)
+          field_type: (type_name
+            name: (identifier)))))))
+
+================================================================================
+ZetaSQL SAFE_CAST function
+================================================================================
+
+SELECT SAFE_CAST(user_id AS INT64) FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (safe_cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+ZetaSQL NULLIFZERO and ZEROIFNULL functions
+================================================================================
+
+SELECT 
+    NULLIFZERO(score) AS safe_score,
+    ZEROIFNULL(rating) AS default_rating
+FROM reviews;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (nullifzero_expression
+            expression: (qualified_identifier
+              name: (identifier)))
+          alias: (identifier))
+        (result_column
+          expression: (zeroifnull_expression
+            expression: (qualified_identifier
+              name: (identifier)))
+          alias: (identifier)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+ZetaSQL data types in SELECT
+================================================================================
+
+SELECT 
+    id,
+    CAST(timestamp_col AS TIMESTAMP) AS ts,
+    CAST(date_col AS DATE) AS dt,
+    CAST(geo_col AS GEOGRAPHY) AS location
+FROM mixed_data;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier)))
+        (result_column
+          expression: (cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier))
+        (result_column
+          expression: (cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier))
+        (result_column
+          expression: (cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+ZetaSQL complex nested types
+================================================================================
+
+CREATE TABLE complex_data (
+    id INT64,
+    nested_array ARRAY<STRUCT<key STRING, values ARRAY<INT64>>>,
+    json_data JSON
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (array_type
+          element_type: (type_name
+            name: (struct_type
+              field_name: (identifier)
+              field_type: (type_name
+                name: (identifier))
+              field_name: (identifier)
+              field_type: (type_name
+                name: (array_type
+                  element_type: (type_name
+                    name: (identifier)))))))))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))))
+
+================================================================================
+ZetaSQL UINT data types
+================================================================================
+
+CREATE TABLE uint_test (
+    small_uint UINT32,
+    large_uint UINT64,
+    regular_int INT32
+);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))))
+
+================================================================================
+ZetaSQL BYTES type
+================================================================================
+
+SELECT 
+    id,
+    CAST(data AS BYTES) AS binary_data,
+    LENGTH(CAST(content AS BYTES)) AS byte_length
+FROM binary_table;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier)))
+        (result_column
+          expression: (cast_expression
+            expression: (qualified_identifier
+              name: (identifier))
+            type: (type_name
+              name: (identifier)))
+          alias: (identifier))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (cast_expression
+              expression: (qualified_identifier
+                name: (identifier))
+              type: (type_name
+                name: (identifier))))
+          alias: (identifier)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))

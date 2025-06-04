@@ -67,23 +67,17 @@ $$ LANGUAGE plpgsql;
 --------------------------------------------------------------------------------
 
 (source_file
-  (ERROR
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier)
-    (identifier))
-  (begin_statement)
-  (ERROR
-    (identifier)
-    (identifier))
-  (commit_statement)
-  (ERROR
-    (identifier)
-    (identifier)))
+  (create_function_statement
+    name: (identifier)
+    (function_parameter
+      name: (identifier)
+      type: (identifier))
+    (function_parameter
+      name: (identifier)
+      type: (identifier))
+    return_type: (identifier)
+    (dollar_quoted_string)
+    language: (identifier)))
 
 ================================================================================
 PostgreSQL COPY statement

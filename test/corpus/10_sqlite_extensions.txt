@@ -268,37 +268,41 @@ CREATE TABLE rectangles (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (qualified_identifier
-            (identifier)))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (qualified_identifier
+            name: (identifier)))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (integer)
-          (parenthesized_expression
+        expression: (binary_expression
+          left: (integer)
+          right: (parenthesized_expression
             (binary_expression
-              (qualified_identifier
-                (identifier))
-              (qualified_identifier
-                (identifier)))))))))
+              left: (qualified_identifier
+                name: (identifier))
+              right: (qualified_identifier
+                name: (identifier)))))))))
 
 ================================================================================
 Bind parameters

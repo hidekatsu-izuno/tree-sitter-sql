@@ -17,93 +17,100 @@ CREATE TABLE employees (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
-        (binary_expression
-          (function_call
-            (identifier)
-            (qualified_identifier
-              (identifier)))
-          (binary_expression
-            (binary_expression
-              (integer)
-              (qualified_identifier
-                (identifier)))
-            (string)))))
+        expression: (binary_expression
+          left: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier)))
+          right: (binary_expression
+            left: (binary_expression
+              left: (integer)
+              right: (qualified_identifier
+                name: (identifier)))
+            right: (string)))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (between_expression
-          (qualified_identifier
-            (identifier))
-          (integer)
-          (integer))))
+        expression: (between_expression
+          expression: (qualified_identifier
+            name: (identifier))
+          low: (integer)
+          high: (integer))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (integer))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (integer))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (in_expression
-          (qualified_identifier
-            (identifier))
-          (string)
-          (string)
-          (string)
-          (string))))
+        expression: (in_expression
+          expression: (qualified_identifier
+            name: (identifier))
+          value: (string)
+          value: (string)
+          value: (string)
+          value: (string))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
-        (binary_expression
-          (binary_expression
-            (qualified_identifier
-              (identifier))
-            (binary_expression
-              (string)
-              (function_call
-                (identifier)
-                (qualified_identifier
-                  (identifier)))))
-          (integer))))
+        expression: (binary_expression
+          left: (binary_expression
+            left: (qualified_identifier
+              name: (identifier))
+            right: (binary_expression
+              left: (string)
+              right: (function_call
+                name: (identifier)
+                argument: (qualified_identifier
+                  name: (identifier)))))
+          right: (integer))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (function_call
-            (identifier)
-            (qualified_identifier
-              (identifier)))
-          (null))))
+        expression: (binary_expression
+          left: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier)))
+          right: (null))))
     (table_constraint
-      (identifier)
-      (binary_expression
-        (qualified_identifier
-          (identifier))
-        (binary_expression
-          (binary_expression
-            (integer)
-            (qualified_identifier
-              (identifier)))
-          (string))))))
+      name: (identifier)
+      expression: (binary_expression
+        left: (qualified_identifier
+          name: (identifier))
+        right: (binary_expression
+          left: (binary_expression
+            left: (integer)
+            right: (qualified_identifier
+              name: (identifier)))
+          right: (string))))))
 
 ================================================================================
 Foreign key with complex actions
@@ -124,61 +131,67 @@ CREATE TABLE order_items (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
         (foreign_key_clause
-          (qualified_identifier
-            (identifier))
-          (identifier))))
+          table: (qualified_identifier
+            name: (identifier))
+          column: (identifier))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
         (foreign_key_clause
-          (qualified_identifier
-            (identifier))
-          (identifier))))
+          table: (qualified_identifier
+            name: (identifier))
+          column: (identifier))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
-        (integer)))
+        value: (integer)))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (qualified_identifier
-            (identifier)))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (qualified_identifier
+            name: (identifier)))))
     (table_constraint
-      (identifier)
+      column: (identifier)
       (foreign_key_clause
-        (qualified_identifier
-          (identifier))
-        (identifier)
-        (identifier)))
+        table: (qualified_identifier
+          name: (identifier))
+        column: (identifier)
+        name: (identifier)))
     (table_constraint
-      (identifier)
+      column: (identifier)
       (foreign_key_clause
-        (qualified_identifier
-          (identifier))
-        (identifier)))))
+        table: (qualified_identifier
+          name: (identifier))
+        column: (identifier)))))
 
 ================================================================================
 Complex LIMIT with expressions
@@ -396,109 +409,118 @@ CREATE TABLE complex_table (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint)
       (column_constraint
-        (identifier)))
+        collation: (identifier)))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
-        (binary_expression
-          (function_call
-            (identifier)
-            (function_call
-              (identifier)
-              (qualified_identifier
-                (identifier))))
-          (integer))))
+        expression: (binary_expression
+          left: (function_call
+            name: (identifier)
+            argument: (function_call
+              name: (identifier)
+              argument: (qualified_identifier
+                name: (identifier))))
+          right: (integer))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
         (foreign_key_clause
-          (qualified_identifier
-            (identifier))
-          (identifier))))
+          table: (qualified_identifier
+            name: (identifier))
+          column: (identifier))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (string))
+        value: (string))
       (column_constraint
-        (in_expression
-          (qualified_identifier
-            (identifier))
-          (string)
-          (string)
-          (string))))
+        expression: (in_expression
+          expression: (qualified_identifier
+            name: (identifier))
+          value: (string)
+          value: (string)
+          value: (string))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (between_expression
-          (qualified_identifier
-            (identifier))
-          (real)
-          (real))))
+        expression: (between_expression
+          expression: (qualified_identifier
+            name: (identifier))
+          low: (real)
+          high: (real))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (binary_expression
-          (binary_expression
-            (function_call
-              (identifier)
-              (qualified_identifier
-                (identifier)))
-            (qualified_identifier
-              (identifier)))
-          (null))))
+        expression: (binary_expression
+          left: (binary_expression
+            left: (function_call
+              name: (identifier)
+              argument: (qualified_identifier
+                name: (identifier)))
+            right: (qualified_identifier
+              name: (identifier)))
+          right: (null))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint)
       (column_constraint
-        (parenthesized_expression
+        value: (parenthesized_expression
           (function_call
-            (identifier)
-            (string)))))
+            name: (identifier)
+            argument: (string)))))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (parenthesized_expression
+        value: (parenthesized_expression
           (function_call
-            (identifier)
-            (string)))))
+            name: (identifier)
+            argument: (string)))))
     (table_constraint
-      (identifier)
-      (identifier))
+      column: (identifier)
+      column: (identifier))
     (table_constraint
-      (binary_expression
-        (binary_expression
-          (is_expression
-            (qualified_identifier
-              (identifier)))
-          (qualified_identifier
-            (identifier)))
-        (integer)))
+      expression: (binary_expression
+        left: (binary_expression
+          left: (is_expression
+            left: (qualified_identifier
+              name: (identifier)))
+          right: (qualified_identifier
+            name: (identifier)))
+        right: (integer)))
     (table_constraint
-      (identifier)
+      column: (identifier)
       (foreign_key_clause
-        (qualified_identifier
-          (identifier))
-        (identifier)))))
+        table: (qualified_identifier
+          name: (identifier))
+        column: (identifier)))))
 
 ================================================================================
 Complex column definitions with multiple type parameters
@@ -520,62 +542,67 @@ CREATE TABLE precise_data (
 
 (source_file
   (create_table_statement
-    (qualified_identifier
-      (identifier))
+    name: (qualified_identifier
+      name: (identifier))
     (column_definition
-      (identifier)
-      (type_name)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name
-        (integer))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)
+        size: (integer))
       (column_constraint))
     (column_definition
-      (identifier)
-      (type_name
-        (integer)))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)
+        size: (integer)))
     (column_definition
-      (identifier)
-      (type_name
-        (integer)
-        (integer))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)
+        size: (integer)
+        scale: (integer))
       (column_constraint
-        (binary_expression
-          (qualified_identifier
-            (identifier))
-          (integer))))
+        expression: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (integer))))
     (column_definition
-      (identifier))
-    (ERROR
-      (identifier))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
     (column_definition
-      (identifier)
-      (type_name
-        (integer)))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)
+        size: (integer)))
     (column_definition
-      (identifier)
-      (ERROR
-        (identifier))
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (qualified_identifier
-          (identifier))))
-    (ERROR
-      (identifier))
+        value: (qualified_identifier
+          name: (identifier))))
     (column_definition
-      (identifier)
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
       (column_constraint
-        (string)))
+        value: (string)))
     (table_constraint
-      (identifier)
-      (binary_expression
-        (binary_expression
-          (is_expression
-            (qualified_identifier
-              (identifier)))
-          (qualified_identifier
-            (identifier)))
-        (integer)))))
+      name: (identifier)
+      expression: (binary_expression
+        left: (binary_expression
+          left: (is_expression
+            left: (qualified_identifier
+              name: (identifier)))
+          right: (qualified_identifier
+            name: (identifier)))
+        right: (integer)))))
 
 ================================================================================
 Partial indexes with complex WHERE clauses
