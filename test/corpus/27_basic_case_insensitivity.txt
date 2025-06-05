@@ -1,0 +1,182 @@
+================================================================================
+Basic CREATE TABLE case insensitivity
+================================================================================
+
+create table users (id integer primary key, name text not null);
+CREATE TABLE orders (id INTEGER PRIMARY KEY, name TEXT NOT NULL);
+Create Table products (id Integer Primary Key, name Text Not Null);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
+      (column_constraint))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
+      (column_constraint)))
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
+      (column_constraint))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
+      (column_constraint)))
+  (create_table_statement
+    name: (qualified_identifier
+      name: (identifier))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
+      (column_constraint))
+    (column_definition
+      name: (identifier)
+      type: (type_name
+        name: (identifier))
+      (column_constraint))))
+
+================================================================================
+Basic SELECT case insensitivity
+================================================================================
+
+select * from users;
+SELECT * FROM orders;
+Select * From products;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+NULL and boolean case insensitivity
+================================================================================
+
+select null, true, false;
+SELECT NULL, TRUE, FALSE;
+Select Null, True, False;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (null))
+        (result_column
+          expression: (boolean))
+        (result_column
+          expression: (boolean)))))
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (null))
+        (result_column
+          expression: (boolean))
+        (result_column
+          expression: (boolean)))))
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (null))
+        (result_column
+          expression: (boolean))
+        (result_column
+          expression: (boolean))))))
+
+================================================================================
+Oracle pseudo-columns case insensitivity
+================================================================================
+
+select rownum, level from dual;
+SELECT ROWNUM, LEVEL FROM DUAL;
+Select Rownum, Level From Dual;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (oracle_rownum))
+        (result_column
+          expression: (oracle_level)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (oracle_rownum))
+        (result_column
+          expression: (oracle_level)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (oracle_rownum))
+        (result_column
+          expression: (oracle_level)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+SQL Server GO statement case insensitivity
+================================================================================
+
+go;
+GO;
+Go;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (go_statement)
+  (go_statement)
+  (go_statement))

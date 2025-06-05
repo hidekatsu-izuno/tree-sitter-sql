@@ -112,6 +112,25 @@
     }
   },
   {
+    "type": "apply_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "table_or_subquery",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "array_constructor",
     "named": true,
     "fields": {
@@ -189,6 +208,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -342,6 +377,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -481,6 +532,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -599,6 +666,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -714,6 +797,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -841,6 +940,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -908,6 +1023,10 @@
           },
           {
             "type": "&&",
+            "named": false
+          },
+          {
+            "type": "(+)",
             "named": false
           },
           {
@@ -1133,6 +1252,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -1267,6 +1402,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -1382,6 +1533,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -1503,6 +1670,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -1618,6 +1801,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -1742,6 +1941,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -1889,6 +2104,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -2023,6 +2254,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -2148,6 +2395,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -2292,30 +2555,7 @@
   {
     "type": "compound_operator",
     "named": true,
-    "fields": {
-      "operator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "EXCEPT",
-            "named": false
-          },
-          {
-            "type": "INTERSECT",
-            "named": false
-          },
-          {
-            "type": "UNION",
-            "named": false
-          },
-          {
-            "type": "UNION ALL",
-            "named": false
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": true,
@@ -2601,6 +2841,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -2740,6 +2996,10 @@
           "named": true
         },
         {
+          "type": "go_statement",
+          "named": true
+        },
+        {
           "type": "insert_statement",
           "named": true
         },
@@ -2765,6 +3025,10 @@
         },
         {
           "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "show_statement",
           "named": true
         },
         {
@@ -2848,6 +3112,14 @@
           },
           {
             "type": "null",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -3090,6 +3362,10 @@
           "named": true
         },
         {
+          "type": "go_statement",
+          "named": true
+        },
+        {
           "type": "insert_statement",
           "named": true
         },
@@ -3115,6 +3391,10 @@
         },
         {
           "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "show_statement",
           "named": true
         },
         {
@@ -3253,6 +3533,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -3318,6 +3614,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "apply_clause",
+          "named": true
+        },
         {
           "type": "join_clause",
           "named": true
@@ -3407,6 +3707,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -3528,6 +3844,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -3628,6 +3960,11 @@
     }
   },
   {
+    "type": "go_statement",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "group_by_clause",
     "named": true,
     "fields": {
@@ -3705,6 +4042,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -3823,6 +4176,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -3950,6 +4319,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -4065,6 +4450,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -4210,6 +4611,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -4331,6 +4748,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -4538,6 +4971,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -4653,6 +5102,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -4813,6 +5278,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -4937,6 +5418,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -5055,6 +5552,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -5170,6 +5683,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -5297,6 +5826,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -5415,6 +5960,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -5456,6 +6017,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "mysql_index_hint",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -5541,6 +6117,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -5668,6 +6260,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -5739,6 +6347,48 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "oracle_date_literal",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "oracle_level",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "oracle_rownum",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "oracle_timestamp_literal",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5834,6 +6484,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -5980,6 +6646,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -6118,6 +6800,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -6238,6 +6936,22 @@
         },
         {
           "type": "nullifzero_expression",
+          "named": true
+        },
+        {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
           "named": true
         },
         {
@@ -6399,6 +7113,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -6538,6 +7268,22 @@
         },
         {
           "type": "nullifzero_expression",
+          "named": true
+        },
+        {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
           "named": true
         },
         {
@@ -6754,6 +7500,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -6874,6 +7636,22 @@
         },
         {
           "type": "nullifzero_expression",
+          "named": true
+        },
+        {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
           "named": true
         },
         {
@@ -7000,6 +7778,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -7088,6 +7882,14 @@
           },
           {
             "type": "null",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -7284,6 +8086,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -7432,6 +8250,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -7572,6 +8406,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -7669,6 +8519,10 @@
           "named": true
         },
         {
+          "type": "top_clause",
+          "named": true
+        },
+        {
           "type": "where_clause",
           "named": true
         },
@@ -7727,6 +8581,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "show_statement",
+    "named": true,
+    "fields": {
+      "database": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "table": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -7802,6 +8682,10 @@
           "named": true
         },
         {
+          "type": "go_statement",
+          "named": true
+        },
+        {
           "type": "insert_statement",
           "named": true
         },
@@ -7827,6 +8711,10 @@
         },
         {
           "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "show_statement",
           "named": true
         },
         {
@@ -7981,6 +8869,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -8049,6 +8953,21 @@
     }
   },
   {
+    "type": "table_hint",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "table_or_subquery",
     "named": true,
     "fields": {
@@ -8100,7 +9019,15 @@
           "named": true
         },
         {
+          "type": "mysql_index_hint",
+          "named": true
+        },
+        {
           "type": "select_statement",
+          "named": true
+        },
+        {
+          "type": "table_hint",
           "named": true
         },
         {
@@ -8108,6 +9035,156 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "top_clause",
+    "named": true,
+    "fields": {
+      "count": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_constructor",
+            "named": true
+          },
+          {
+            "type": "between_expression",
+            "named": true
+          },
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "blob",
+            "named": true
+          },
+          {
+            "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "case_expression",
+            "named": true
+          },
+          {
+            "type": "cast_expression",
+            "named": true
+          },
+          {
+            "type": "collate_expression",
+            "named": true
+          },
+          {
+            "type": "exists_expression",
+            "named": true
+          },
+          {
+            "type": "function_call",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "in_expression",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "is_expression",
+            "named": true
+          },
+          {
+            "type": "like_expression",
+            "named": true
+          },
+          {
+            "type": "null",
+            "named": true
+          },
+          {
+            "type": "null_expression",
+            "named": true
+          },
+          {
+            "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
+            "type": "parameter",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
+            "named": true
+          },
+          {
+            "type": "raise_expression",
+            "named": true
+          },
+          {
+            "type": "real",
+            "named": true
+          },
+          {
+            "type": "safe_cast_expression",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "subquery_expression",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "zeroifnull_expression",
+            "named": true
+          }
+        ]
+      },
+      "percent": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "PERCENT",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -8232,6 +9309,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -8366,6 +9459,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -8549,6 +9658,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -8683,6 +9808,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -8804,6 +9945,22 @@
           },
           {
             "type": "nullifzero_expression",
+            "named": true
+          },
+          {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
             "named": true
           },
           {
@@ -8961,6 +10118,22 @@
           "named": true
         },
         {
+          "type": "oracle_date_literal",
+          "named": true
+        },
+        {
+          "type": "oracle_level",
+          "named": true
+        },
+        {
+          "type": "oracle_rownum",
+          "named": true
+        },
+        {
+          "type": "oracle_timestamp_literal",
+          "named": true
+        },
+        {
           "type": "order_by_clause",
           "named": true
         },
@@ -9103,6 +10276,22 @@
             "named": true
           },
           {
+            "type": "oracle_date_literal",
+            "named": true
+          },
+          {
+            "type": "oracle_level",
+            "named": true
+          },
+          {
+            "type": "oracle_rownum",
+            "named": true
+          },
+          {
+            "type": "oracle_timestamp_literal",
+            "named": true
+          },
+          {
             "type": "parameter",
             "named": true
           },
@@ -9192,6 +10381,10 @@
   },
   {
     "type": "(",
+    "named": false
+  },
+  {
+    "type": "(+)",
     "named": false
   },
   {
@@ -9307,10 +10500,6 @@
     "named": false
   },
   {
-    "type": "ACTION",
-    "named": false
-  },
-  {
     "type": "ADD",
     "named": false
   },
@@ -9323,15 +10512,7 @@
     "named": false
   },
   {
-    "type": "ALL",
-    "named": false
-  },
-  {
     "type": "ALTER",
-    "named": false
-  },
-  {
-    "type": "ALWAYS",
     "named": false
   },
   {
@@ -9363,14 +10544,6 @@
     "named": false
   },
   {
-    "type": "AUTOINCREMENT",
-    "named": false
-  },
-  {
-    "type": "AVG",
-    "named": false
-  },
-  {
     "type": "BEFORE",
     "named": false
   },
@@ -9384,10 +10557,6 @@
   },
   {
     "type": "BY",
-    "named": false
-  },
-  {
-    "type": "CALL",
     "named": false
   },
   {
@@ -9407,15 +10576,15 @@
     "named": false
   },
   {
-    "type": "COALESCE",
-    "named": false
-  },
-  {
     "type": "COLLATE",
     "named": false
   },
   {
     "type": "COLUMN",
+    "named": false
+  },
+  {
+    "type": "COLUMNS",
     "named": false
   },
   {
@@ -9431,27 +10600,7 @@
     "named": false
   },
   {
-    "type": "COUNT",
-    "named": false
-  },
-  {
     "type": "CREATE",
-    "named": false
-  },
-  {
-    "type": "CROSS",
-    "named": false
-  },
-  {
-    "type": "CROSS JOIN",
-    "named": false
-  },
-  {
-    "type": "CURRENT",
-    "named": false
-  },
-  {
-    "type": "CURRENT ROW",
     "named": false
   },
   {
@@ -9459,15 +10608,11 @@
     "named": false
   },
   {
+    "type": "DATABASES",
+    "named": false
+  },
+  {
     "type": "DATE",
-    "named": false
-  },
-  {
-    "type": "DATETIME",
-    "named": false
-  },
-  {
-    "type": "DEFAULT",
     "named": false
   },
   {
@@ -9487,10 +10632,6 @@
     "named": false
   },
   {
-    "type": "DESTINATION",
-    "named": false
-  },
-  {
     "type": "DETACH",
     "named": false
   },
@@ -9499,23 +10640,11 @@
     "named": false
   },
   {
-    "type": "DO",
-    "named": false
-  },
-  {
     "type": "DROP",
     "named": false
   },
   {
     "type": "EACH",
-    "named": false
-  },
-  {
-    "type": "EDGES",
-    "named": false
-  },
-  {
-    "type": "ELEMENT_ID",
     "named": false
   },
   {
@@ -9528,14 +10657,6 @@
   },
   {
     "type": "ESCAPE",
-    "named": false
-  },
-  {
-    "type": "EXCEPT",
-    "named": false
-  },
-  {
-    "type": "EXCLUDE",
     "named": false
   },
   {
@@ -9567,14 +10688,6 @@
     "named": false
   },
   {
-    "type": "FIRST",
-    "named": false
-  },
-  {
-    "type": "FOLLOWING",
-    "named": false
-  },
-  {
     "type": "FOR",
     "named": false
   },
@@ -9595,31 +10708,11 @@
     "named": false
   },
   {
-    "type": "GENERATED",
-    "named": false
-  },
-  {
     "type": "GLOB",
     "named": false
   },
   {
-    "type": "GRAPH",
-    "named": false
-  },
-  {
     "type": "GROUP",
-    "named": false
-  },
-  {
-    "type": "GROUPS",
-    "named": false
-  },
-  {
-    "type": "HAVING",
-    "named": false
-  },
-  {
-    "type": "IF",
     "named": false
   },
   {
@@ -9639,10 +10732,6 @@
     "named": false
   },
   {
-    "type": "INDEXED",
-    "named": false
-  },
-  {
     "type": "INITIALLY",
     "named": false
   },
@@ -9651,23 +10740,11 @@
     "named": false
   },
   {
-    "type": "INNER JOIN",
-    "named": false
-  },
-  {
     "type": "INSERT",
     "named": false
   },
   {
-    "type": "INSTEAD",
-    "named": false
-  },
-  {
     "type": "INSTEAD OF",
-    "named": false
-  },
-  {
-    "type": "INTERSECT",
     "named": false
   },
   {
@@ -9691,10 +10768,6 @@
     "named": false
   },
   {
-    "type": "JULIANDAY",
-    "named": false
-  },
-  {
     "type": "KEY",
     "named": false
   },
@@ -9703,15 +10776,7 @@
     "named": false
   },
   {
-    "type": "LAST",
-    "named": false
-  },
-  {
     "type": "LEFT",
-    "named": false
-  },
-  {
-    "type": "LENGTH",
     "named": false
   },
   {
@@ -9723,43 +10788,11 @@
     "named": false
   },
   {
-    "type": "LOWER",
-    "named": false
-  },
-  {
     "type": "MATCH",
     "named": false
   },
   {
-    "type": "MAX",
-    "named": false
-  },
-  {
-    "type": "MIN",
-    "named": false
-  },
-  {
-    "type": "NATURAL",
-    "named": false
-  },
-  {
-    "type": "NEW",
-    "named": false
-  },
-  {
-    "type": "NO",
-    "named": false
-  },
-  {
     "type": "NO ACTION",
-    "named": false
-  },
-  {
-    "type": "NO OTHERS",
-    "named": false
-  },
-  {
-    "type": "NODES",
     "named": false
   },
   {
@@ -9787,10 +10820,6 @@
     "named": false
   },
   {
-    "type": "NOTHING",
-    "named": false
-  },
-  {
     "type": "NOTNULL",
     "named": false
   },
@@ -9799,27 +10828,11 @@
     "named": false
   },
   {
-    "type": "NULLIF",
-    "named": false
-  },
-  {
     "type": "NULLIFZERO",
     "named": false
   },
   {
-    "type": "NULLS",
-    "named": false
-  },
-  {
     "type": "OF",
-    "named": false
-  },
-  {
-    "type": "OFFSET",
-    "named": false
-  },
-  {
-    "type": "OLD",
     "named": false
   },
   {
@@ -9835,23 +10848,11 @@
     "named": false
   },
   {
-    "type": "OTHERS",
-    "named": false
-  },
-  {
-    "type": "OUTER",
-    "named": false
-  },
-  {
     "type": "OVER",
     "named": false
   },
   {
-    "type": "PARTITION",
-    "named": false
-  },
-  {
-    "type": "PIVOT",
+    "type": "PERCENT",
     "named": false
   },
   {
@@ -9863,23 +10864,7 @@
     "named": false
   },
   {
-    "type": "PRECEDING",
-    "named": false
-  },
-  {
-    "type": "PRIMARY",
-    "named": false
-  },
-  {
     "type": "PRIMARY KEY",
-    "named": false
-  },
-  {
-    "type": "PROPERTY_EXISTS",
-    "named": false
-  },
-  {
-    "type": "PROTO",
     "named": false
   },
   {
@@ -9888,14 +10873,6 @@
   },
   {
     "type": "RAISE",
-    "named": false
-  },
-  {
-    "type": "RANGE",
-    "named": false
-  },
-  {
-    "type": "RECURSIVE",
     "named": false
   },
   {
@@ -9927,10 +10904,6 @@
     "named": false
   },
   {
-    "type": "RETURNING",
-    "named": false
-  },
-  {
     "type": "RETURNS",
     "named": false
   },
@@ -9947,27 +10920,11 @@
     "named": false
   },
   {
-    "type": "ROWID",
-    "named": false
-  },
-  {
-    "type": "ROWS",
-    "named": false
-  },
-  {
-    "type": "SAFE",
-    "named": false
-  },
-  {
     "type": "SAFE_CAST",
     "named": false
   },
   {
     "type": "SAVEPOINT",
-    "named": false
-  },
-  {
-    "type": "SCHEMA",
     "named": false
   },
   {
@@ -9987,19 +10944,7 @@
     "named": false
   },
   {
-    "type": "SOURCE",
-    "named": false
-  },
-  {
-    "type": "STORED",
-    "named": false
-  },
-  {
-    "type": "STRFTIME",
-    "named": false
-  },
-  {
-    "type": "STRICT",
+    "type": "SHOW",
     "named": false
   },
   {
@@ -10007,19 +10952,11 @@
     "named": false
   },
   {
-    "type": "SUBSTR",
-    "named": false
-  },
-  {
-    "type": "SUM",
-    "named": false
-  },
-  {
     "type": "TABLE",
     "named": false
   },
   {
-    "type": "TABLESAMPLE",
+    "type": "TABLES",
     "named": false
   },
   {
@@ -10035,15 +10972,15 @@
     "named": false
   },
   {
-    "type": "TIES",
-    "named": false
-  },
-  {
-    "type": "TIME",
+    "type": "TIMESTAMP",
     "named": false
   },
   {
     "type": "TO",
+    "named": false
+  },
+  {
+    "type": "TOP",
     "named": false
   },
   {
@@ -10055,31 +10992,7 @@
     "named": false
   },
   {
-    "type": "TRIM",
-    "named": false
-  },
-  {
     "type": "TRUE",
-    "named": false
-  },
-  {
-    "type": "UNBOUNDED",
-    "named": false
-  },
-  {
-    "type": "UNBOUNDED FOLLOWING",
-    "named": false
-  },
-  {
-    "type": "UNBOUNDED PRECEDING",
-    "named": false
-  },
-  {
-    "type": "UNION",
-    "named": false
-  },
-  {
-    "type": "UNION ALL",
     "named": false
   },
   {
@@ -10087,15 +11000,7 @@
     "named": false
   },
   {
-    "type": "UNPIVOT",
-    "named": false
-  },
-  {
     "type": "UPDATE",
-    "named": false
-  },
-  {
-    "type": "UPPER",
     "named": false
   },
   {
@@ -10104,10 +11009,6 @@
   },
   {
     "type": "VACUUM",
-    "named": false
-  },
-  {
-    "type": "VALUES",
     "named": false
   },
   {
@@ -10124,18 +11025,6 @@
   },
   {
     "type": "WHERE",
-    "named": false
-  },
-  {
-    "type": "WINDOW",
-    "named": false
-  },
-  {
-    "type": "WITH",
-    "named": false
-  },
-  {
-    "type": "WITHOUT",
     "named": false
   },
   {

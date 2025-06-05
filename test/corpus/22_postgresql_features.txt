@@ -34,7 +34,6 @@ CREATE SEQUENCE my_seq INCREMENT BY 5 MINVALUE 1 MAXVALUE 1000 START WITH 10;
     (integer)
     (identifier)
     (integer)
-    (identifier)
     (integer)))
 
 ================================================================================
@@ -133,18 +132,20 @@ CREATE TABLE test_arrays (
   (create_table_statement
     name: (qualified_identifier
       name: (identifier))
-    (ERROR
-      (identifier))
     (column_definition
-      name: (identifier))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
     (column_definition
-      name: (identifier))
-    (ERROR
-      (identifier))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (ERROR)
     (column_definition
-      name: (identifier))
-    (ERROR
-      (identifier))))
+      name: (identifier)
+      type: (type_name
+        name: (identifier)))
+    (ERROR)))
 
 ================================================================================
 PostgreSQL JSONB Operations
@@ -254,7 +255,6 @@ TRUNCATE TABLE logs RESTART IDENTITY CASCADE;
 
 (source_file
   (ERROR
-    (identifier)
     (identifier)
     (identifier)
     (identifier)))

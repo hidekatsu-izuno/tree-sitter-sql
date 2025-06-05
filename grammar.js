@@ -7,19 +7,29 @@ function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
 }
 
+// Case-insensitive keyword helper
+function kw(keyword) {
+  let str = "";
+  for (var i = 0; i < keyword.length; i++) {
+    const c = keyword.charAt(i);
+    str += "[" + c.toUpperCase() + c.toLowerCase() + "]";
+  }
+  return new RegExp(str);
+}
+
 // Common patterns
 function alias($, mandatory_as = false) {
   return mandatory_as
-    ? seq('AS', field('alias', $._identifier))
-    : seq(optional('AS'), field('alias', $._identifier));
+    ? seq(kw('AS'), field('alias', $._identifier))
+    : seq(optional(kw('AS')), field('alias', $._identifier));
 }
 
 function if_not_exists() {
-  return optional(seq('IF', 'NOT', 'EXISTS'));
+  return optional(seq(kw('IF'), kw('NOT'), kw('EXISTS')));
 }
 
 function if_exists() {
-  return optional(seq('IF', 'EXISTS'));
+  return optional(seq(kw('IF'), kw('EXISTS')));
 }
 
 function column_list($) {
@@ -35,63 +45,79 @@ function qualified_table_name($, with_alias = true) {
     : field('name', $._qualified_identifier);
 }
 
-// Keyword groups
+// Keyword groups - using case-insensitive patterns
 const DDL_KEYWORDS = [
-  'CREATE', 'DROP', 'ALTER', 'TABLE', 'INDEX', 'VIEW', 'TRIGGER',
-  'DATABASE', 'SCHEMA', 'VIRTUAL', 'TEMPORARY', 'TEMP', 'IF',
-  'EXISTS', 'CASCADE', 'RESTRICT', 'RENAME', 'ADD', 'COLUMN',
-  'FUNCTION', 'RETURNS', 'LANGUAGE'
+  kw('CREATE'), kw('DROP'), kw('ALTER'), kw('TABLE'), kw('INDEX'), kw('VIEW'), kw('TRIGGER'),
+  kw('DATABASE'), kw('SCHEMA'), kw('VIRTUAL'), kw('TEMPORARY'), kw('TEMP'), kw('IF'),
+  kw('EXISTS'), kw('CASCADE'), kw('RESTRICT'), kw('RENAME'), kw('ADD'), kw('COLUMN'),
+  kw('FUNCTION'), kw('RETURNS'), kw('LANGUAGE')
 ];
 
 const DML_KEYWORDS = [
-  'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'FROM', 'WHERE', 'INTO',
-  'VALUES', 'SET', 'JOIN', 'LEFT', 'RIGHT', 'INNER', 'OUTER',
-  'CROSS', 'NATURAL', 'USING', 'ON', 'AS', 'GROUP', 'BY',
-  'HAVING', 'ORDER', 'LIMIT', 'OFFSET', 'DISTINCT', 'ALL'
+  kw('SELECT'), kw('INSERT'), kw('UPDATE'), kw('DELETE'), kw('FROM'), kw('WHERE'), kw('INTO'),
+  kw('VALUES'), kw('SET'), kw('JOIN'), kw('LEFT'), kw('RIGHT'), kw('INNER'), kw('OUTER'),
+  kw('CROSS'), kw('NATURAL'), kw('USING'), kw('ON'), kw('AS'), kw('GROUP'), kw('BY'),
+  kw('HAVING'), kw('ORDER'), kw('LIMIT'), kw('OFFSET'), kw('DISTINCT'), kw('ALL')
 ];
 
 const TRANSACTION_KEYWORDS = [
-  'BEGIN', 'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'RELEASE',
-  'TRANSACTION', 'DEFERRED', 'IMMEDIATE', 'EXCLUSIVE'
+  kw('BEGIN'), kw('COMMIT'), kw('ROLLBACK'), kw('SAVEPOINT'), kw('RELEASE'),
+  kw('TRANSACTION'), kw('DEFERRED'), kw('IMMEDIATE'), kw('EXCLUSIVE')
 ];
 
 const CONSTRAINT_KEYWORDS = [
-  'PRIMARY', 'KEY', 'FOREIGN', 'UNIQUE', 'CHECK', 'DEFAULT',
-  'CONSTRAINT', 'REFERENCES', 'AUTOINCREMENT', 'NOT', 'NULL',
-  'COLLATE', 'GENERATED', 'ALWAYS', 'STORED', 'VIRTUAL'
+  kw('PRIMARY'), kw('KEY'), kw('FOREIGN'), kw('UNIQUE'), kw('CHECK'), kw('DEFAULT'),
+  kw('CONSTRAINT'), kw('REFERENCES'), kw('AUTOINCREMENT'), kw('NOT'), kw('NULL'),
+  kw('COLLATE'), kw('GENERATED'), kw('ALWAYS'), kw('STORED'), kw('VIRTUAL')
 ];
 
 const FUNCTION_KEYWORDS = [
-  'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'CAST', 'COALESCE',
-  'NULLIF', 'SUBSTR', 'LENGTH', 'UPPER', 'LOWER', 'TRIM',
-  'DATE', 'TIME', 'DATETIME', 'STRFTIME', 'JULIANDAY'
+  kw('COUNT'), kw('SUM'), kw('AVG'), kw('MIN'), kw('MAX'), kw('CAST'), kw('COALESCE'),
+  kw('NULLIF'), kw('SUBSTR'), kw('LENGTH'), kw('UPPER'), kw('LOWER'), kw('TRIM'),
+  kw('DATE'), kw('TIME'), kw('DATETIME'), kw('STRFTIME'), kw('JULIANDAY'),
+  // Oracle functions
+  kw('NVL'), kw('NVL2'), kw('DECODE'), kw('GREATEST'), kw('LEAST'),
+  // MySQL functions
+  kw('IFNULL'), kw('ISNULL'), kw('CONCAT'), kw('CONCAT_WS'), kw('SUBSTRING_INDEX'),
+  // SQL Server functions
+  kw('ISNULL'), kw('CHARINDEX'), kw('PATINDEX'), kw('STUFF'), kw('REPLICATE')
 ];
 
 const OPERATOR_KEYWORDS = [
-  'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE', 'GLOB', 'MATCH',
-  'REGEXP', 'IS', 'ISNULL', 'NOTNULL', 'ESCAPE'
+  kw('AND'), kw('OR'), kw('NOT'), kw('IN'), kw('BETWEEN'), kw('LIKE'), kw('GLOB'), kw('MATCH'),
+  kw('REGEXP'), kw('IS'), kw('ISNULL'), kw('NOTNULL'), kw('ESCAPE')
 ];
 
 const MISC_KEYWORDS = [
-  'PRAGMA', 'VACUUM', 'ANALYZE', 'REINDEX', 'ATTACH', 'DETACH',
-  'EXPLAIN', 'QUERY', 'PLAN', 'WITH', 'RECURSIVE', 'WITHOUT',
-  'ROWID', 'FILTER', 'OVER', 'PARTITION', 'WINDOW', 'ROWS',
-  'RANGE', 'PRECEDING', 'FOLLOWING', 'CURRENT', 'ROW', 'UNBOUNDED',
-  'EXCLUDE', 'TIES', 'GROUPS', 'NO', 'OTHERS', 'CASE', 'WHEN',
-  'THEN', 'ELSE', 'END', 'RAISE', 'ABORT', 'FAIL', 'IGNORE',
-  'REPLACE', 'CONFLICT', 'DO', 'NOTHING', 'RETURNING', 'ASC',
-  'DESC', 'FULL', 'GLOB', 'EACH', 'FOR', 'OF', 'INSTEAD',
-  'BEFORE', 'AFTER', 'NEW', 'OLD', 'UNION', 'INTERSECT', 'EXCEPT',
-  'TRUE', 'FALSE', 'DEFERRABLE', 'INITIALLY', 'MATCH', 'ON',
-  'USING', 'TO', 'INDEXED', 'ACTION', 'RESTRICT'
+  kw('PRAGMA'), kw('VACUUM'), kw('ANALYZE'), kw('REINDEX'), kw('ATTACH'), kw('DETACH'),
+  kw('EXPLAIN'), kw('QUERY'), kw('PLAN'), kw('WITH'), kw('RECURSIVE'), kw('WITHOUT'),
+  kw('ROWID'), kw('FILTER'), kw('OVER'), kw('PARTITION'), kw('WINDOW'), kw('ROWS'),
+  kw('RANGE'), kw('PRECEDING'), kw('FOLLOWING'), kw('CURRENT'), kw('ROW'), kw('UNBOUNDED'),
+  kw('EXCLUDE'), kw('TIES'), kw('GROUPS'), kw('NO'), kw('OTHERS'), kw('CASE'), kw('WHEN'),
+  kw('THEN'), kw('ELSE'), kw('END'), kw('RAISE'), kw('ABORT'), kw('FAIL'), kw('IGNORE'),
+  kw('REPLACE'), kw('CONFLICT'), kw('DO'), kw('NOTHING'), kw('RETURNING'), kw('ASC'),
+  kw('DESC'), kw('FULL'), kw('GLOB'), kw('EACH'), kw('FOR'), kw('OF'), kw('INSTEAD'),
+  kw('BEFORE'), kw('AFTER'), kw('NEW'), kw('OLD'), kw('UNION'), kw('INTERSECT'), kw('EXCEPT'),
+  kw('TRUE'), kw('FALSE'), kw('DEFERRABLE'), kw('INITIALLY'), kw('MATCH'), kw('ON'),
+  kw('USING'), kw('TO'), kw('INDEXED'), kw('ACTION'), kw('RESTRICT'),
+  // Oracle-specific
+  kw('DUAL'), kw('ROWNUM'), kw('CONNECT'), kw('PRIOR'), kw('START'), kw('SYSDATE'), kw('SYSTIMESTAMP'),
+  kw('LEVEL'), kw('MINUS'),
+  // MySQL-specific
+  kw('SHOW'), kw('DATABASES'), kw('TABLES'), kw('ENGINE'), kw('CHARSET'), kw('COLLATION'),
+  kw('USE'), kw('FORCE'), kw('IGNORE'),
+  // SQL Server-specific
+  kw('TOP'), kw('OUTPUT'), kw('INSERTED'), kw('DELETED'), kw('GO'), kw('IDENTITY'), kw('PERCENT'),
+  kw('APPLY'), kw('OUTER'), kw('CROSS'), kw('OPTION'), kw('NOLOCK'), kw('READUNCOMMITTED'),
+  kw('READCOMMITTED'), kw('REPEATABLEREAD'), kw('SERIALIZABLE'), kw('SNAPSHOT')
 ];
 
 // ZetaSQL-specific keywords (excluding data types which are handled in type_name)
 const ZETASQL_KEYWORDS = [
-  'EXTEND', 'RENAME', 'AGGREGATE', 'TABLESAMPLE', 'PIVOT', 'UNPIVOT',
-  'ASSERT', 'SAFE_CAST', 'NULLIFZERO', 'ZEROIFNULL',
-  'PROTO', 'CALL', 'DESTINATION', 'SOURCE', 'GRAPH',
-  'NODES', 'EDGES', 'PROPERTY_EXISTS', 'ELEMENT_ID', 'SAFE'
+  kw('EXTEND'), kw('RENAME'), kw('AGGREGATE'), kw('TABLESAMPLE'), kw('PIVOT'), kw('UNPIVOT'),
+  kw('ASSERT'), kw('SAFE_CAST'), kw('NULLIFZERO'), kw('ZEROIFNULL'),
+  kw('PROTO'), kw('CALL'), kw('DESTINATION'), kw('SOURCE'), kw('GRAPH'),
+  kw('NODES'), kw('EDGES'), kw('PROPERTY_EXISTS'), kw('ELEMENT_ID'), kw('SAFE')
 ];
 
 // Grouped binary operators by precedence
@@ -101,9 +127,9 @@ const OPERATORS_BY_PRECEDENCE = {
   3: ['+', '-'],  // Addition, subtraction
   4: ['<<', '>>', '&', '|'],  // Bitwise operators
   5: ['<', '<=', '>', '>='],  // Comparison
-  6: ['=', '==', '!=', '<>', 'IS', 'IS NOT', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'GLOB', 'NOT GLOB', 'MATCH', 'NOT MATCH', 'REGEXP', 'NOT REGEXP', '->', '->>', '@>', '<@', token('#>'), token('#>>'), token('?&'), token('?|'), token('&&'), token('@@')],  // Equality, pattern matching, and PostgreSQL operators
-  7: ['AND'],  // Logical AND
-  8: ['OR'],  // Logical OR
+  6: ['=', '==', '!=', '<>', kw('IS'), seq(kw('IS'), kw('NOT')), kw('IN'), seq(kw('NOT'), kw('IN')), kw('LIKE'), seq(kw('NOT'), kw('LIKE')), kw('GLOB'), seq(kw('NOT'), kw('GLOB')), kw('MATCH'), seq(kw('NOT'), kw('MATCH')), kw('REGEXP'), seq(kw('NOT'), kw('REGEXP')), '->', '->>', '@>', '<@', token('#>'), token('#>>'), token('?&'), token('?|'), token('&&'), token('@@'), token('(+)')],  // Equality, pattern matching, PostgreSQL operators, and Oracle outer join
+  7: [kw('AND')],  // Logical AND
+  8: [kw('OR')],  // Logical OR
 };
 
 module.exports = grammar({
@@ -113,6 +139,7 @@ module.exports = grammar({
     /\s/,
     $.comment,
   ],
+
 
   conflicts: $ => [
     [$.identifier, $._keyword],
@@ -160,6 +187,7 @@ module.exports = grammar({
     [$.column_constraint, $._expression],
     [$.like_expression],
     [$.select_core, $.pipe_query],
+    [$.table_or_subquery, $.apply_clause],
   ],
 
   precedences: $ => [
@@ -185,6 +213,8 @@ module.exports = grammar({
         $.create_virtual_table_statement,
         $.create_aggregate_statement,
         $.create_function_statement,
+        $.show_statement,
+        $.go_statement,
         $.drop_statement,
         $.alter_table_statement,
         $.pragma_statement,
@@ -261,23 +291,24 @@ module.exports = grammar({
     ),
 
     with_clause: $ => seq(
-      'WITH',
-      optional('RECURSIVE'),
+      kw('WITH'),
+      optional(kw('RECURSIVE')),
       commaSep1($.common_table_expression)
     ),
 
     common_table_expression: $ => seq(
       field('name', $.identifier),
       optional(column_list($)),
-      'AS',
+      kw('AS'),
       '(',
       field('query', $.select_statement),
       ')'
     ),
 
     select_core: $ => seq(
-      'SELECT',
-      optional(choice('DISTINCT', 'ALL')),
+      kw('SELECT'),
+      optional(choice(kw('DISTINCT'), kw('ALL'))),
+      optional($.top_clause), // SQL Server TOP clause
       field('columns', $.select_list),
       optional($.from_clause),
       optional($.where_clause),
@@ -296,17 +327,19 @@ module.exports = grammar({
     ),
 
     from_clause: $ => seq(
-      'FROM',
+      kw('FROM'),
       $.table_or_subquery,
-      repeat($.join_clause)
+      repeat(choice($.join_clause, $.apply_clause))
     ),
 
     table_or_subquery: $ => choice(
       seq(
         qualified_table_name($),
         optional(choice(
-          seq('INDEXED', 'BY', field('index', $.identifier)),
-          seq('NOT', 'INDEXED')
+          seq(kw('INDEXED'), kw('BY'), field('index', $.identifier)),
+          seq(kw('NOT'), kw('INDEXED')),
+          $.table_hint,  // SQL Server table hints
+          $.mysql_index_hint  // MySQL index hints
         ))
       ),
       seq(
@@ -322,89 +355,89 @@ module.exports = grammar({
     ),
 
     join_clause: $ => seq(
-      optional(choice('NATURAL')),
-      optional(choice('LEFT', 'RIGHT', 'FULL')),
-      optional('OUTER'),
-      choice('JOIN', 'INNER JOIN', 'CROSS JOIN', ','),
+      optional(choice(kw('NATURAL'))),
+      optional(choice(kw('LEFT'), kw('RIGHT'), kw('FULL'))),
+      optional(kw('OUTER')),
+      choice(kw('JOIN'), seq(kw('INNER'), kw('JOIN')), seq(kw('CROSS'), kw('JOIN')), ','),
       $.table_or_subquery,
       optional($.join_constraint)
     ),
 
     join_constraint: $ => choice(
-      seq('ON', field('condition', $._expression)),
-      seq('USING', column_list($))
+      seq(kw('ON'), field('condition', $._expression)),
+      seq(kw('USING'), column_list($))
     ),
 
-    where_clause: $ => seq('WHERE', field('condition', $._expression)),
+    where_clause: $ => seq(kw('WHERE'), field('condition', $._expression)),
 
     group_by_clause: $ => seq(
-      'GROUP', 'BY',
+      kw('GROUP'), kw('BY'),
       commaSep1(field('expression', $._expression)),
-      optional(seq('HAVING', field('having', $._expression)))
+      optional(seq(kw('HAVING'), field('having', $._expression)))
     ),
 
     window_clause: $ => seq(
-      'WINDOW',
+      kw('WINDOW'),
       commaSep1(seq(
         field('name', $.identifier),
-        'AS',
+        kw('AS'),
         $.window_definition
       ))
     ),
 
     window_definition: $ => seq(
       '(',
-      optional(seq('PARTITION', 'BY', commaSep1($._expression))),
+      optional(seq(kw('PARTITION'), kw('BY'), commaSep1($._expression))),
       optional($.order_by_clause),
       optional($.frame_spec),
       ')'
     ),
 
     frame_spec: $ => seq(
-      choice('RANGE', 'ROWS', 'GROUPS'),
+      choice(kw('RANGE'), kw('ROWS'), kw('GROUPS')),
       choice(
-        seq('BETWEEN', $.frame_bound, 'AND', $.frame_bound),
+        seq(kw('BETWEEN'), $.frame_bound, kw('AND'), $.frame_bound),
         $.frame_bound
       ),
-      optional(seq('EXCLUDE', choice('NO OTHERS', 'CURRENT ROW', 'GROUP', 'TIES')))
+      optional(seq(kw('EXCLUDE'), choice(seq(kw('NO'), kw('OTHERS')), seq(kw('CURRENT'), kw('ROW')), kw('GROUP'), kw('TIES'))))
     ),
 
     frame_bound: $ => choice(
-      'UNBOUNDED PRECEDING',
-      seq($._expression, 'PRECEDING'),
-      'CURRENT ROW',
-      seq($._expression, 'FOLLOWING'),
-      'UNBOUNDED FOLLOWING'
+      seq(kw('UNBOUNDED'), kw('PRECEDING')),
+      seq($._expression, kw('PRECEDING')),
+      seq(kw('CURRENT'), kw('ROW')),
+      seq($._expression, kw('FOLLOWING')),
+      seq(kw('UNBOUNDED'), kw('FOLLOWING'))
     ),
 
     order_by_clause: $ => seq(
-      'ORDER', 'BY',
+      kw('ORDER'), kw('BY'),
       commaSep1($.ordering_term)
     ),
 
     ordering_term: $ => seq(
       field('expression', $._expression),
-      optional(choice('ASC', 'DESC')),
-      optional(seq('NULLS', choice('FIRST', 'LAST')))
+      optional(choice(kw('ASC'), kw('DESC'))),
+      optional(seq(kw('NULLS'), choice(kw('FIRST'), kw('LAST'))))
     ),
 
     limit_clause: $ => seq(
-      'LIMIT',
+      kw('LIMIT'),
       field('limit', $._expression),
-      optional(seq(choice('OFFSET', ','), field('offset', $._expression)))
+      optional(seq(choice(kw('OFFSET'), ','), field('offset', $._expression)))
     ),
 
     compound_operator: $ => seq(
-      field('operator', choice('UNION', 'UNION ALL', 'INTERSECT', 'EXCEPT')),
+      field('operator', choice(kw('UNION'), seq(kw('UNION'), kw('ALL')), kw('INTERSECT'), kw('EXCEPT'), kw('MINUS'))),
       $.select_core
     ),
 
     // INSERT statement
     insert_statement: $ => seq(
       optional($.with_clause),
-      choice('INSERT', 'REPLACE'),
-      optional(choice('OR', 'ROLLBACK', 'ABORT', 'REPLACE', 'FAIL', 'IGNORE')),
-      'INTO',
+      choice(kw('INSERT'), kw('REPLACE')),
+      optional(choice(kw('OR'), kw('ROLLBACK'), kw('ABORT'), kw('REPLACE'), kw('FAIL'), kw('IGNORE'))),
+      kw('INTO'),
       qualified_table_name($, false),
       optional(alias($)),
       choice(
@@ -418,13 +451,13 @@ module.exports = grammar({
           field('select', $.select_statement),
           optional($.on_conflict_clause)
         ),
-        seq('DEFAULT', 'VALUES')
+        seq(kw('DEFAULT'), kw('VALUES'))
       ),
       optional($.returning_clause)
     ),
 
     values_clause: $ => seq(
-      'VALUES',
+      kw('VALUES'),
       commaSep1(seq(
         '(',
         commaSep1(field('value', $._expression)),
@@ -433,19 +466,19 @@ module.exports = grammar({
     ),
 
     on_conflict_clause: $ => seq(
-      'ON', 'CONFLICT',
+      kw('ON'), kw('CONFLICT'),
       optional(seq(
         '(',
         commaSep1(field('column', $.identifier)),
         optional($.where_clause),
         ')'
       )),
-      'DO',
+      kw('DO'),
       choice(
-        'NOTHING',
+        kw('NOTHING'),
         seq(
-          'UPDATE',
-          'SET',
+          kw('UPDATE'),
+          kw('SET'),
           commaSep1($.update_set)
         )
       ),
@@ -462,7 +495,7 @@ module.exports = grammar({
     ),
 
     returning_clause: $ => seq(
-      'RETURNING',
+      kw('RETURNING'),
       choice(
         '*',
         commaSep1(seq(
@@ -475,10 +508,10 @@ module.exports = grammar({
     // UPDATE statement
     update_statement: $ => seq(
       optional($.with_clause),
-      'UPDATE',
-      optional(choice('OR', 'ROLLBACK', 'ABORT', 'REPLACE', 'FAIL', 'IGNORE')),
+      kw('UPDATE'),
+      optional(choice(kw('OR'), kw('ROLLBACK'), kw('ABORT'), kw('REPLACE'), kw('FAIL'), kw('IGNORE'))),
       qualified_table_name($),
-      'SET',
+      kw('SET'),
       commaSep1($.update_set),
       optional($.where_clause),
       optional($.returning_clause)
@@ -487,8 +520,8 @@ module.exports = grammar({
     // DELETE statement
     delete_statement: $ => seq(
       optional($.with_clause),
-      'DELETE',
-      'FROM',
+      kw('DELETE'),
+      kw('FROM'),
       qualified_table_name($),
       optional($.where_clause),
       optional($.returning_clause)
@@ -496,9 +529,9 @@ module.exports = grammar({
 
     // CREATE TABLE statement
     create_table_statement: $ => seq(
-      'CREATE',
-      optional(choice('TEMP', 'TEMPORARY')),
-      'TABLE',
+      kw('CREATE'),
+      optional(choice(kw('TEMP'), kw('TEMPORARY'))),
+      kw('TABLE'),
       if_not_exists(),
       qualified_table_name($, false),
       choice(
@@ -509,11 +542,11 @@ module.exports = grammar({
             $.table_constraint
           )),
           ')',
-          optional(seq('WITHOUT', 'ROWID'))
+          optional(seq(kw('WITHOUT'), kw('ROWID')))
         ),
-        seq('AS', field('select', $.select_statement))
+        seq(kw('AS'), field('select', $.select_statement))
       ),
-      optional(seq('STRICT', optional(seq(',', 'WITHOUT', 'ROWID'))))
+      optional(seq(kw('STRICT'), optional(seq(',', kw('WITHOUT'), kw('ROWID')))))
     ),
 
     column_definition: $ => seq(
@@ -537,47 +570,47 @@ module.exports = grammar({
     ),
 
     column_constraint: $ => seq(
-      optional(seq('CONSTRAINT', field('name', $.identifier))),
+      optional(seq(kw('CONSTRAINT'), field('name', $.identifier))),
       choice(
-        seq('PRIMARY', 'KEY', optional(choice('ASC', 'DESC')), optional($.conflict_clause), optional('AUTOINCREMENT')),
-        seq('NOT', 'NULL', optional($.conflict_clause)),
-        seq('UNIQUE', optional($.conflict_clause)),
-        seq('CHECK', '(', field('expression', $._expression), ')'),
-        seq('DEFAULT', field('value', choice($._expression, $._literal_value))),
-        seq('COLLATE', field('collation', $.identifier)),
+        seq(kw('PRIMARY'), kw('KEY'), optional(choice(kw('ASC'), kw('DESC'))), optional($.conflict_clause), optional(kw('AUTOINCREMENT'))),
+        seq(kw('NOT'), kw('NULL'), optional($.conflict_clause)),
+        seq(kw('UNIQUE'), optional($.conflict_clause)),
+        seq(kw('CHECK'), '(', field('expression', $._expression), ')'),
+        seq(kw('DEFAULT'), field('value', choice($._expression, $._literal_value))),
+        seq(kw('COLLATE'), field('collation', $.identifier)),
         $.foreign_key_clause,
         seq(
-          optional(seq('GENERATED', 'ALWAYS')),
-          'AS',
+          optional(seq(kw('GENERATED'), kw('ALWAYS'))),
+          kw('AS'),
           '(',
           field('expression', $._expression),
           ')',
-          optional(choice('STORED', 'VIRTUAL'))
+          optional(choice(kw('STORED'), kw('VIRTUAL')))
         )
       )
     ),
 
     table_constraint: $ => seq(
-      optional(seq('CONSTRAINT', field('name', $.identifier))),
+      optional(seq(kw('CONSTRAINT'), field('name', $.identifier))),
       choice(
         seq(
-          choice('PRIMARY KEY', 'UNIQUE'),
+          choice(seq(kw('PRIMARY'), kw('KEY')), kw('UNIQUE')),
           '(',
           commaSep1(seq(
             field('column', $.identifier),
-            optional(choice('ASC', 'DESC'))
+            optional(choice(kw('ASC'), kw('DESC')))
           )),
           ')',
           optional($.conflict_clause)
         ),
         seq(
-          'CHECK',
+          kw('CHECK'),
           '(',
           field('expression', $._expression),
           ')'
         ),
         seq(
-          'FOREIGN', 'KEY',
+          kw('FOREIGN'), kw('KEY'),
           column_list($),
           $.foreign_key_clause
         )
@@ -585,37 +618,37 @@ module.exports = grammar({
     ),
 
     foreign_key_clause: $ => seq(
-      'REFERENCES',
+      kw('REFERENCES'),
       field('table', $._qualified_identifier),
       optional(column_list($)),
       repeat(choice(
         seq(
-          'ON',
-          choice('DELETE', 'UPDATE'),
-          choice('SET NULL', 'SET DEFAULT', 'CASCADE', 'RESTRICT', 'NO ACTION')
+          kw('ON'),
+          choice(kw('DELETE'), kw('UPDATE')),
+          choice(seq(kw('SET', kw('NULL')), seq(kw('SET'), kw('DEFAULT')), kw('CASCADE'), kw('RESTRICT'), seq(kw('NO'), kw('ACTION'))))
         ),
-        seq('MATCH', field('name', $.identifier))
+        seq(kw('MATCH'), field('name', $.identifier))
       )),
       optional(seq(
-        optional('NOT'),
-        'DEFERRABLE',
-        optional(seq('INITIALLY', choice('DEFERRED', 'IMMEDIATE')))
+        optional(kw('NOT')),
+        kw('DEFERRABLE'),
+        optional(seq(kw('INITIALLY'), choice(kw('DEFERRED'), kw('IMMEDIATE'))))
       ))
     ),
 
     conflict_clause: $ => seq(
-      'ON', 'CONFLICT',
-      choice('ROLLBACK', 'ABORT', 'FAIL', 'IGNORE', 'REPLACE')
+      kw('ON'), kw('CONFLICT'),
+      choice(kw('ROLLBACK'), kw('ABORT'), kw('FAIL'), kw('IGNORE'), kw('REPLACE'))
     ),
 
     // CREATE INDEX statement
     create_index_statement: $ => seq(
-      'CREATE',
-      optional('UNIQUE'),
-      'INDEX',
+      kw('CREATE'),
+      optional(kw('UNIQUE')),
+      kw('INDEX'),
       if_not_exists(),
       field('name', $._qualified_identifier),
-      'ON',
+      kw('ON'),
       field('table', $._qualified_identifier),
       '(',
       commaSep1($.indexed_column),
@@ -625,49 +658,49 @@ module.exports = grammar({
 
     indexed_column: $ => seq(
       field('expression', $._expression),
-      optional(choice('ASC', 'DESC'))
+      optional(choice(kw('ASC'), kw('DESC')))
     ),
 
     // CREATE VIEW statement
     create_view_statement: $ => seq(
-      'CREATE',
-      optional(choice('TEMP', 'TEMPORARY')),
-      'VIEW',
+      kw('CREATE'),
+      optional(choice(kw('TEMP'), kw('TEMPORARY'))),
+      kw('VIEW'),
       if_not_exists(),
       field('name', $._qualified_identifier),
       optional(column_list($)),
-      'AS',
+      kw('AS'),
       field('select', $.select_statement)
     ),
 
     // CREATE TRIGGER statement
     create_trigger_statement: $ => seq(
-      'CREATE',
-      optional(choice('TEMP', 'TEMPORARY')),
-      'TRIGGER',
+      kw('CREATE'),
+      optional(choice(kw('TEMP'), kw('TEMPORARY'))),
+      kw('TRIGGER'),
       if_not_exists(),
       field('name', $._qualified_identifier),
-      optional(choice('BEFORE', 'AFTER', 'INSTEAD OF')),
+      optional(choice(kw('BEFORE'), kw('AFTER'), seq(kw('INSTEAD'), kw('OF')))),
       choice(
-        'DELETE',
-        'INSERT',
-        seq('UPDATE', optional(seq('OF', commaSep1(field('column', $.identifier)))))
+        kw('DELETE'),
+        kw('INSERT'),
+        seq(kw('UPDATE'), optional(seq(kw('OF'), commaSep1(field('column', $.identifier)))))
       ),
-      'ON',
+      kw('ON'),
       field('table', $._qualified_identifier),
-      optional(seq('FOR', 'EACH', 'ROW')),
-      optional(seq('WHEN', field('condition', $._expression))),
-      'BEGIN',
+      optional(seq(kw('FOR'), kw('EACH'), kw('ROW'))),
+      optional(seq(kw('WHEN'), field('condition', $._expression))),
+      kw('BEGIN'),
       repeat1($._statement),
-      'END'
+      kw('END')
     ),
 
     // CREATE VIRTUAL TABLE statement
     create_virtual_table_statement: $ => seq(
-      'CREATE', 'VIRTUAL', 'TABLE',
+      kw('CREATE'), kw('VIRTUAL'), kw('TABLE'),
       if_not_exists(),
       field('name', $._qualified_identifier),
-      'USING',
+      kw('USING'),
       field('module', $.identifier),
       optional(seq(
         '(',
@@ -678,9 +711,9 @@ module.exports = grammar({
 
     // CREATE AGGREGATE statement (PostgreSQL)
     create_aggregate_statement: $ => seq(
-      'CREATE',
-      optional(seq('OR', 'REPLACE')),
-      'AGGREGATE',
+      kw('CREATE'),
+      optional(seq(kw('OR'), kw('REPLACE'))),
+      kw('AGGREGATE'),
       field('name', $.identifier),
       '(',
       field('parameter_type', $.identifier),
@@ -698,18 +731,18 @@ module.exports = grammar({
 
     // CREATE FUNCTION statement (PostgreSQL)
     create_function_statement: $ => seq(
-      'CREATE',
-      optional(seq('OR', 'REPLACE')),
-      'FUNCTION',
+      kw('CREATE'),
+      optional(seq(kw('OR'), kw('REPLACE'))),
+      kw('FUNCTION'),
       field('name', $.identifier),
       '(',
       optional(commaSep1($.function_parameter)),
       ')',
-      'RETURNS',
+      kw('RETURNS'),
       field('return_type', $.identifier),
-      'AS',
+      kw('AS'),
       $.dollar_quoted_string,
-      'LANGUAGE',
+      kw('LANGUAGE'),
       field('language', $.identifier)
     ),
 
@@ -727,27 +760,27 @@ module.exports = grammar({
 
     // DROP statement
     drop_statement: $ => seq(
-      'DROP',
-      field('type', choice('TABLE', 'INDEX', 'VIEW', 'TRIGGER')),
+      kw('DROP'),
+      field('type', choice(kw('TABLE'), kw('INDEX'), kw('VIEW'), kw('TRIGGER'))),
       if_exists(),
       field('name', $._qualified_identifier)
     ),
 
     // ALTER TABLE statement
     alter_table_statement: $ => seq(
-      'ALTER', 'TABLE',
+      kw('ALTER'), kw('TABLE'),
       field('table', $._qualified_identifier),
       choice(
-        seq('RENAME', 'TO', field('new_name', $.identifier)),
-        seq('RENAME', optional('COLUMN'), field('old_name', $.identifier), 'TO', field('new_name', $.identifier)),
-        seq('ADD', optional('COLUMN'), $.column_definition),
-        seq('DROP', optional('COLUMN'), field('column', $.identifier))
+        seq(kw('RENAME'), kw('TO'), field('new_name', $.identifier)),
+        seq(kw('RENAME'), optional(kw('COLUMN')), field('old_name', $.identifier), kw('TO'), field('new_name', $.identifier)),
+        seq(kw('ADD'), optional(kw('COLUMN')), $.column_definition),
+        seq(kw('DROP'), optional(kw('COLUMN')), field('column', $.identifier))
       )
     ),
 
     // PRAGMA statement
     pragma_statement: $ => seq(
-      'PRAGMA',
+      kw('PRAGMA'),
       optional(seq(field('schema', $.identifier), '.')),
       field('name', $.identifier),
       optional(choice(
@@ -764,29 +797,29 @@ module.exports = grammar({
 
     // ATTACH/DETACH statements
     attach_statement: $ => seq(
-      'ATTACH',
-      optional('DATABASE'),
+      kw('ATTACH'),
+      optional(kw('DATABASE')),
       field('file', $._expression),
-      'AS',
+      kw('AS'),
       field('schema', $.identifier)
     ),
 
     detach_statement: $ => seq(
-      'DETACH',
-      optional('DATABASE'),
+      kw('DETACH'),
+      optional(kw('DATABASE')),
       field('schema', $.identifier)
     ),
 
     // VACUUM statement
     vacuum_statement: $ => seq(
-      'VACUUM',
+      kw('VACUUM'),
       optional(field('schema', $.identifier)),
-      optional(seq('INTO', field('file', $._expression)))
+      optional(seq(kw('INTO'), field('file', $._expression)))
     ),
 
     // ANALYZE statement
     analyze_statement: $ => seq(
-      'ANALYZE',
+      kw('ANALYZE'),
       optional(choice(
         field('schema', $.identifier),
         seq(
@@ -799,7 +832,7 @@ module.exports = grammar({
 
     // REINDEX statement
     reindex_statement: $ => seq(
-      'REINDEX',
+      kw('REINDEX'),
       optional(choice(
         field('name', $.identifier),
         field('name', $._qualified_identifier)
@@ -808,37 +841,37 @@ module.exports = grammar({
 
     // Transaction statements
     begin_statement: $ => seq(
-      'BEGIN',
-      optional(choice('DEFERRED', 'IMMEDIATE', 'EXCLUSIVE')),
-      optional('TRANSACTION')
+      kw('BEGIN'),
+      optional(choice(kw('DEFERRED'), kw('IMMEDIATE'), kw('EXCLUSIVE'))),
+      optional(kw('TRANSACTION'))
     ),
 
     commit_statement: $ => seq(
-      choice('COMMIT', 'END'),
-      optional('TRANSACTION')
+      choice(kw('COMMIT'), kw('END')),
+      optional(kw('TRANSACTION'))
     ),
 
     rollback_statement: $ => seq(
-      'ROLLBACK',
-      optional('TRANSACTION'),
-      optional(seq('TO', optional('SAVEPOINT'), field('savepoint', $.identifier)))
+      kw('ROLLBACK'),
+      optional(kw('TRANSACTION')),
+      optional(seq(kw('TO'), optional(kw('SAVEPOINT')), field('savepoint', $.identifier)))
     ),
 
     savepoint_statement: $ => seq(
-      'SAVEPOINT',
+      kw('SAVEPOINT'),
       field('name', $.identifier)
     ),
 
     release_statement: $ => seq(
-      'RELEASE',
-      optional('SAVEPOINT'),
+      kw('RELEASE'),
+      optional(kw('SAVEPOINT')),
       field('name', $.identifier)
     ),
 
     // EXPLAIN statement
     explain_statement: $ => seq(
-      'EXPLAIN',
-      optional(seq('QUERY', 'PLAN')),
+      kw('EXPLAIN'),
+      optional(seq(kw('QUERY'), kw('PLAN'))),
       $._statement
     ),
 
@@ -866,7 +899,9 @@ module.exports = grammar({
       $.array_constructor,
       $.safe_cast_expression,
       $.nullifzero_expression,
-      $.zeroifnull_expression
+      $.zeroifnull_expression,
+      $.oracle_rownum,
+      $.oracle_level
     ),
 
     _literal_value: $ => choice(
@@ -875,7 +910,9 @@ module.exports = grammar({
       $.string,
       $.blob,
       $.null,
-      $.boolean
+      $.boolean,
+      $.oracle_date_literal,
+      $.oracle_timestamp_literal
     ),
 
     integer: $ => /\d+/,
@@ -892,20 +929,20 @@ module.exports = grammar({
     ),
 
     blob: $ => seq(
-      choice('x', 'X'),
+      choice('x', kw('X')),
       "'",
       /[0-9a-fA-F]+/,
       "'"
     ),
 
-    null: $ => 'NULL',
+    null: $ => kw('NULL'),
 
-    boolean: $ => choice('TRUE', 'FALSE'),
+    boolean: $ => choice(kw('TRUE'), kw('FALSE')),
 
     unary_expression: $ => prec.right('unary', choice(
       seq('-', field('operand', $._expression)),
       seq('+', field('operand', $._expression)),
-      seq('NOT', field('operand', $._expression)),
+      seq(kw('NOT'), field('operand', $._expression)),
       seq('~', field('operand', $._expression))
     )),
 
@@ -930,30 +967,30 @@ module.exports = grammar({
     parenthesized_expression: $ => seq('(', $._expression, ')'),
 
     cast_expression: $ => seq(
-      'CAST',
+      kw('CAST'),
       '(',
       field('expression', $._expression),
-      'AS',
+      kw('AS'),
       field('type', $.type_name),
       ')'
     ),
 
     case_expression: $ => seq(
-      'CASE',
+      kw('CASE'),
       optional(field('expression', $._expression)),
       repeat1(seq(
-        'WHEN',
+        kw('WHEN'),
         field('condition', $._expression),
-        'THEN',
+        kw('THEN'),
         field('result', $._expression)
       )),
-      optional(seq('ELSE', field('else', $._expression))),
-      'END'
+      optional(seq(kw('ELSE'), field('else', $._expression))),
+      kw('END')
     ),
 
     exists_expression: $ => seq(
-      optional('NOT'),
-      'EXISTS',
+      optional(kw('NOT')),
+      kw('EXISTS'),
       '(',
       field('subquery', $.select_statement),
       ')'
@@ -961,8 +998,8 @@ module.exports = grammar({
 
     in_expression: $ => seq(
       field('expression', $._expression),
-      optional('NOT'),
-      'IN',
+      optional(kw('NOT')),
+      kw('IN'),
       choice(
         seq('(', commaSep1(field('value', $._expression)), ')'),
         seq('(', field('subquery', $.select_statement), ')'),
@@ -978,58 +1015,62 @@ module.exports = grammar({
 
     between_expression: $ => seq(
       field('expression', $._expression),
-      optional('NOT'),
-      'BETWEEN',
+      optional(kw('NOT')),
+      kw('BETWEEN'),
       field('low', $._expression),
-      'AND',
+      kw('AND'),
       field('high', $._expression)
     ),
 
     like_expression: $ => seq(
       field('expression', $._expression),
-      optional('NOT'),
-      choice('LIKE', 'GLOB', 'MATCH', 'REGEXP'),
+      optional(kw('NOT')),
+      choice(kw('LIKE'), kw('GLOB'), kw('MATCH'), kw('REGEXP')),
       field('pattern', $._expression),
-      optional(seq('ESCAPE', field('escape', $._expression)))
+      optional(seq(kw('ESCAPE'), field('escape', $._expression)))
     ),
 
     is_expression: $ => seq(
       field('left', $._expression),
-      'IS',
-      optional('NOT'),
+      kw('IS'),
+      optional(kw('NOT')),
       choice(
-        'NULL',
-        'TRUE',
-        'FALSE',
+        kw('NULL'),
+        kw('TRUE'),
+        kw('FALSE'),
         field('value', $._expression)
       )
     ),
 
     null_expression: $ => seq(
       field('expression', $._expression),
-      choice('ISNULL', 'NOTNULL')
+      choice(kw('ISNULL'), kw('NOTNULL'))
     ),
 
     collate_expression: $ => seq(
       field('expression', $._expression),
-      'COLLATE',
+      kw('COLLATE'),
       field('collation', $.identifier)
     ),
 
     function_call: $ => seq(
-      field('name', $.identifier),
+      field('name', choice(
+        $.identifier,
+        // Allow certain keywords to be used as function names
+        kw('DATE'), kw('TIME'), kw('DATETIME'), kw('TIMESTAMP')
+      )),
       '(',
       optional(choice(
         '*',
         seq(
-          optional('DISTINCT'),
+          optional(kw('DISTINCT')),
           commaSep1(field('argument', $._expression))
         )
       )),
       ')',
       optional(seq(
-        optional(seq('FILTER', '(', 'WHERE', field('filter', $._expression), ')')),
-        'OVER',
+        optional(seq(kw('FILTER'), '(', kw('WHERE'), field('filter', $._expression), ')')),
+        kw('OVER'),
         choice(
           field('window', $.identifier),
           $.window_definition
@@ -1044,9 +1085,9 @@ module.exports = grammar({
     ),
 
     raise_expression: $ => seq(
-      'RAISE',
+      kw('RAISE'),
       '(',
-      choice('IGNORE', 'ROLLBACK', 'ABORT', 'FAIL'),
+      choice(kw('IGNORE'), kw('ROLLBACK'), kw('ABORT'), kw('FAIL')),
       optional(seq(',', field('message', $.string))),
       ')'
     ),
@@ -1062,13 +1103,13 @@ module.exports = grammar({
 
     array_constructor: $ => choice(
       seq(
-        'ARRAY',
+        kw('ARRAY'),
         '[',
         commaSep1(field('element', $._expression)),
         ']'
       ),
       seq(
-        'ARRAY',
+        kw('ARRAY'),
         '(',
         field('subquery', $.select_statement),
         ')'
@@ -1077,14 +1118,14 @@ module.exports = grammar({
 
     // ZetaSQL data types
     array_type: $ => seq(
-      'ARRAY',
+      kw('ARRAY'),
       '<',
       field('element_type', $.type_name),
       '>'
     ),
 
     struct_type: $ => seq(
-      'STRUCT',
+      kw('STRUCT'),
       '<',
       commaSep1(seq(
         field('field_name', $.identifier),
@@ -1095,7 +1136,7 @@ module.exports = grammar({
 
     // ZetaSQL pipe syntax
     pipe_query: $ => prec(1, seq(
-      'FROM',
+      kw('FROM'),
       field('source', $.table_or_subquery),
       repeat1($.pipe_operator)
     )),
@@ -1118,49 +1159,130 @@ module.exports = grammar({
       ))
     ),
 
-    pipe_select: $ => seq('SELECT', commaSep1($._expression)),
-    pipe_extend: $ => seq('EXTEND', commaSep1(seq($._expression, optional(alias($))))),
-    pipe_set: $ => seq('SET', commaSep1(seq($.identifier, '=', $._expression))),
-    pipe_drop: $ => seq('DROP', commaSep1($.identifier)),
-    pipe_rename: $ => seq('RENAME', commaSep1(seq($.identifier, 'AS', $.identifier))),
-    pipe_where: $ => seq('WHERE', $._expression),
-    pipe_limit: $ => seq('LIMIT', $._expression),
+    pipe_select: $ => seq(kw('SELECT'), commaSep1($._expression)),
+    pipe_extend: $ => seq(kw('EXTEND'), commaSep1(seq($._expression, optional(alias($))))),
+    pipe_set: $ => seq(kw('SET'), commaSep1(seq($.identifier, '=', $._expression))),
+    pipe_drop: $ => seq(kw('DROP'), commaSep1($.identifier)),
+    pipe_rename: $ => seq(kw('RENAME'), commaSep1(seq($.identifier, kw('AS'), $.identifier))),
+    pipe_where: $ => seq(kw('WHERE'), $._expression),
+    pipe_limit: $ => seq(kw('LIMIT'), $._expression),
     pipe_aggregate: $ => seq(
-      'AGGREGATE',
+      kw('AGGREGATE'),
       commaSep1(seq($._expression, optional(alias($)))),
-      optional(seq('GROUP', 'BY', commaSep1($._expression)))
+      optional(seq(kw('GROUP'), kw('BY'), commaSep1($._expression)))
     ),
-    pipe_distinct: $ => 'DISTINCT',
-    pipe_order_by: $ => seq('ORDER', 'BY', commaSep1($.ordering_term)),
+    pipe_distinct: $ => kw('DISTINCT'),
+    pipe_order_by: $ => seq(kw('ORDER'), kw('BY'), commaSep1($.ordering_term)),
     pipe_join: $ => seq(
-      optional(choice('LEFT', 'RIGHT', 'FULL', 'INNER')),
-      'JOIN',
+      optional(choice(kw('LEFT'), kw('RIGHT'), kw('FULL'), kw('INNER'))),
+      kw('JOIN'),
       $.table_or_subquery,
       optional($.join_constraint)
     ),
-    pipe_assert: $ => seq('ASSERT', $._expression),
+    pipe_assert: $ => seq(kw('ASSERT'), $._expression),
 
     // ZetaSQL-specific functions
     safe_cast_expression: $ => seq(
       'SAFE_CAST',
       '(',
       field('expression', $._expression),
-      'AS',
+      kw('AS'),
       field('type', $.type_name),
       ')'
     ),
 
     nullifzero_expression: $ => seq(
-      'NULLIFZERO',
+      kw('NULLIFZERO'),
       '(',
       field('expression', $._expression),
       ')'
     ),
 
     zeroifnull_expression: $ => seq(
-      'ZEROIFNULL',
+      kw('ZEROIFNULL'),
       '(',
       field('expression', $._expression),
+      ')'
+    ),
+
+    // SQL Server TOP clause
+    top_clause: $ => seq(
+      kw('TOP'),
+      choice(
+        field('count', $.integer),
+        seq('(', field('count', $._expression), ')')
+      ),
+      optional(field('percent', kw('PERCENT')))
+    ),
+
+    // Oracle date and timestamp literals
+    oracle_date_literal: $ => seq(
+      kw('DATE'),
+      field('value', $.string)
+    ),
+
+    oracle_timestamp_literal: $ => seq(
+      kw('TIMESTAMP'),
+      field('value', $.string)
+    ),
+
+    // MySQL SHOW statements
+    show_statement: $ => seq(
+      kw('SHOW'),
+      choice(
+        kw('DATABASES'),
+        kw('TABLES'),
+        seq(kw('TABLES'), kw('FROM'), field('database', $.identifier)),
+        seq(kw('COLUMNS'), kw('FROM'), field('table', $.identifier)),
+        seq(kw('INDEX'), kw('FROM'), field('table', $.identifier)),
+        seq(kw('CREATE'), kw('TABLE'), field('table', $.identifier)),
+        seq(kw('CREATE'), kw('DATABASE'), field('database', $.identifier))
+      )
+    ),
+
+
+    // Oracle ROWNUM support
+    oracle_rownum: $ => kw('ROWNUM'),
+    
+    // Oracle LEVEL pseudo-column for hierarchical queries
+    oracle_level: $ => kw('LEVEL'),
+
+    // SQL Server batch separator
+    go_statement: $ => kw('GO'),
+
+    // SQL Server table hints
+    table_hint: $ => seq(
+      kw('WITH'),
+      '(',
+      commaSep1(choice(
+        kw('NOLOCK'),
+        kw('READUNCOMMITTED'),
+        kw('READCOMMITTED'), 
+        kw('REPEATABLEREAD'),
+        kw('SERIALIZABLE'),
+        kw('SNAPSHOT'),
+        seq(kw('INDEX'), '(', commaSep1($.identifier), ')'),
+        seq(kw('INDEX'), '=', $.identifier)
+      )),
+      ')'
+    ),
+
+    // SQL Server APPLY operators
+    apply_clause: $ => seq(
+      choice(seq(kw('CROSS'), kw('APPLY')), seq(kw('OUTER'), kw('APPLY'))),
+      choice(
+        $.table_or_subquery,
+        seq('(', $.select_statement, ')')
+      )
+    ),
+
+    // MySQL index hints  
+    mysql_index_hint: $ => seq(
+      choice(kw('USE'), kw('IGNORE'), kw('FORCE')),
+      choice(kw('INDEX'), kw('KEY')),
+      optional(seq(kw('FOR'), choice(kw('JOIN'), seq(kw('ORDER'), kw('BY')), seq(kw('GROUP'), kw('BY'))))),
+      '(',
+      optional(commaSep1($.identifier)),
       ')'
     ),
 

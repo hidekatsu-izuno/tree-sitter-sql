@@ -385,7 +385,6 @@ WHERE id IN (
                 (qualified_identifier
                   (identifier))
                 (function_call
-                  (identifier)
                   (string)
                   (string))))))))))
 
@@ -485,7 +484,6 @@ WHERE (status = 'inactive' AND last_login < DATE('now', '-1 year'))
                   (qualified_identifier
                     (identifier))))
               (function_call
-                (identifier)
                 (string)
                 (string))))
           (parenthesized_expression
@@ -498,7 +496,6 @@ WHERE (status = 'inactive' AND last_login < DATE('now', '-1 year'))
                   (qualified_identifier
                     (identifier))))
               (function_call
-                (identifier)
                 (string)
                 (string)))))
         (parenthesized_expression
@@ -511,7 +508,6 @@ WHERE (status = 'inactive' AND last_login < DATE('now', '-1 year'))
                 (qualified_identifier
                   (identifier))))
             (function_call
-              (identifier)
               (string)
               (string))))))))
 
@@ -557,7 +553,6 @@ WHERE NOT EXISTS (
                       (identifier)
                       (identifier))))
                 (function_call
-                  (identifier)
                   (string)
                   (string))))))))))
 
@@ -663,7 +658,6 @@ DELETE FROM logs WHERE created_at < DATE('now', '-30 days') LIMIT 1000;
         (qualified_identifier
           (identifier))
         (function_call
-          (identifier)
           (string)
           (string)))))
   (ERROR

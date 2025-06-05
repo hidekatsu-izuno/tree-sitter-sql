@@ -1,0 +1,291 @@
+================================================================================
+SQL Server TOP clause
+================================================================================
+
+SELECT TOP 10 * FROM users;
+SELECT TOP (5) name FROM products;
+SELECT TOP 10 PERCENT * FROM orders;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (top_clause
+        count: (integer))
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (select_statement
+    (select_core
+      (top_clause
+        count: (integer))
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (select_statement
+    (select_core
+      (top_clause
+        count: (integer))
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+Oracle date literals
+================================================================================
+
+SELECT DATE '2023-01-01', TIMESTAMP '2023-01-01 12:00:00' FROM DUAL;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (oracle_date_literal
+            value: (string)))
+        (result_column
+          expression: (oracle_timestamp_literal
+            value: (string))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+Oracle ROWNUM
+================================================================================
+
+SELECT * FROM users WHERE ROWNUM <= 10;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (oracle_rownum)
+          right: (integer))))))
+
+================================================================================
+MySQL SHOW statements
+================================================================================
+
+SHOW DATABASES;
+SHOW TABLES;
+SHOW TABLES FROM mydb;
+SHOW COLUMNS FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (show_statement)
+  (show_statement)
+  (show_statement
+    database: (identifier))
+  (show_statement
+    table: (identifier)))
+
+================================================================================
+Oracle functions
+================================================================================
+
+SELECT NVL(name, 'Unknown'), DECODE(status, 1, 'Active', 'Inactive') FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier))
+            argument: (string)))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier))
+            argument: (integer)
+            argument: (string)
+            argument: (string))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+MySQL functions
+================================================================================
+
+SELECT IFNULL(name, 'Unknown'), CONCAT(first_name, ' ', last_name) FROM users;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier))
+            argument: (string)))
+        (result_column
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
+              name: (identifier))
+            argument: (string)
+            argument: (qualified_identifier
+              name: (identifier)))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+SQL Server batch separator
+================================================================================
+
+SELECT * FROM users;
+GO
+SELECT * FROM orders;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))))
+  (go_statement)
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))))
+
+================================================================================
+Oracle LEVEL pseudo-column
+================================================================================
+
+SELECT ename, LEVEL FROM emp WHERE LEVEL <= 3;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier)))
+        (result_column
+          expression: (oracle_level)))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (oracle_level)
+          right: (integer))))))
+
+================================================================================
+Oracle MINUS operator
+================================================================================
+
+SELECT id FROM table1 MINUS SELECT id FROM table2;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list
+        (result_column
+          expression: (qualified_identifier
+            name: (identifier))))
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier)))))
+    (compound_operator
+      (select_core
+        columns: (select_list
+          (result_column
+            expression: (qualified_identifier
+              name: (identifier))))
+        (from_clause
+          (table_or_subquery
+            name: (qualified_identifier
+              name: (identifier))))))))
+
+================================================================================
+SQL Server table hints
+================================================================================
+
+SELECT * FROM users WITH (NOLOCK);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))
+          (table_hint))))))
+
+================================================================================
+MySQL index hints
+================================================================================
+
+SELECT * FROM users USE INDEX (idx_name) WHERE name = 'John';
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      columns: (select_list)
+      (from_clause
+        (table_or_subquery
+          name: (qualified_identifier
+            name: (identifier))
+          (mysql_index_hint
+            (identifier))))
+      (where_clause
+        condition: (binary_expression
+          left: (qualified_identifier
+            name: (identifier))
+          right: (string))))))

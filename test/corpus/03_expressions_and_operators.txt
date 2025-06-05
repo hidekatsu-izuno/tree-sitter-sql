@@ -445,12 +445,10 @@ FROM users;
       (select_list
         (result_column
           (function_call
-            (identifier)
             (string))
           (identifier))
         (result_column
           (function_call
-            (identifier)
             (string)
             (string))
           (identifier))
