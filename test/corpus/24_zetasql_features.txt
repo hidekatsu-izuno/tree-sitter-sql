@@ -111,13 +111,15 @@ FROM reviews;
     (select_core
       columns: (select_list
         (result_column
-          expression: (nullifzero_expression
-            expression: (qualified_identifier
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
               name: (identifier)))
           alias: (identifier))
         (result_column
-          expression: (zeroifnull_expression
-            expression: (qualified_identifier
+          expression: (function_call
+            name: (identifier)
+            argument: (qualified_identifier
               name: (identifier)))
           alias: (identifier)))
       (from_clause

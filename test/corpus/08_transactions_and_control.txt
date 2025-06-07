@@ -107,9 +107,8 @@ COMMIT TRANSACTION;
         (binary_expression
           (qualified_identifier
             (identifier))
-          (integer)))))
-  (ERROR
-    (identifier))
+          (integer)))
+      (for_update_clause)))
   (update_statement
     (qualified_identifier
       (identifier))

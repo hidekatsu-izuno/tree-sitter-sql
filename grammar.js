@@ -9,12 +9,7 @@ function commaSep1(rule) {
 
 // Case-insensitive keyword helper
 function kw(keyword) {
-  let str = "";
-  for (var i = 0; i < keyword.length; i++) {
-    const c = keyword.charAt(i);
-    str += "[" + c.toUpperCase() + c.toLowerCase() + "]";
-  }
-  return new RegExp(str);
+  return new RegExp(keyword.replace(/[A-Z]/ig, m => `[${m.toUpperCase()}${m.toLowerCase()}]`));
 }
 
 // Common patterns
@@ -25,11 +20,11 @@ function alias($, mandatory_as = false) {
 }
 
 function if_not_exists($) {
-  return optional(seq(kw('IF'), $._kw_not, $._kw_exists));
+  return optional(seq($._kw_if, $._kw_not, $._kw_exists));
 }
 
 function if_exists($) {
-  return optional(seq(kw('IF'), $._kw_exists));
+  return optional(seq($._kw_if, $._kw_exists));
 }
 
 function column_list($) {
@@ -99,6 +94,11 @@ module.exports = grammar({
     [$.select_core, $.pipe_query],
     [$.table_or_subquery, $.apply_clause],
     [$.unary_expression, $.binary_expression, $.is_expression],
+    [$.safe_cast_expression, $.function_call],
+    [$.oracle_date_literal, $.function_call],
+    [$.oracle_timestamp_literal, $.function_call],
+    [$.oracle_rownum, $.qualified_identifier],
+    [$.oracle_level, $.qualified_identifier],
   ],
 
   precedences: $ => [
@@ -112,46 +112,74 @@ module.exports = grammar({
       $._kw_all,
       $._kw_alter,
       $._kw_and,
+      $._kw_array,
       $._kw_as,
       $._kw_asc,
+      $._kw_begin,
       $._kw_between,
       $._kw_by,
+      $._kw_case,
+      $._kw_cast,
       $._kw_check,
       $._kw_column,
+      $._kw_commit,
       $._kw_create,
       $._kw_default,
+      $._kw_deferred,
       $._kw_delete,
       $._kw_desc,
       $._kw_distinct,
       $._kw_drop,
+      $._kw_else,
+      $._kw_end,
+      $._kw_exclusive,
       $._kw_exists,
       $._kw_for,
       $._kw_foreign,
       $._kw_from,
       $._kw_group,
       $._kw_having,
+      $._kw_if,
+      $._kw_immediate,
       $._kw_in,
       $._kw_insert,
       $._kw_intersect,
       $._kw_into,
       $._kw_is,
       $._kw_join,
+      $._kw_key,
       $._kw_like,
+      $._kw_limit,
       $._kw_not,
       $._kw_null,
+      $._kw_offset,
       $._kw_of,
       $._kw_on,
       $._kw_or,
       $._kw_order,
+      $._kw_primary,
+      $._kw_recursive,
+      $._kw_release,
+      $._kw_rename,
+      $._kw_rollback,
+      $._kw_safe_cast,
+      $._kw_savepoint,
       $._kw_select,
       $._kw_set,
+      $._kw_struct,
       $._kw_table,
+      $._kw_then,
+      $._kw_to,
+      $._kw_top,
+      $._kw_transaction,
       $._kw_trigger,
       $._kw_union,
       $._kw_unique,
       $._kw_update,
       $._kw_values,
+      $._kw_when,
       $._kw_where,
+      $._kw_window,
       $._kw_with,
     ],
   }),
@@ -164,47 +192,76 @@ module.exports = grammar({
     _kw_add: $ => kw("ADD"),
     _kw_all: $ => kw("ALL"),
     _kw_alter: $ => kw("ALTER"),
+    _kw_array: $ => kw("ARRAY"),
     _kw_and: $ => kw("AND"),
+    _kw_autoincrement: $ => kw("AUTOINCREMENT"),
     _kw_as: $ => kw("AS"),
     _kw_asc: $ => kw("ASC"),
+    _kw_begin: $ => kw("BEGIN"),
     _kw_between: $ => kw("BETWEEN"),
     _kw_by: $ => kw("BY"),
+    _kw_case: $ => kw("CASE"),
+    _kw_cast: $ => kw("CAST"),
     _kw_check: $ => kw("CHECK"),
     _kw_column: $ => kw("COLUMN"),
+    _kw_commit: $ => kw("COMMIT"),
     _kw_create: $ => kw("CREATE"),
+    _kw_deferred: $ => kw("DEFERRED"),
     _kw_default: $ => kw("DEFAULT"),
     _kw_delete: $ => kw("DELETE"),
     _kw_desc: $ => kw("DESC"),
     _kw_distinct: $ => kw("DISTINCT"),
     _kw_drop: $ => kw("DROP"),
+    _kw_else: $ => kw("ELSE"),
+    _kw_end: $ => kw("END"),
+    _kw_exclusive: $ => kw("EXCLUSIVE"),
     _kw_exists: $ => kw("EXISTS"),
     _kw_for: $ => kw("FOR"),
     _kw_foreign: $ => kw("FOREIGN"),
     _kw_from: $ => kw("FROM"),
     _kw_group: $ => kw("GROUP"),
     _kw_having: $ => kw("HAVING"),
+    _kw_if: $ => kw("IF"),
+    _kw_immediate: $ => kw("IMMEDIATE"),
     _kw_in: $ => kw("IN"),
     _kw_insert: $ => kw("INSERT"),
     _kw_intersect: $ => kw("INTERSECT"),
     _kw_into: $ => kw("INTO"),
     _kw_is: $ => kw("IS"),
     _kw_join: $ => kw("JOIN"),
+    _kw_key: $ => kw("KEY"),
     _kw_like: $ => kw("LIKE"),
+    _kw_limit: $ => kw("LIMIT"),
     _kw_not: $ => kw("NOT"),
     _kw_null: $ => kw("NULL"),
+    _kw_offset: $ => kw("OFFSET"),
     _kw_of: $ => kw("OF"),
     _kw_on: $ => kw("ON"),
     _kw_or: $ => kw("OR"),
     _kw_order: $ => kw("ORDER"),
+    _kw_primary: $ => kw("PRIMARY"),
+    _kw_recursive: $ => kw("RECURSIVE"),
+    _kw_release: $ => kw("RELEASE"),
+    _kw_rename: $ => kw("RENAME"),
+    _kw_rollback: $ => kw("ROLLBACK"),
+    _kw_safe_cast: _ => /[Ss][Aa][Ff][Ee]_[Cc][Aa][Ss][Tt]/,
+    _kw_savepoint: $ => kw("SAVEPOINT"),
     _kw_select: $ => kw("SELECT"),
     _kw_set: $ => kw("SET"),
+    _kw_struct: $ => kw("STRUCT"),
     _kw_table: $ => kw("TABLE"),
+    _kw_top: $ => kw("TOP"),
+    _kw_then: $ => kw("THEN"),
+    _kw_to: $ => kw("TO"),
+    _kw_transaction: $ => kw("TRANSACTION"),
     _kw_trigger: $ => kw("TRIGGER"),
     _kw_union: $ => kw("UNION"),
     _kw_unique: $ => kw("UNIQUE"),
     _kw_update: $ => kw("UPDATE"),
     _kw_values: $ => kw("VALUES"),
+    _kw_when: $ => kw("WHEN"),
     _kw_where: $ => kw("WHERE"),
+    _kw_window: $ => kw("WINDOW"),
     _kw_with: $ => kw("WITH"),
 
     _statement: $ => seq(
@@ -250,7 +307,7 @@ module.exports = grammar({
     )),
 
     // Identifiers
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    identifier: $ => token(prec(-1, /[a-zA-Z_][a-zA-Z0-9_]*/)),
 
     qualified_identifier: $ => seq(
       optional(seq(field('schema', $.identifier), '.')),
@@ -287,16 +344,16 @@ module.exports = grammar({
 
     with_clause: $ => seq(
       $._kw_with,
-      optional(kw('RECURSIVE')),
+      optional($._kw_recursive),
       commaSep1($.common_table_expression)
     ),
 
     common_table_expression: $ => seq(
-      field('name', $.identifier),
+      $.identifier,
       optional(column_list($)),
       $._kw_as,
       '(',
-      field('query', $.select_statement),
+      $.select_statement,
       ')'
     ),
 
@@ -308,7 +365,8 @@ module.exports = grammar({
       optional($.from_clause),
       optional($.where_clause),
       optional($.group_by_clause),
-      optional($.window_clause)
+      optional($.window_clause),
+      optional($.for_update_clause)
     ),
 
     select_list: $ => choice(
@@ -372,12 +430,19 @@ module.exports = grammar({
     ),
 
     window_clause: $ => seq(
-      kw('WINDOW'),
+      $._kw_window,
       commaSep1(seq(
         field('name', $.identifier),
         $._kw_as,
         $.window_definition
       ))
+    ),
+
+    for_update_clause: $ => seq(
+      $._kw_for,
+      $._kw_update,
+      optional(seq($._kw_of, commaSep1(field('table', $.identifier)))),
+      optional(choice(kw('NOWAIT'), seq(kw('WAIT'), field('timeout', $.integer))))
     ),
 
     window_definition: $ => seq(
@@ -417,9 +482,9 @@ module.exports = grammar({
     ),
 
     limit_clause: $ => seq(
-      kw('LIMIT'),
+      $._kw_limit,
       field('limit', $._expression),
-      optional(seq(choice(kw('OFFSET'), ','), field('offset', $._expression)))
+      optional(seq(choice($._kw_offset, ','), field('offset', $._expression)))
     ),
 
     compound_operator: $ => seq(
@@ -559,7 +624,7 @@ module.exports = grammar({
     column_constraint: $ => seq(
       optional(seq(kw('CONSTRAINT'), field('name', $.identifier))),
       choice(
-        seq(kw('PRIMARY'), kw('KEY'), optional(choice($._kw_asc, $._kw_desc)), optional($.conflict_clause), optional(kw('AUTOINCREMENT'))),
+        seq($._kw_primary, $._kw_key, optional(choice($._kw_asc, $._kw_desc)), optional($.conflict_clause), optional($._kw_autoincrement)),
         seq($._kw_not, $._kw_null, optional($.conflict_clause)),
         seq($._kw_unique, optional($.conflict_clause)),
         seq($._kw_check, '(', field('expression', $._expression), ')'),
@@ -581,7 +646,7 @@ module.exports = grammar({
       optional(seq(kw('CONSTRAINT'), field('name', $.identifier))),
       choice(
         seq(
-          choice(seq(kw('PRIMARY'), kw('KEY')), $._kw_unique),
+          choice(seq($._kw_primary, $._kw_key), $._kw_unique),
           '(',
           commaSep1(seq(
             field('column', $.identifier),
@@ -597,7 +662,7 @@ module.exports = grammar({
           ')'
         ),
         seq(
-          $._kw_foreign, kw('KEY'),
+          $._kw_foreign, $._kw_key,
           column_list($),
           $.foreign_key_clause
         )
@@ -682,10 +747,10 @@ module.exports = grammar({
       $._kw_on,
       field('table', $._qualified_identifier),
       optional(seq($._kw_for, kw('EACH'), kw('ROW'))),
-      optional(seq(kw('WHEN'), field('condition', $._expression))),
-      kw('BEGIN'),
+      optional(seq($._kw_when, field('condition', $._expression))),
+      $._kw_begin,
       repeat1($._statement),
-      kw('END')
+      $._kw_end
     ),
 
     // CREATE VIRTUAL TABLE statement
@@ -764,8 +829,8 @@ module.exports = grammar({
       $._kw_alter, $._kw_table,
       field('table', $._qualified_identifier),
       choice(
-        seq(kw('RENAME'), kw('TO'), field('new_name', $.identifier)),
-        seq(kw('RENAME'), optional($._kw_column), field('old_name', $.identifier), kw('TO'), field('new_name', $.identifier)),
+        seq($._kw_rename, $._kw_to, field('new_name', $.identifier)),
+        seq($._kw_rename, optional($._kw_column), field('old_name', $.identifier), $._kw_to, field('new_name', $.identifier)),
         seq($._kw_add, optional($._kw_column), $.column_definition),
         seq($._kw_drop, optional($._kw_column), field('column', $.identifier))
       )
@@ -834,30 +899,30 @@ module.exports = grammar({
 
     // Transaction statements
     begin_statement: $ => seq(
-      kw('BEGIN'),
-      optional(choice(kw('DEFERRED'), kw('IMMEDIATE'), kw('EXCLUSIVE'))),
-      optional(kw('TRANSACTION'))
+      $._kw_begin,
+      optional(choice($._kw_deferred, $._kw_immediate, $._kw_exclusive)),
+      optional($._kw_transaction)
     ),
 
     commit_statement: $ => seq(
-      choice(kw('COMMIT'), kw('END')),
-      optional(kw('TRANSACTION'))
+      choice($._kw_commit, $._kw_end),
+      optional($._kw_transaction)
     ),
 
     rollback_statement: $ => seq(
-      kw('ROLLBACK'),
-      optional(kw('TRANSACTION')),
-      optional(seq(kw('TO'), optional(kw('SAVEPOINT')), field('savepoint', $.identifier)))
+      $._kw_rollback,
+      optional($._kw_transaction),
+      optional(seq($._kw_to, optional($._kw_savepoint), field('savepoint', $.identifier)))
     ),
 
     savepoint_statement: $ => seq(
-      kw('SAVEPOINT'),
+      $._kw_savepoint,
       field('name', $.identifier)
     ),
 
     release_statement: $ => seq(
-      kw('RELEASE'),
-      optional(kw('SAVEPOINT')),
+      $._kw_release,
+      optional($._kw_savepoint),
       field('name', $.identifier)
     ),
 
@@ -870,6 +935,10 @@ module.exports = grammar({
 
     // Expressions
     _expression: $ => choice(
+      $.oracle_date_literal,
+      $.oracle_timestamp_literal,
+      $.oracle_rownum,
+      $.oracle_level,
       $._literal_value,
       $.identifier,
       $.qualified_identifier,
@@ -886,15 +955,11 @@ module.exports = grammar({
       $.is_expression,
       $.null_expression,
       $.collate_expression,
+      $.safe_cast_expression,
       $.function_call,
       $.subquery_expression,
       $.raise_expression,
-      $.array_constructor,
-      $.safe_cast_expression,
-      $.nullifzero_expression,
-      $.zeroifnull_expression,
-      $.oracle_rownum,
-      $.oracle_level
+      $.array_constructor
     ),
 
     _literal_value: $ => choice(
@@ -903,9 +968,7 @@ module.exports = grammar({
       $.string,
       $.blob,
       $.null,
-      $.boolean,
-      $.oracle_date_literal,
-      $.oracle_timestamp_literal
+      $.boolean
     ),
 
     integer: $ => /\d+/,
@@ -969,7 +1032,7 @@ module.exports = grammar({
     parenthesized_expression: $ => seq('(', $._expression, ')'),
 
     cast_expression: $ => seq(
-      kw('CAST'),
+      $._kw_cast,
       '(',
       field('expression', $._expression),
       $._kw_as,
@@ -978,16 +1041,16 @@ module.exports = grammar({
     ),
 
     case_expression: $ => seq(
-      kw('CASE'),
+      $._kw_case,
       optional(field('expression', $._expression)),
       repeat1(seq(
-        kw('WHEN'),
+        $._kw_when,
         field('condition', $._expression),
-        kw('THEN'),
+        $._kw_then,
         field('result', $._expression)
       )),
-      optional(seq(kw('ELSE'), field('else', $._expression))),
-      kw('END')
+      optional(seq($._kw_else, field('else', $._expression))),
+      $._kw_end
     ),
 
     exists_expression: $ => seq(
@@ -1055,7 +1118,7 @@ module.exports = grammar({
       field('collation', $.identifier)
     ),
 
-    function_call: $ => seq(
+    function_call: $ => prec(1, seq(
       field('name', choice(
         $.identifier,
         // Allow certain keywords to be used as function names
@@ -1078,7 +1141,7 @@ module.exports = grammar({
           $.window_definition
         )
       ))
-    ),
+    )),
 
     subquery_expression: $ => seq(
       '(',
@@ -1105,13 +1168,13 @@ module.exports = grammar({
 
     array_constructor: $ => choice(
       seq(
-        kw('ARRAY'),
+        $._kw_array,
         '[',
         commaSep1(field('element', $._expression)),
         ']'
       ),
       seq(
-        kw('ARRAY'),
+        $._kw_array,
         '(',
         field('subquery', $.select_statement),
         ')'
@@ -1120,14 +1183,14 @@ module.exports = grammar({
 
     // ZetaSQL data types
     array_type: $ => seq(
-      kw('ARRAY'),
+      $._kw_array,
       '<',
       field('element_type', $.type_name),
       '>'
     ),
 
     struct_type: $ => seq(
-      kw('STRUCT'),
+      $._kw_struct,
       '<',
       commaSep1(seq(
         field('field_name', $.identifier),
@@ -1165,9 +1228,9 @@ module.exports = grammar({
     pipe_extend: $ => seq(kw('EXTEND'), commaSep1(seq($._expression, optional(alias($))))),
     pipe_set: $ => seq($._kw_set, commaSep1(seq($.identifier, '=', $._expression))),
     pipe_drop: $ => seq($._kw_drop, commaSep1($.identifier)),
-    pipe_rename: $ => seq(kw('RENAME'), commaSep1(seq($.identifier, $._kw_as, $.identifier))),
+    pipe_rename: $ => seq($._kw_rename, commaSep1(seq($.identifier, $._kw_as, $.identifier))),
     pipe_where: $ => seq($._kw_where, $._expression),
-    pipe_limit: $ => seq(kw('LIMIT'), $._expression),
+    pipe_limit: $ => seq($._kw_limit, $._expression),
     pipe_aggregate: $ => seq(
       kw('AGGREGATE'),
       commaSep1(seq($._expression, optional(alias($)))),
@@ -1184,32 +1247,19 @@ module.exports = grammar({
     pipe_assert: $ => seq(kw('ASSERT'), $._expression),
 
     // ZetaSQL-specific functions
-    safe_cast_expression: $ => seq(
-      kw('SAFE_CAST'),
+    safe_cast_expression: $ => prec(2, seq(
+      $._kw_safe_cast,
       '(',
       field('expression', $._expression),
       $._kw_as,
       field('type', $.type_name),
       ')'
-    ),
+    )),
 
-    nullifzero_expression: $ => seq(
-      kw('NULLIFZERO'),
-      '(',
-      field('expression', $._expression),
-      ')'
-    ),
-
-    zeroifnull_expression: $ => seq(
-      kw('ZEROIFNULL'),
-      '(',
-      field('expression', $._expression),
-      ')'
-    ),
 
     // SQL Server TOP clause
     top_clause: $ => seq(
-      kw('TOP'),
+      $._kw_top,
       choice(
         field('count', $.integer),
         seq('(', field('count', $._expression), ')')
@@ -1218,15 +1268,15 @@ module.exports = grammar({
     ),
 
     // Oracle date and timestamp literals
-    oracle_date_literal: $ => seq(
-      kw('DATE'),
+    oracle_date_literal: $ => prec(3, seq(
+      /[Dd][Aa][Tt][Ee]\s+/,
       field('value', $.string)
-    ),
+    )),
 
-    oracle_timestamp_literal: $ => seq(
-      kw('TIMESTAMP'),
+    oracle_timestamp_literal: $ => prec(3, seq(
+      /[Tt][Ii][Mm][Ee][Ss][Tt][Aa][Mm][Pp]\s+/,
       field('value', $.string)
-    ),
+    )),
 
     // MySQL SHOW statements
     show_statement: $ => seq(
@@ -1244,10 +1294,10 @@ module.exports = grammar({
 
 
     // Oracle ROWNUM support
-    oracle_rownum: $ => kw('ROWNUM'),
+    oracle_rownum: _ => prec(2, /[Rr][Oo][Ww][Nn][Uu][Mm]/),
     
     // Oracle LEVEL pseudo-column for hierarchical queries
-    oracle_level: $ => kw('LEVEL'),
+    oracle_level: _ => prec(2, /[Ll][Ee][Vv][Ee][Ll]/),
 
     // SQL Server batch separator
     go_statement: $ => kw('GO'),
@@ -1281,7 +1331,7 @@ module.exports = grammar({
     // MySQL index hints  
     mysql_index_hint: $ => seq(
       choice(kw('USE'), kw('IGNORE'), kw('FORCE')),
-      choice(kw('INDEX'), kw('KEY')),
+      choice(kw('INDEX'), $._kw_key),
       optional(seq($._kw_for, choice($._kw_join, seq($._kw_order, $._kw_by), seq($._kw_group, $._kw_by)))),
       '(',
       optional(commaSep1($.identifier)),
