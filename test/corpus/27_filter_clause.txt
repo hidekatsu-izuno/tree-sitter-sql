@@ -1,0 +1,142 @@
+===============================================
+Basic FILTER clause
+===============================================
+
+SELECT 
+  COUNT(*) FILTER (WHERE status = 'active') AS active_count,
+  SUM(amount) FILTER (WHERE type = 'credit') AS total_credits
+FROM transactions;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (result_column
+          (function_call
+            (identifier)
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (string)))
+          (identifier))
+        (result_column
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (string)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+===============================================
+FILTER with multiple conditions
+===============================================
+
+SELECT 
+  AVG(price) FILTER (WHERE category = 'electronics' AND in_stock = 1) AS avg_electronics_price
+FROM products;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (result_column
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (string))
+              (binary_expression
+                (qualified_identifier
+                  (identifier))
+                (integer))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+===============================================
+FILTER with DISTINCT
+===============================================
+
+SELECT 
+  COUNT(DISTINCT user_id) FILTER (WHERE event_type = 'login') AS unique_logins
+FROM events;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (result_column
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (string)))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))
+
+===============================================
+FILTER with window functions
+===============================================
+
+SELECT 
+  employee_id,
+  salary,
+  AVG(salary) FILTER (WHERE department = 'IT') 
+    OVER (PARTITION BY location) AS avg_it_salary_by_location
+FROM employees;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (select_statement
+    (select_core
+      (select_list
+        (result_column
+          (qualified_identifier
+            (identifier)))
+        (result_column
+          (qualified_identifier
+            (identifier)))
+        (result_column
+          (function_call
+            (identifier)
+            (qualified_identifier
+              (identifier))
+            (binary_expression
+              (qualified_identifier
+                (identifier))
+              (string))
+            (window_definition
+              (partition_clause
+                (qualified_identifier
+                  (identifier)))))
+          (identifier)))
+      (from_clause
+        (table_or_subquery
+          (qualified_identifier
+            (identifier)))))))

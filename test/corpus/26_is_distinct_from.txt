@@ -1,0 +1,211 @@
+====================================
+IS DISTINCT FROM operators
+====================================
+
+SELECT *
+FROM table1
+WHERE col1 IS DISTINCT FROM col2;
+
+---
+
+(source_file
+  (select_statement
+    (select_clause
+      (select_clause_body
+        (wildcard)))
+    (from_clause
+      (table_expression
+        (table_reference
+          (identifier))))
+    (where_clause
+      (is_distinct_from_expression
+        (identifier)
+        (identifier)))))
+
+====================================
+IS NOT DISTINCT FROM operators
+====================================
+
+SELECT *
+FROM table1
+WHERE col1 IS NOT DISTINCT FROM col2;
+
+---
+
+(source_file
+  (select_statement
+    (select_clause
+      (select_clause_body
+        (wildcard)))
+    (from_clause
+      (table_expression
+        (table_reference
+          (identifier))))
+    (where_clause
+      (is_not_distinct_from_expression
+        (identifier)
+        (identifier)))))
+
+====================================
+IS DISTINCT FROM with NULL
+====================================
+
+SELECT 
+  NULL IS DISTINCT FROM NULL AS test1,
+  1 IS DISTINCT FROM NULL AS test2,
+  'a' IS DISTINCT FROM 'b' AS test3;
+
+---
+
+(source_file
+  (select_statement
+    (select_clause
+      (select_clause_body
+        (select_expression
+          (expression
+            (is_distinct_from_expression
+              (null)
+              (null)))
+          (identifier))
+        (select_expression
+          (expression
+            (is_distinct_from_expression
+              (literal)
+              (null)))
+          (identifier))
+        (select_expression
+          (expression
+            (is_distinct_from_expression
+              (literal)
+              (literal)))
+          (identifier))))))
+
+====================================
+IS DISTINCT FROM in complex expressions
+====================================
+
+SELECT *
+FROM orders
+WHERE 
+  (price IS DISTINCT FROM old_price) AND
+  (status IS NOT DISTINCT FROM 'completed') AND
+  (customer_id IS DISTINCT FROM NULL OR customer_id = 0);
+
+---
+
+(source_file
+  (select_statement
+    (select_clause
+      (select_clause_body
+        (wildcard)))
+    (from_clause
+      (table_expression
+        (table_reference
+          (identifier))))
+    (where_clause
+      (binary_expression
+        (binary_expression
+          (parenthesized_expression
+            (is_distinct_from_expression
+              (identifier)
+              (identifier)))
+          (parenthesized_expression
+            (is_not_distinct_from_expression
+              (identifier)
+              (literal))))
+        (parenthesized_expression
+          (binary_expression
+            (is_distinct_from_expression
+              (identifier)
+              (null))
+            (binary_expression
+              (identifier)
+              (literal))))))))
+
+====================================
+IS DISTINCT FROM with subqueries
+====================================
+
+SELECT *
+FROM products p
+WHERE p.price IS DISTINCT FROM (
+  SELECT AVG(price) 
+  FROM products 
+  WHERE category = p.category
+);
+
+---
+
+(source_file
+  (select_statement
+    (select_clause
+      (select_clause_body
+        (wildcard)))
+    (from_clause
+      (table_expression
+        (table_reference
+          (identifier)
+          (identifier))))
+    (where_clause
+      (is_distinct_from_expression
+        (qualified_name
+          (identifier)
+          (identifier))
+        (parenthesized_expression
+          (select_statement
+            (select_clause
+              (select_clause_body
+                (select_expression
+                  (expression
+                    (function_call
+                      (identifier)
+                      (identifier))))))
+            (from_clause
+              (table_expression
+                (table_reference
+                  (identifier))))
+            (where_clause
+              (binary_expression
+                (identifier)
+                (qualified_name
+                  (identifier)
+                  (identifier))))))))))
+
+====================================
+IS DISTINCT FROM in CASE expressions
+====================================
+
+SELECT 
+  CASE 
+    WHEN old_value IS DISTINCT FROM new_value THEN 'changed'
+    WHEN old_value IS NOT DISTINCT FROM new_value THEN 'unchanged'
+    ELSE 'unknown'
+  END AS status
+FROM changes;
+
+---
+
+(source_file
+  (select_statement
+    (select_clause
+      (select_clause_body
+        (select_expression
+          (expression
+            (case_expression
+              (case_when_clause
+                (is_distinct_from_expression
+                  (identifier)
+                  (identifier))
+                (literal))
+              (case_when_clause
+                (is_not_distinct_from_expression
+                  (identifier)
+                  (identifier))
+                (literal))
+              (case_else_clause
+                (literal))))
+          (identifier))))
+    (from_clause
+      (table_expression
+        (table_reference
+          (identifier))))))

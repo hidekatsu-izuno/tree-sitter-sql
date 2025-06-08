@@ -75,12 +75,17 @@ module.exports = grammar({
     [$.select_statement, $.insert_statement],
     [$._pragma_value, $._literal_value],
     [$.like_expression, $.collate_expression],
+    [$.binary_expression, $.like_expression, $.is_expression],
+    [$.like_expression, $.is_expression],
     [$.like_expression, $.null_expression],
     [$.in_expression, $.between_expression, $.like_expression],
     [$.between_expression, $.like_expression],
+    [$.between_expression, $.is_expression],
+    [$.is_expression, $.collate_expression],
+    [$.is_expression, $.null_expression],
     [$.unary_expression, $.is_expression],
     [$.binary_expression, $.in_expression, $.between_expression, $.like_expression],
-    [$.binary_expression, $.between_expression, $.like_expression],
+    [$.binary_expression, $.between_expression, $.like_expression, $.is_expression],
     [$.unary_expression, $.in_expression, $.between_expression, $.like_expression, $.is_expression],
     [$.unary_expression, $.is_expression, $.collate_expression],
     [$.unary_expression, $.between_expression, $.is_expression],
@@ -1011,7 +1016,7 @@ module.exports = grammar({
         3: ['+', '-'],  // Addition, subtraction
         4: ['<<', '>>', '&', '|'],  // Bitwise operators
         5: ['<', '<=', '>', '>='],  // Comparison
-        6: ['=', '==', '!=', '<>', $._kw_is, seq($._kw_is, $._kw_not), $._kw_in, seq($._kw_not, $._kw_in), $._kw_like, seq($._kw_not, $._kw_like), kw('GLOB'), seq($._kw_not, kw('GLOB')), kw('MATCH'), seq($._kw_not, kw('MATCH')), kw('REGEXP'), seq($._kw_not, kw('REGEXP')), '->', '->>', '@>', '<@', token('#>'), token('#>>'), token('?&'), token('?|'), token('&&'), token('@@'), token('(+)')],  // Equality, pattern matching, PostgreSQL operators, and Oracle outer join
+        6: ['=', '==', '!=', '<>', $._kw_in, seq($._kw_not, $._kw_in), $._kw_like, seq($._kw_not, $._kw_like), kw('GLOB'), seq($._kw_not, kw('GLOB')), kw('MATCH'), seq($._kw_not, kw('MATCH')), kw('REGEXP'), seq($._kw_not, kw('REGEXP')), '->', '->>', '@>', '<@', token('#>'), token('#>>'), token('?&'), token('?|'), token('&&'), token('@@'), token('(+)')],  // Equality, pattern matching, PostgreSQL operators, and Oracle outer join
         7: [$._kw_and],  // Logical AND
         8: [$._kw_or],  // Logical OR
       })) {
@@ -1095,7 +1100,7 @@ module.exports = grammar({
       optional(seq(kw('ESCAPE'), field('escape', $._expression)))
     ),
 
-    is_expression: $ => seq(
+    is_expression: $ => prec.left(seq(
       field('left', $._expression),
       $._kw_is,
       optional($._kw_not),
@@ -1105,7 +1110,7 @@ module.exports = grammar({
         kw('FALSE'),
         field('value', $._expression)
       )
-    ),
+    )),
 
     null_expression: $ => seq(
       field('expression', $._expression),
@@ -1133,12 +1138,15 @@ module.exports = grammar({
         )
       )),
       ')',
-      optional(seq(
-        optional(seq(kw('FILTER'), '(', $._kw_where, field('filter', $._expression), ')')),
-        kw('OVER'),
-        choice(
-          field('window', $.identifier),
-          $.window_definition
+      optional(choice(
+        seq(kw('FILTER'), '(', $._kw_where, field('filter', $._expression), ')'),
+        seq(
+          optional(seq(kw('FILTER'), '(', $._kw_where, field('filter', $._expression), ')')),
+          kw('OVER'),
+          choice(
+            field('window', $.identifier),
+            $.window_definition
+          )
         )
       ))
     )),
